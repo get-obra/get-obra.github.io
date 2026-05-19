@@ -570,12 +570,18 @@
     /* ─────────── Trust primitives ─────────── */
     .primitives {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
       margin-top: 44px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 1000px) {
+      .primitives {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
       .primitives {
         grid-template-columns: 1fr;
       }
@@ -1193,6 +1199,19 @@
       </div>
       <div class="primitive">
         <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h8"/>
+          <path d="M3 16h8"/>
+          <path d="M15 10l3 3 4-4"/>
+        </svg>
+        <div class="primitive-title">Reads must agree</div>
+        <div class="primitive-body">
+          Two independent reads of critical documents must agree
+          before any value enters review. Disagreement halts and lands
+          in your hands.
+        </div>
+      </div>
+      <div class="primitive">
+        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7l8-4z"/>
           <path d="M9 12l2 2 4-4"/>
         </svg>
@@ -1292,7 +1311,7 @@
         <span class="status-row-value">2027</span>
       </div>
       <div class="status-row">
-        <span class="status-row-label">Open-source vertical reference packs</span>
+        <span class="status-row-label"><a href="https://github.com/get-obra/claude-for-portuguese-al-hosts" style="color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent-line);">Open-source vertical reference packs</a></span>
         <span class="status-row-value">In progress</span>
       </div>
     </div>
