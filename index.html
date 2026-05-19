@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obra — Your team, plus one.</title>
+  <meta name="description" content="A managed-service AI virtual employee for operational businesses. Local-first, with a cryptographic audit trail you control. Built on Claude. Coming summer 2026.">
+  <meta name="theme-color" content="#faf9f5">
+
+  <meta property="og:title" content="Obra — Your team, plus one.">
+  <meta property="og:description" content="A managed-service AI virtual employee for operational businesses where data cannot leave the premises. Built on Claude. Coming summer 2026.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://get-obra.com">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #faf9f5;
+      --paper-warm: #f3f1e8;
+      --paper-deep: #ece9dc;
+      --rule: #d9d6c8;
+      --muted: #6e6a5d;
+      --ink: #1a1a1a;
+      --accent: #b75740;
+      --accent-soft: rgba(183, 87, 64, 0.08);
+      --accent-line: rgba(183, 87, 64, 0.25);
+
+      --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+      --dur-instant: 100ms;
+      --dur-fast: 200ms;
+      --dur-medium: 350ms;
+      --dur-slow: 700ms;
+      --dur-glacial: 1200ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Spectral', Georgia, serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+
+      /* Subtle paper-grain background */
+      background-image:
+        radial-gradient(circle at 25% 35%, rgba(217, 214, 200, 0.18) 0%, transparent 35%),
+        radial-gradient(circle at 75% 65%, rgba(217, 214, 200, 0.15) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* ─────────── Top bar ─────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: rgba(250, 249, 245, 0.85);
+      backdrop-filter: saturate(180%) blur(10px);
+      -webkit-backdrop-filter: saturate(180%) blur(10px);
+      border-bottom: 1px solid var(--rule);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .lockup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .mark {
+      width: 32px;
+      height: 32px;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .mark svg {
+      width: 100%;
+      height: 100%;
+      transition: transform var(--dur-glacial) var(--ease-in-out);
+    }
+
+    .lockup:hover .mark svg {
+      transform: rotateX(60deg);
+    }
+
+    .wordmark {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: -0.005em;
+      color: var(--ink);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .topbar-essay-link {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: color var(--dur-fast) var(--ease-standard);
+    }
+
+    .topbar-essay-link:hover { color: var(--ink); }
+    .topbar-essay-link::after {
+      content: ' \2192';
+      opacity: 0.5;
+      margin-left: 4px;
+      transition: transform var(--dur-fast) var(--ease-standard), opacity var(--dur-fast) var(--ease-standard);
+      display: inline-block;
+    }
+    .topbar-essay-link:hover::after {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+
+    @media (max-width: 600px) {
+      .topbar-essay-link { display: none; }
+      .topbar-right { gap: 0; }
+    }
+
+    .pill {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      padding: 6px 14px;
+      border: 1px solid var(--accent-line);
+      border-radius: 999px;
+      background: var(--accent-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 999px;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ─────────── Sections ─────────── */
+    section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    @media (max-width: 600px) {
+      section {
+        padding: 0 24px;
+      }
+      .topbar {
+        padding: 14px 20px;
+      }
+    }
+
+    .section {
+      padding-top: 96px;
+      padding-bottom: 96px;
+      position: relative;
+    }
+
+    @media (max-width: 600px) {
+      .section {
+        padding-top: 64px;
+        padding-bottom: 64px;
+      }
+    }
+
+    .section-alt {
+      background: var(--paper-warm);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* ─────────── Hero ─────────── */
+    .hero {
+      padding-top: 112px;
+      padding-bottom: 112px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding-top: 72px;
+        padding-bottom: 72px;
+      }
+    }
+
+    /* Decorative oversized mark behind hero */
+    .hero::before {
+      content: '';
+      position: absolute;
+      right: -120px;
+      top: 40px;
+      width: 480px;
+      height: 480px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='44' fill='none' stroke='%23d9d6c8' stroke-width='1'/><circle cx='60' cy='60' r='26' fill='none' stroke='%23d9d6c8' stroke-width='0.5'/></svg>");
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.4;
+      pointer-events: none;
+      animation: hero-mark-rotate 60s linear infinite;
+    }
+
+    @keyframes hero-mark-rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 800px) {
+      .hero::before {
+        display: none;
+      }
+    }
+
+    .hero-mark {
+      width: 96px;
+      height: 96px;
+      color: var(--ink);
+      margin-bottom: 56px;
+      animation: hero-mark-in 700ms var(--ease-standard) both;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      .hero-mark {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 40px;
+      }
+    }
+
+    @keyframes hero-mark-in {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .hero-mark svg {
+      width: 100%;
+      height: 100%;
+      animation: hero-mark-tilt 8s var(--ease-in-out) infinite;
+      transform-origin: center;
+    }
+
+    @keyframes hero-mark-tilt {
+      0%, 100% { transform: rotateX(0deg); }
+      50% { transform: rotateX(15deg); }
+    }
+
+    .hero-mark:hover svg {
+      animation: none;
+      transform: rotateX(60deg);
+      transition: transform var(--dur-glacial) var(--ease-in-out);
+    }
+
+    .tagline {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 72px;
+      line-height: 0.98;
+      color: var(--ink);
+      margin-bottom: 20px;
+      animation: fade-up var(--dur-medium) var(--ease-standard) both;
+      animation-delay: 150ms;
+      letter-spacing: -0.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      .tagline {
+        font-size: 48px;
+      }
+    }
+
+    .essence {
+      font-family: 'Spectral', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-bottom: 56px;
+      animation: fade-up var(--dur-medium) var(--ease-standard) both;
+      animation-delay: 250ms;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-lead {
+      font-size: 20px;
+      line-height: 1.55;
+      color: var(--ink);
+      max-width: 600px;
+      animation: fade-up var(--dur-medium) var(--ease-standard) both;
+      animation-delay: 350ms;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─────────── Section signature ─────────── */
+    .section-signature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-signature .sig-mark {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .section-label {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+    }
+
+    .section-heading {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 1.12;
+      color: var(--ink);
+      margin-bottom: 28px;
+      letter-spacing: -0.015em;
+      max-width: 640px;
+    }
+
+    @media (max-width: 600px) {
+      .section-heading {
+        font-size: 30px;
+      }
+    }
+
+    .prose {
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--ink);
+      max-width: 620px;
+    }
+
+    .prose p {
+      margin-bottom: 16px;
+    }
+
+    .prose p:last-child {
+      margin-bottom: 0;
+    }
+
+    .prose-muted {
+      color: var(--muted);
+    }
+
+    /* ─────────── Workflow steps ─────────── */
+    .workflow {
+      margin-top: 48px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--rule);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 600ms var(--ease-standard), transform 600ms var(--ease-standard);
+    }
+
+    .step.in-view {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .step-number {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--accent);
+      padding-top: 6px;
+      letter-spacing: 0.08em;
+      position: relative;
+    }
+
+    .step-number::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 28px;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    .step-title {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 500;
+      font-size: 19px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .step-detail {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .workflow-coda {
+      margin-top: 40px;
+      padding: 24px 28px;
+      background: var(--paper-warm);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      font-family: 'Spectral', Georgia, serif;
+      font-style: italic;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    /* ─────────── Sectors ─────────── */
+    .sectors {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .sectors {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sector {
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      transition: border-color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sector::before {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 120px;
+      height: 120px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='44' fill='none' stroke='%23d9d6c8' stroke-width='2'/><circle cx='60' cy='60' r='26' fill='none' stroke='%23d9d6c8' stroke-width='1'/></svg>");
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+      pointer-events: none;
+      transition: opacity var(--dur-fast) var(--ease-standard);
+    }
+
+    .sector:hover {
+      border-color: rgba(26, 26, 26, 0.2);
+    }
+
+    .sector:hover::before {
+      opacity: 0.75;
+    }
+
+    .sector-tag {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sector-title {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 500;
+      font-size: 20px;
+      color: var(--ink);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sector-body {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .sector-pilot {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .sector-pilot::before {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='44' fill='none' stroke='%23b75740' stroke-width='2'/><circle cx='60' cy='60' r='26' fill='none' stroke='%23b75740' stroke-width='1'/></svg>");
+      opacity: 0.6;
+    }
+
+    .sector-pilot .sector-tag {
+      color: var(--accent);
+    }
+
+    .sector-pilot .sector-title {
+      color: var(--paper);
+    }
+
+    .sector-pilot .sector-body {
+      color: rgba(250, 249, 245, 0.75);
+    }
+
+    /* ─────────── Trust primitives ─────────── */
+    .primitives {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 44px;
+    }
+
+    @media (max-width: 700px) {
+      .primitives {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .primitive {
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .primitive-icon {
+      width: 32px;
+      height: 32px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .primitive-title {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 500;
+      font-size: 20px;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .primitive-body {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    /* ─────────── Status ─────────── */
+    .status {
+      padding: 36px;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      margin-top: 36px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--rule);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+    }
+
+    .status-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .status-row:first-child {
+      padding-top: 0;
+    }
+
+    .status-row-label {
+      color: var(--muted);
+    }
+
+    .status-row-value {
+      color: var(--ink);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-row-value.accent {
+      color: var(--accent);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    /* ─────────── Beta card ─────────── */
+    .beta-card {
+      padding: 48px 40px;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 16px;
+      margin-top: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .beta-card::before {
+      content: '';
+      position: absolute;
+      right: -80px;
+      bottom: -80px;
+      width: 320px;
+      height: 320px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='44' fill='none' stroke='%23b75740' stroke-width='1.5'/><circle cx='60' cy='60' r='26' fill='none' stroke='%23b75740' stroke-width='0.75'/></svg>");
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .beta-content {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+    }
+
+    .beta-label {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .beta-heading {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 32px;
+      line-height: 1.15;
+      color: var(--paper);
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    @media (max-width: 600px) {
+      .beta-heading {
+        font-size: 24px;
+      }
+    }
+
+    .beta-body {
+      font-size: 16px;
+      line-height: 1.65;
+      color: rgba(250, 249, 245, 0.78);
+      margin-bottom: 28px;
+    }
+
+    .beta-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      background: var(--accent);
+      color: var(--paper);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      border-radius: 999px;
+      transition: opacity var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+    }
+
+    .beta-cta:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 600px) {
+      .beta-card {
+        padding: 32px 24px;
+        border-radius: 12px;
+      }
+      .beta-card::before {
+        right: -120px;
+        bottom: -120px;
+        width: 240px;
+        height: 240px;
+      }
+      .status {
+        padding: 24px 20px;
+      }
+      .status-row {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .pill {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        padding: 5px 10px;
+      }
+      .wordmark {
+        font-size: 20px;
+      }
+      .mark {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    /* ─────────── Mission ─────────── */
+    .mission-section {
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mission-section::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 560px;
+      height: 560px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='44' fill='none' stroke='%23d9d6c8' stroke-width='1'/><circle cx='60' cy='60' r='26' fill='none' stroke='%23d9d6c8' stroke-width='0.5'/></svg>");
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .mission-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mission-tagline {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 28px;
+      letter-spacing: -0.015em;
+    }
+
+    @media (max-width: 600px) {
+      .mission-tagline {
+        font-size: 30px;
+      }
+    }
+
+    .mission-section .prose {
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    /* ─────────── Contact ─────────── */
+    .contact {
+      text-align: center;
+      padding-top: 96px;
+      padding-bottom: 72px;
+    }
+
+    .contact-prompt {
+      font-family: 'Spectral', Georgia, serif;
+      font-size: 24px;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+
+    .contact-email {
+      font-family: 'Spectral', Georgia, serif;
+      font-size: 28px;
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity var(--dur-fast) var(--ease-standard);
+    }
+
+    .contact-email:hover {
+      opacity: 0.7;
+    }
+
+    .contact-meta {
+      margin-top: 24px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 600px) {
+      .contact {
+        padding-top: 72px;
+        padding-bottom: 56px;
+      }
+      .contact-prompt {
+        font-size: 20px;
+      }
+      .contact-email {
+        font-size: 22px;
+        word-break: break-all;
+      }
+      .step {
+        grid-template-columns: 48px 1fr;
+        gap: 16px;
+      }
+      .step-number::after {
+        width: 16px;
+      }
+      .workflow-coda {
+        padding: 20px 22px;
+        font-size: 16px;
+      }
+      .sector {
+        padding: 24px 22px;
+      }
+      .primitive {
+        padding: 24px 22px;
+      }
+    }
+
+    /* ─────────── Footer ─────────── */
+    footer {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 32px 56px;
+      border-top: 1px solid var(--rule);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      footer {
+        padding: 24px 24px 36px;
+      }
+    }
+
+    /* ─────────── Animations ─────────── */
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .lockup:hover .mark svg,
+      .hero-mark:hover svg {
+        transform: none;
+      }
+      .step {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="#top" class="lockup">
+      <div class="mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
+          <title>Obra mark</title>
+          <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+          <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="wordmark">Obra</div>
+    </a>
+    <div class="topbar-right">
+      <a href="/the-trust-gap" class="topbar-essay-link">Read the essay</a>
+      <span class="pill">Coming summer 2026</span>
+    </div>
+  </header>
+
+  <section id="top" class="hero">
+    <div class="hero-mark">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
+        <title>Obra mark</title>
+        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg>
+    </div>
+    <h1 class="tagline">Your team,<br>plus one.</h1>
+    <p class="essence">The work, attended to.</p>
+    <p class="hero-lead">
+      Obra is a managed-service AI virtual employee for operational
+      businesses. She logs into the systems your team uses. The
+      work that needs you reaches you; the work that doesn't, just
+      gets done.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="section-signature">
+      <svg class="sig-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg>
+      <span class="section-label">What Obra does</span>
+    </div>
+    <h2 class="section-heading">A reservation, attended to.</h2>
+    <div class="prose">
+      <p>
+        A small vacation rental host in Portugal. She doesn't speak
+        English. Portuguese law requires her to collect every guest's
+        passport and report it to the police within 24 hours of
+        arrival. Today she manages this with translated emails that
+        read as cold, missed deadlines that risk fines, and a hundred
+        and fifty euros a month to an accountant just to handle her
+        invoices.
+      </p>
+      <p>
+        When a booking arrives, Obra picks up the work. Routine
+        steps just get done. Anything that touches the regulator,
+        the guest's money, or her reputation lands in her hands
+        for sign-off first.
+      </p>
+    </div>
+    <div class="workflow">
+      <div class="step">
+        <div class="step-number">01</div>
+        <div>
+          <div class="step-title">Pre-arrival</div>
+          <div class="step-detail">
+            Drafts the welcome email in the guest's native language,
+            in the host's voice. Warm. Hospitable. Clear about what
+            Portuguese law requires. The host approves and it sends.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <div>
+          <div class="step-title">Passport collection</div>
+          <div class="step-detail">
+            Reads the passport scan the guest sends back. A second
+            independent read cross-checks the numbers. The host signs
+            off. The report lands on the police portal on time.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <div>
+          <div class="step-title">During the stay</div>
+          <div class="step-detail">
+            Answers questions in the guest's language. The wifi
+            password. The best restaurant nearby. Where to drop the
+            keys. Escalates only when judgment is actually needed.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">04</div>
+        <div>
+          <div class="step-title">After check-out</div>
+          <div class="step-detail">
+            Schedules the cleaning crew. Drafts the thank-you in the
+            right language for the right day. Drafts the review request
+            that drives the five-star rating. The host signs off on
+            what reaches the guest.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">05</div>
+        <div>
+          <div class="step-title">Month end</div>
+          <div class="step-detail">
+            Generates the invoice. The host approves the figures.
+            Hands a clean record to the accountant for sign-off. The
+            books close. No scramble.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">06</div>
+        <div>
+          <div class="step-title">The receipt</div>
+          <div class="step-detail">
+            Every step lands in a cryptographic audit trail the host
+            controls entirely. Who did what, when, and why. Exportable
+            for the tax authority, the data regulator, or her own
+            peace of mind.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="workflow-coda">
+      The host sleeps through the night before a check-in. The guest
+      never knows their welcome came from anyone but her.
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="section-signature">
+      <svg class="sig-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg>
+      <span class="section-label">Who Obra is for</span>
+    </div>
+    <h2 class="section-heading">Operational businesses where data cannot leave the premises.</h2>
+    <div class="prose">
+      <p>
+        Obra serves businesses where AI deployment has been blocked
+        not by capability but by trust. The data is too sensitive to
+        send to a hosted service. The regulator will ask for a
+        cryptographic audit trail. The workflow is the work.
+      </p>
+    </div>
+    <div class="sectors">
+      <div class="sector sector-pilot">
+        <div class="sector-tag">First pilot · 2026</div>
+        <div class="sector-title">Vacation rental hosts</div>
+        <div class="sector-body">
+          Independent and small-portfolio hosts across the EU
+          regulated tourism sector. Multilingual guest comms,
+          identity reporting, channel sync, accountant handoff.
+        </div>
+      </div>
+      <div class="sector">
+        <div class="sector-tag">Coming 2026</div>
+        <div class="sector-title">Accounting firms</div>
+        <div class="sector-body">
+          Mid-tier firms serving SMB portfolios. A force multiplier
+          on the labor a single qualified accountant can sign off.
+          Audit-chain evidence exportable for tax authorities.
+        </div>
+      </div>
+      <div class="sector">
+        <div class="sector-tag">Coming 2026</div>
+        <div class="sector-title">Property management</div>
+        <div class="sector-body">
+          Maintenance scheduling, vendor coordination, lease
+          compliance, tenant communications. Multi-property
+          isolation with one operator surface for the manager.
+        </div>
+      </div>
+      <div class="sector">
+        <div class="sector-tag">Coming 2027</div>
+        <div class="sector-title">Legal practices</div>
+        <div class="sector-body">
+          Privilege-bound documents, regulatory deadlines, client
+          intake, billing. Audit-chain evidence with structural
+          privilege protection.
+        </div>
+      </div>
+      <div class="sector">
+        <div class="sector-tag">Coming 2027</div>
+        <div class="sector-title">Healthcare clinics</div>
+        <div class="sector-body">
+          Patient communications, scheduling, insurance
+          coordination, intake forms. HIPAA-aligned local-first
+          architecture with cryptographic audit.
+        </div>
+      </div>
+      <div class="sector">
+        <div class="sector-tag">Coming 2027</div>
+        <div class="sector-title">Logistics and freight</div>
+        <div class="sector-body">
+          Chain-of-custody tracking, multi-party coordination,
+          customs paperwork, dispatch. Compliance trails ready for
+          regulatory audit.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-signature">
+      <svg class="sig-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg>
+      <span class="section-label">How Obra is built</span>
+    </div>
+    <h2 class="section-heading">Trust, by construction.</h2>
+    <div class="prose">
+      <p>
+        Obra runs on Claude, locally on your hardware. Every action
+        passes through three independent gates: structured reasoning,
+        adversarial review, and human confirmation. Each gate lands
+        in a cryptographic audit chain you control entirely. Your
+        data never crosses to us. The chain is designed to be
+        witnessed by independent third parties so any auditor,
+        regulator, or future you can verify what happened, when,
+        and why.
+      </p>
+    </div>
+    <div class="primitives">
+      <div class="primitive">
+        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M9 12h6M12 9v6"/>
+        </svg>
+        <div class="primitive-title">Local-first</div>
+        <div class="primitive-body">
+          Your data stays on your premises. Obra acts on your behalf.
+          We never see what she sees. Provable from the schema, not
+          from a policy document.
+        </div>
+      </div>
+      <div class="primitive">
+        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7l8-4z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        <div class="primitive-title">Audit you control</div>
+        <div class="primitive-body">
+          Every action signed and replayable. Export on demand for
+          the tax authority, the data regulator, or your own
+          records.
+        </div>
+      </div>
+      <div class="primitive">
+        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M8 12l3 3 5-5"/>
+        </svg>
+        <div class="primitive-title">No horror story</div>
+        <div class="primitive-body">
+          Three independent gates on every gated action. The AI
+          proposes. A red team challenges. A human confirms. The
+          action your business takes is the one you approved.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="section-signature">
+      <svg class="sig-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg>
+      <span class="section-label">Beta access</span>
+    </div>
+    <h2 class="section-heading">If your business sounds like one of these.</h2>
+    <div class="prose">
+      <p>
+        We are inviting a small group of operators to pilot Obra
+        ahead of the public launch. If you run a business in any of
+        the sectors above, or in one we haven't named where
+        local-first deployment and customer-controlled audit are
+        contract terms, we want to hear from you.
+      </p>
+    </div>
+    <div class="beta-card">
+      <div class="beta-content">
+        <div class="beta-label">Get involved</div>
+        <h3 class="beta-heading">Tell us what you're trying to automate.</h3>
+        <p class="beta-body">
+          Send a note with your sector and the workflow that costs
+          you the most time today. If Obra fits, you'll be among the
+          first operators we deploy with. If it doesn't, we'll tell
+          you honestly.
+        </p>
+        <a href="mailto:team@get-obra.com?subject=Beta%20access%20%E2%80%94%20Obra" class="beta-cta">
+          Request beta access
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-signature">
+      <svg class="sig-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg>
+      <span class="section-label">Where we are</span>
+    </div>
+    <h2 class="section-heading">Built deliberately, in the open.</h2>
+    <div class="prose">
+      <p>
+        Obra is in active development. The platform foundation is
+        complete: connector framework, durable workflow runtime,
+        cryptographic audit chain, redacted-by-construction
+        telemetry, three-gate trust pillar. The first pilot launches
+        with a small group of vacation rental hosts in summer 2026.
+      </p>
+    </div>
+    <div class="status">
+      <div class="status-row">
+        <span class="status-row-label">Platform foundation</span>
+        <span class="status-row-value"><span class="status-dot"></span>Complete</span>
+      </div>
+      <div class="status-row">
+        <span class="status-row-label">First pilot · vacation rental hosts</span>
+        <span class="status-row-value accent"><span class="status-dot"></span>Summer 2026</span>
+      </div>
+      <div class="status-row">
+        <span class="status-row-label">Accounting and property management</span>
+        <span class="status-row-value">Late 2026</span>
+      </div>
+      <div class="status-row">
+        <span class="status-row-label">Legal, healthcare, logistics</span>
+        <span class="status-row-value">2027</span>
+      </div>
+      <div class="status-row">
+        <span class="status-row-label">Open-source vertical reference packs</span>
+        <span class="status-row-value">In progress</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt mission-section">
+    <div class="mission-content">
+      <div class="section-signature" style="justify-content: center;">
+        <svg class="sig-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+          <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+        </svg>
+        <span class="section-label">Why Obra exists</span>
+      </div>
+      <p class="mission-tagline">
+        Claude is the power.<br>We are the plug.
+      </p>
+      <div class="prose">
+        <p>
+          Anthropic builds the most capable, careful AI in the world.
+          Obra is the deployment layer that lets it reach operational
+          businesses in regulated sectors. The places where data
+          cannot leave the building, every action needs a receipt,
+          and one wrong move costs more than the automation saves.
+        </p>
+        <p class="prose-muted">
+          The action your business takes is the one you approved.
+          Your data stays on your premises. That is the work, and
+          we attend to it.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <p class="contact-prompt">If you'd like to talk,</p>
+    <a href="mailto:team@get-obra.com" class="contact-email">team@get-obra.com</a>
+  </section>
+
+  <footer>
+    <div>&copy; 2026 Obra</div>
+    <div><a href="/the-trust-gap" style="color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--accent-line);">Read the essay: The trust gap</a></div>
+    <div>Built on Claude.</div>
+  </footer>
+
+  <script>
+    // Step-line reveal — sequential workflow steps fade in as scrolled into view.
+    // Brand guideline reference: motion-spec-extended.md §3 "Step-line reveal."
+    (function() {
+      if ('IntersectionObserver' in window) {
+        const steps = document.querySelectorAll('.step');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              const allSteps = Array.from(steps);
+              const i = allSteps.indexOf(entry.target);
+              setTimeout(() => {
+                entry.target.classList.add('in-view');
+              }, i * 120);
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+        steps.forEach(step => observer.observe(step));
+      } else {
+        // Fallback: show all immediately
+        document.querySelectorAll('.step').forEach(s => s.classList.add('in-view'));
+      }
+    })();
+  </script>
+</body>
+</html>
