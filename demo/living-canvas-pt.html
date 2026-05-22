@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obra · Tela viva (demonstração)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #faf9f5; --paper-warm: #f3f1e8; --paper-soft: #ece8dc;
+    --ink: #1a1a1a; --ink-soft: #3a3a37; --rule: #d9d6c8; --rule-soft: #e6e3d6;
+    --muted: #6e6a5d; --accent: #b75740; --vertical: #2d6a6e; --green: #5a8a4e;
+    --amber: #b8862d; --red: #a8442e; --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --board-h: 0%;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body { font-family: 'Inter', system-ui, sans-serif; line-height: 1.55; -webkit-font-smoothing: antialiased; background: var(--paper); color: var(--ink); overflow: hidden; }
+  .workspace { display: grid; grid-template-columns: 240px 1fr; height: 100vh; height: 100dvh; transition: grid-template-columns 440ms var(--ease); }
+  .workspace.rail-collapsed { grid-template-columns: 0 1fr; }
+  .head-left { display: flex; align-items: center; gap: 12px; pointer-events: auto; }
+  .rail-toggle { cursor: pointer; width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper-warm); color: var(--ink-soft); font-size: 14px; line-height: 1; display: grid; place-items: center; transition: all 180ms var(--ease); }
+  .rail-toggle:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* RAIL */
+  .rail { background: var(--paper-warm); border-right: 1px solid var(--rule); display: flex; flex-direction: column; padding: 20px 14px; overflow: hidden; white-space: nowrap; }
+  .rail-brand { display: flex; align-items: center; gap: 10px; padding: 6px 10px 18px; font-family: 'Spectral', serif; font-size: 19px; }
+  .rail-section { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 16px 10px 6px; }
+  .rail-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 6px; font-size: 14px; color: var(--ink-soft); cursor: pointer; transition: background 200ms var(--ease); text-decoration: none; }
+  .rail-item:hover { background: var(--paper-soft); color: var(--ink); }
+  .rail-item.active { background: var(--paper); color: var(--ink); border: 1px solid var(--rule); font-weight: 500; }
+  .rail-item .ri-icon { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); width: 14px; text-align: center; }
+  .rail-item.active .ri-icon { color: var(--vertical); }
+  .rail-spacer { flex: 1; }
+  .rail-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-top: 1px solid var(--rule); margin-top: 10px; font-size: 13px; }
+  .rail-user-avatar { width: 28px; height: 28px; background: var(--ink); color: var(--paper); border-radius: 50%; display: grid; place-items: center; font-family: 'Spectral', serif; font-size: 13px; }
+  .rail-user-name { font-weight: 500; } .rail-user-role { font-size: 11px; color: var(--muted); }
+
+  /* BRAND MARK */
+  .obra-mark { position: relative; perspective: 500px; transform-style: preserve-3d; display: inline-block; }
+  .obra-mark-outer, .obra-mark-inner { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .obra-mark-outer { animation: obra-rotate-y 6s linear infinite; }
+  .obra-mark-inner { animation: obra-rotate-x 4.5s linear infinite; }
+  .obra-mark-outer svg, .obra-mark-inner svg { display: block; width: 100%; height: 100%; }
+  @keyframes obra-rotate-y { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+  @keyframes obra-rotate-x { from { transform: rotateX(0); } to { transform: rotateX(360deg); } }
+  .obra-mark-flow-outer { stroke-linecap: round; stroke-dasharray: 100 176; stroke: var(--accent); animation: obra-orbit 7s linear infinite; }
+  .obra-mark-flow-inner { stroke-linecap: round; stroke-dasharray: 40 73; stroke: var(--vertical); animation: obra-orbit-rev 5s linear infinite; }
+  @keyframes obra-orbit { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -276; } }
+  @keyframes obra-orbit-rev { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 113; } }
+  .obra-mark-ring { fill: none; stroke: var(--ink); stroke-width: 14; }
+  .obra-mark-dot { fill: var(--ink); }
+  body[data-state="running"] .obra-mark-outer { animation-duration: 2.4s; }
+  body[data-state="running"] .obra-mark-inner { animation-duration: 1.8s; }
+  body[data-state="running"] .obra-mark-flow-outer { animation: obra-orbit 2.5s linear infinite !important; stroke: var(--vertical); }
+  body[data-state="running"] .obra-mark-flow-inner { animation: obra-orbit-rev 2s linear infinite !important; stroke: var(--vertical); }
+  body[data-state="gated"] .obra-mark-flow-outer { animation: obra-orbit 5s linear infinite !important; stroke: var(--amber); }
+  body[data-state="gated"] .obra-mark-flow-inner { animation: obra-orbit-rev 4s linear infinite !important; stroke: var(--amber); }
+
+  /* CANVAS */
+  .canvas { position: relative; overflow: hidden; background: var(--paper); }
+  .canvas-header { position: absolute; top: 0; left: 0; right: 0; z-index: 6; padding: 14px 26px; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
+  .canvas-title { font-family: 'Spectral', serif; font-size: 17px; font-weight: 500; }
+  .canvas-title em { font-style: italic; color: var(--muted); font-size: 12px; margin-left: 7px; }
+  .head-right { display: flex; align-items: center; gap: 9px; pointer-events: auto; }
+  .phase-pill { display: inline-flex; align-items: center; gap: 7px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper-warm); color: var(--muted); }
+  .phase-pill .pp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+  .phase-pill[data-p="talk"] { color: var(--accent); border-color: rgba(183,87,64,.35);} .phase-pill[data-p="talk"] .pp-dot{background:var(--accent); animation: blink 1s infinite;}
+  .phase-pill[data-p="work"] { color: var(--vertical); border-color: rgba(45,106,110,.35);} .phase-pill[data-p="work"] .pp-dot{background:var(--vertical); animation: blink 1s infinite;}
+  .phase-pill[data-p="waiting"] { color: var(--amber); border-color: rgba(184,134,45,.4); background: rgba(184,134,45,.08);} .phase-pill[data-p="waiting"] .pp-dot{background:var(--amber); animation: blink .7s infinite;}
+  .phase-pill[data-p="done"] { color: var(--green); border-color: rgba(90,138,78,.4);} .phase-pill[data-p="done"] .pp-dot{background:var(--green);}
+  @keyframes blink { 0%,49%{opacity:1;} 50%,100%{opacity:.3;} }
+  .chip-btn { cursor: pointer; font-size: 12px; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft); transition: all 180ms var(--ease); }
+  .chip-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .auto-chip { display: none; align-items: center; gap: 6px; }
+  .auto-chip.show { display: inline-flex; }
+
+  /* STACK = the two breathing regions */
+  .stack { position: absolute; inset: 0; padding-top: 50px; display: flex; flex-direction: column; }
+
+  /* BOARD REGION (top) */
+  .board-region { height: var(--board-h); transition: height 680ms var(--ease); overflow: hidden; padding: 6px 26px 0; flex-shrink: 0; }
+  .board { position: relative; max-width: 1180px; margin: 0 auto; height: 100%; background: var(--paper); border: 1px solid var(--rule); border-radius: 16px; box-shadow: 0 14px 44px -24px rgba(26,26,26,.26); padding: 16px 20px 14px; display: flex; flex-direction: column; transition: opacity 400ms var(--ease); overflow: hidden; }
+  .board.dim { opacity: .5; }
+  .board-eyebrow { display: flex; align-items: center; gap: 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .board-heading { font-family: 'Spectral', serif; font-size: 16px; font-weight: 500; margin: 0; }
+  .board-heading em { font-style: italic; color: var(--muted); }
+  .board-think { font-size: 13px; color: var(--vertical); margin: 6px 0 8px; min-height: 18px; display: flex; align-items: center; gap: 7px; }
+  .board-think .tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--vertical); animation: blink 1s infinite; flex-shrink: 0; }
+  .board-think.idle .tdot { animation: none; background: var(--muted); }
+
+  .stage-wrap { flex: 1; overflow: hidden; min-height: 0; }
+  .stage { position: relative; width: 1330px; height: 460px; transform-origin: top left; transition: transform 600ms var(--ease); }
+  .stage svg.edges { position: absolute; inset: 0; width: 1330px; height: 460px; pointer-events: none; overflow: visible; }
+  .edge { fill: none; stroke: var(--rule); stroke-width: 2; transition: stroke 500ms var(--ease), stroke-dashoffset 700ms var(--ease); }
+  .edge.live { stroke: var(--green); }
+
+  .node { position: absolute; width: 214px; background: var(--paper); border: 1px solid var(--rule); border-radius: 11px; padding: 11px 13px; opacity: 0; transform: translateY(10px) scale(.97); transition: opacity 420ms var(--ease), transform 420ms var(--ease), border-color 360ms var(--ease), box-shadow 360ms var(--ease), background 360ms var(--ease); }
+  .node.shown { opacity: 1; transform: translateY(0) scale(1); }
+  .node-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .node-title { font-family: 'Spectral', serif; font-size: 13.5px; font-weight: 500; line-height: 1.2; }
+  .node-sub { font-size: 11px; color: var(--muted); line-height: 1.3; margin-top: 2px; }
+  .node-tier { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--rule); color: var(--muted); white-space: nowrap; flex-shrink: 0; transition: all 250ms var(--ease); }
+  .node-tier.gated { background: rgba(184,134,45,.12); color: var(--amber); border-color: rgba(184,134,45,.3); }
+  .node-tier.recur { background: rgba(45,106,110,.1); color: var(--vertical); border-color: rgba(45,106,110,.28); }
+  .node-badges { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .node-state { position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; background: var(--paper); border: 1px solid var(--rule); color: var(--muted); opacity: 0; transform: scale(.6); transition: all 300ms var(--ease); }
+  .node.running { border-color: var(--vertical); box-shadow: 0 0 0 3px rgba(45,106,110,.13); }
+  .node.running .node-state { opacity: 1; transform: scale(1); border-color: var(--vertical); color: var(--vertical); }
+  .node.running .node-state .spin { display: inline-block; width: 11px; height: 11px; border: 2px solid var(--rule); border-top-color: var(--vertical); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .node.gatewait { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(184,134,45,.16); }
+  .node.gatewait .node-state { opacity: 1; transform: scale(1); border-color: var(--amber); color: var(--amber); }
+  .node.done { border-color: rgba(90,138,78,.55); background: linear-gradient(180deg, var(--paper) 0%, rgba(90,138,78,.06) 100%); }
+  .node.done .node-state { opacity: 1; transform: scale(1); border-color: var(--green); color: var(--green); }
+  .node.asking { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(183,87,64,.14); }
+  /* handed off to its own routine (NOT done) */
+  .node.handoff { border-color: var(--vertical); background: linear-gradient(180deg, var(--paper) 0%, rgba(45,106,110,.06) 100%); }
+  .node.handoff .node-state { opacity: 1; transform: scale(1); border-color: var(--vertical); color: var(--vertical); }
+  /* waiting on an external party (teal = the world, vs amber = you) */
+  .node.extwait { border-color: var(--vertical); box-shadow: 0 0 0 3px rgba(45,106,110,.12); }
+  .node.extwait .node-state { opacity: 1; transform: scale(1); border-color: var(--vertical); color: var(--vertical); }
+  .node-state .watch { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--vertical); animation: blink 1.1s infinite; }
+  /* idle canvas: "what's in flight" pills */
+  .inflight { display: flex; flex-direction: column; align-items: stretch; gap: 9px; width: 100%; max-width: 480px; margin-bottom: 4px; }
+  .inflight-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: center; }
+  .flight-pill { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid var(--rule); background: var(--paper-warm); cursor: pointer; transition: all 200ms var(--ease); text-align: left; font-family: 'Inter', sans-serif; }
+  .flight-pill:hover { border-color: var(--ink); transform: translateY(-1px); }
+  .flight-pill .fp-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .flight-pill .fp-name { font-family: 'Spectral', serif; font-size: 15px; font-weight: 500; }
+  .flight-pill .fp-sub { font-size: 12px; color: var(--muted); }
+  .flight-pill .fp-tag { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 8px; white-space: nowrap; }
+  .flight-pill.ext .fp-dot { background: var(--vertical); }
+  .flight-pill.ext .fp-tag { color: var(--vertical); border: 1px solid rgba(45,106,110,.3); background: rgba(45,106,110,.08); }
+  .flight-pill.you { border-color: rgba(184,134,45,.5); background: rgba(184,134,45,.07); }
+  .flight-pill.you .fp-dot { background: var(--amber); animation: blink 1s infinite; }
+  .flight-pill.you .fp-tag { color: var(--amber); border: 1px solid rgba(184,134,45,.4); background: rgba(184,134,45,.12); }
+  .flight-pill.ext { cursor: default; }
+  .flight-pill.ext:hover { transform: none; border-color: var(--rule); }
+  .inflight-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 2px; line-height: 1.5; }
+  /* Telegram intro overlay */
+  .tg-intro { position: absolute; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: rgba(250,249,245,0.96); opacity: 0; pointer-events: none; transition: opacity 500ms var(--ease); }
+  .tg-intro.show { opacity: 1; pointer-events: auto; }
+  .tg-phone { width: 340px; max-width: 88vw; background: var(--paper); border: 1px solid var(--rule); border-radius: 24px; box-shadow: 0 28px 70px -30px rgba(26,26,26,0.45); overflow: hidden; }
+  .tg-head { display: flex; align-items: center; gap: 10px; padding: 13px 15px; background: var(--paper-warm); border-bottom: 1px solid var(--rule-soft); }
+  .tg-name { font-weight: 600; font-size: 13px; }
+  .tg-status { font-size: 10px; color: #229ED9; }
+  .tg-app { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #229ED9; }
+  .tg-body { padding: 16px 14px; display: flex; flex-direction: column; gap: 9px; min-height: 230px; justify-content: flex-end; }
+  .tg-msg { max-width: 82%; padding: 9px 13px; border-radius: 14px; font-size: 13.5px; line-height: 1.45; animation: fade-up 360ms var(--ease) backwards; }
+  .tg-msg b { font-weight: 600; }
+  .tg-msg.in { align-self: flex-start; background: var(--paper-warm); border: 1px solid var(--rule-soft); border-bottom-left-radius: 4px; color: var(--ink-soft); }
+  .tg-msg.out { align-self: flex-end; background: #229ED9; color: #fff; border-bottom-right-radius: 4px; }
+  .tg-msg.sys { align-self: center; text-align: center; max-width: 92%; background: transparent; border: none; color: var(--muted); font-size: 11.5px; padding: 3px 8px; }
+  .tg-intro.wa .tg-msg.out { background: #25D366; }
+  .tg-intro.wa .tg-app, .tg-intro.wa .tg-status { color: #1da851; }
+  .tg-typing { align-self: flex-start; display: flex; gap: 4px; padding: 11px 14px; background: var(--paper-warm); border: 1px solid var(--rule-soft); border-radius: 14px; border-bottom-left-radius: 4px; }
+  .tg-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: tg-blink 1.2s infinite; }
+  .tg-typing span:nth-child(2){ animation-delay: .2s; } .tg-typing span:nth-child(3){ animation-delay: .4s; }
+  @keyframes tg-blink { 0%,60%,100%{opacity:.3;} 30%{opacity:1;} }
+  /* persistent mini-dock of tracked routines (shown while the board is busy with something else) */
+  .track-dock { position: absolute; top: 11px; left: 0; right: 0; z-index: 6; display: none; justify-content: center; flex-wrap: wrap; gap: 8px; padding: 0 220px; pointer-events: none; }
+  .dock-pill { pointer-events: auto; display: inline-flex; align-items: center; gap: 7px; font-size: 11px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper-warm); color: var(--ink-soft); box-shadow: 0 5px 16px -10px rgba(26,26,26,.3); }
+  .dock-pill .dp-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dock-pill.ext .dp-dot { background: var(--vertical); }
+  .dock-pill.you { border-color: rgba(184,134,45,.5); background: rgba(184,134,45,.12); color: var(--amber); cursor: pointer; }
+  .dock-pill.you .dp-dot { background: var(--amber); animation: blink 1s infinite; }
+  /* inline decision on a node */
+  .node-decide { margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--rule); }
+  .node-decide-q { font-size: 11.5px; color: var(--ink-soft); margin-bottom: 7px; }
+  .node-decide-opts { display: flex; gap: 6px; }
+  .nd-opt { cursor: pointer; font-size: 11px; padding: 5px 10px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper-warm); color: var(--ink-soft); transition: all 160ms var(--ease); }
+  .nd-opt:hover { border-color: var(--ink); color: var(--ink); }
+  .nd-opt.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .confirm { display: flex; align-items: center; gap: 11px; margin-top: 10px; opacity: 0; max-height: 0; overflow: hidden; transition: opacity 400ms var(--ease), max-height 400ms var(--ease); }
+  .confirm.show { opacity: 1; max-height: 70px; }
+  .confirm-q { font-size: 13px; color: var(--ink-soft); flex: 1; } .confirm-q strong { font-weight: 600; }
+
+  /* DIVIDER */
+  .divider { height: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: ns-resize; position: relative; z-index: 5; }
+  .divider .grip { width: 46px; height: 4px; border-radius: 2px; background: var(--rule); transition: background 180ms var(--ease), width 180ms var(--ease); }
+  .divider:hover .grip { background: var(--muted); width: 64px; }
+
+  /* CHAT REGION (bottom) */
+  .chat-region { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
+  .chat-feed { flex: 1; overflow-y: auto; padding: 8px 26px 6px; scroll-behavior: smooth; }
+  .chat-inner { max-width: 720px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+  .turn { display: flex; gap: 11px; margin-bottom: 14px; animation: fade-up 380ms var(--ease) backwards; }
+  .turn.user { justify-content: flex-end; }
+  .turn-avatar { width: 26px; height: 26px; flex-shrink: 0; margin-top: 2px; }
+  .turn-body { max-width: 560px; padding: 11px 15px; border-radius: 10px; font-size: 14px; }
+  .turn.claude .turn-body { background: var(--paper); border: 1px solid var(--rule-soft); color: var(--ink-soft); }
+  .turn.user .turn-body { background: var(--ink); color: var(--paper); }
+  .turn-body strong { font-weight: 600; color: var(--ink); } .turn.user .turn-body strong { color: var(--paper); }
+  .turn-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 9px 0 2px 37px; }
+  .turn-chips .tc { cursor: pointer; font-size: 13px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft); transition: all 170ms var(--ease); }
+  .turn-chips .tc:hover { background: var(--paper-warm); border-color: var(--ink); color: var(--ink); }
+  .turn-chips .tc.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* HERO (empty state) */
+  .hero { position: absolute; top: 0; left: 0; right: 0; bottom: 88px; z-index: 4; background: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 0 26px; transition: opacity 400ms var(--ease); }
+  .hero.gone { opacity: 0; pointer-events: none; }
+  .hero-mark { width: 46px; height: 46px; }
+  .hero-title { font-family: 'Spectral', serif; font-size: 26px; font-weight: 500; }
+  .hero-sub { font-size: 14px; color: var(--muted); max-width: 440px; }
+
+  /* INPUT */
+  .input-bar { flex-shrink: 0; padding: 10px 26px 20px; background: linear-gradient(180deg, transparent, var(--paper) 40%); }
+  .input-shell { max-width: 720px; margin: 0 auto; display: flex; gap: 10px; align-items: center; background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 6px 6px 6px 16px; }
+  .input-shell:focus-within { border-color: var(--ink); }
+  .input-text { flex: 1; border: none; outline: none; background: transparent; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--ink); padding: 9px 0; }
+  .input-text::placeholder { color: var(--muted); font-style: italic; }
+  .input-send { background: var(--ink); color: var(--paper); border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .input-foot { max-width: 720px; margin: 7px auto 0; font-size: 11px; color: var(--muted); text-align: center; }
+  .input-foot em { color: var(--vertical); font-style: normal; }
+
+  /* SUMMONED WORKSPACE */
+  .summon-scrim { position: absolute; inset: 0; z-index: 8; background: rgba(26,26,26,.18); opacity: 0; pointer-events: none; transition: opacity 360ms var(--ease); }
+  .summon-scrim.show { opacity: 1; pointer-events: auto; }
+  .summon { position: absolute; top: 0; right: 0; bottom: 0; z-index: 9; width: 420px; max-width: 92vw; background: var(--paper); border-left: 1px solid var(--rule); box-shadow: -22px 0 50px -28px rgba(26,26,26,.4); transform: translateX(100%); transition: transform 460ms var(--ease); display: flex; flex-direction: column; }
+  .summon.show { transform: translateX(0); }
+  .summon-head { padding: 20px 22px 14px; border-bottom: 1px solid var(--rule-soft); }
+  .summon-eyebrow { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); margin-bottom: 7px; }
+  .summon-eyebrow .pp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); }
+  .summon-title { font-family: 'Spectral', serif; font-size: 19px; font-weight: 500; margin: 0 0 5px; }
+  .summon-desc { font-size: 13px; color: var(--muted); }
+  .summon-body { flex: 1; overflow-y: auto; padding: 16px 22px; }
+  .guest-row { display: flex; align-items: center; gap: 12px; padding: 12px 13px; border: 1px solid var(--rule); border-radius: 10px; margin-bottom: 9px; background: var(--paper-warm); }
+  .guest-check { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--green); color: var(--green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0; background: rgba(90,138,78,.08); }
+  .guest-name { font-family: 'Spectral', serif; font-size: 14.5px; font-weight: 500; }
+  .guest-meta { font-size: 11.5px; color: var(--muted); }
+  .guest-cc { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); border: 1px solid var(--rule); border-radius: 6px; padding: 2px 7px; }
+  .agree-note { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--green); margin-top: 2px; }
+  /* expandable verification rows */
+  .guest-row.exp { flex-direction: column; align-items: stretch; gap: 0; padding: 0; overflow: hidden; cursor: pointer; transition: border-color 180ms var(--ease); }
+  .guest-row.exp:hover { border-color: var(--muted); }
+  .guest-head { display: flex; align-items: center; gap: 12px; padding: 12px 13px; }
+  .guest-head > div:nth-child(2) { flex: 1; }
+  .guest-chev { color: var(--muted); font-size: 11px; transition: transform 260ms var(--ease); }
+  .guest-row.exp.open .guest-chev { transform: rotate(180deg); }
+  .guest-detail { max-height: 0; overflow: hidden; transition: max-height 380ms var(--ease), padding 380ms var(--ease); padding: 0 13px; }
+  .guest-row.exp.open .guest-detail { max-height: 820px; padding-bottom: 13px; }
+  /* recap extras */
+  .recap-meter { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .recap-meter > div { background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 10px; padding: 11px 13px; }
+  .rm-k { font-size: 11px; color: var(--muted); }
+  .rm-v { font-family: 'Spectral', serif; font-size: 20px; font-weight: 500; margin-top: 1px; }
+  .open-row { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border: 1px dashed var(--rule); border-radius: 9px; margin-bottom: 7px; }
+  .open-row .od { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+  .open-row .ol { font-weight: 500; font-size: 13px; }
+  .open-row .os { font-size: 11px; color: var(--muted); }
+  .open-row .om { margin-left: auto; font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+  .open-row .rtag { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--vertical); border: 1px solid rgba(45,106,110,.3); background: rgba(45,106,110,.08); border-radius: 8px; padding: 2px 7px; white-space: nowrap; }
+  /* SIBA filing flow */
+  .filing-working { display: flex; align-items: center; gap: 11px; padding: 22px 4px; font-size: 13px; color: var(--muted); }
+  .spin.big { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--rule); border-top-color: var(--vertical); border-radius: 50%; animation: spin .7s linear infinite; }
+  .receipt { font-family: 'JetBrains Mono', monospace; font-size: 11px; border: 1px solid var(--rule); border-radius: 9px; overflow: hidden; }
+  .receipt .rline { display: flex; justify-content: space-between; gap: 12px; padding: 8px 11px; border-bottom: 1px solid var(--rule-soft); }
+  .receipt .rline:last-child { border-bottom: none; }
+  .receipt .rk { color: var(--muted); }
+  .receipt .rv { color: var(--ink); text-align: right; }
+  .receipt .rv.ok { color: var(--green); font-weight: 500; }
+  .detail-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 9px 0 5px; }
+  .detail-msg { font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 8px; padding: 9px 11px; }
+  .detail-msg.trans { color: var(--muted); font-style: italic; }
+  .detail-fields { display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; align-items: baseline; }
+  .detail-fields .fk { color: var(--muted); font-size: 11.5px; }
+  .detail-fields .fv { color: var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+  /* source document panel (verify the fields against the real thing) */
+  .doc-panel { border: 1px solid var(--rule); border-radius: 9px; overflow: hidden; margin-bottom: 11px; background: var(--paper-warm); }
+  .doc-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 11px; font-size: 11px; color: var(--ink-soft); border-bottom: 1px solid var(--rule-soft); }
+  .doc-head .doc-src { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--vertical); white-space: nowrap; }
+  .doc-body { display: flex; gap: 11px; padding: 11px; align-items: stretch; }
+  .doc-photo { width: 52px; height: 64px; border-radius: 5px; border: 1px solid var(--rule); flex-shrink: 0; display: grid; place-items: center; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); background: repeating-linear-gradient(45deg, #e3dece, #e3dece 6px, #ece8db 6px, #ece8db 12px); }
+  .doc-mrz { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .5px; line-height: 1.8; color: var(--ink-soft); background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 5px; padding: 8px 10px; word-break: break-all; align-self: center; }
+  .summon-foot { padding: 14px 22px 20px; border-top: 1px solid var(--rule-soft); }
+  .summon-foot .btn { width: 100%; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; padding: 11px; border-radius: 9px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); }
+  .summon-foot .dwell { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+
+  .chat-feed::-webkit-scrollbar, .summon-body::-webkit-scrollbar { width: 8px; }
+  .chat-feed::-webkit-scrollbar-thumb, .summon-body::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+  /* ───────── landing autoplay additions ───────── */
+  .auto-fill { position: relative; overflow: hidden; }
+  .auto-fill::after { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: rgba(255,255,255,.6); pointer-events: none; }
+  .auto-fill.go::after { width: 100%; transition: width var(--auto-ms, 2600ms) linear; }
+  #changeBtn { display: none; }        /* autoplay: only the run path */
+  .divider { pointer-events: none; }   /* autoplay: no manual resize */
+  .input-text { cursor: default; }
+  /* mobile */
+  @media (max-width: 720px) {
+    /* single full-width column: the rail is hidden, so the canvas must occupy
+       the only column. (A 0-width first column would leave the canvas at 0 width
+       and overflow:hidden would clip the whole app to a blank screen.) */
+    .workspace, .workspace.rail-collapsed { grid-template-columns: 1fr; }
+    .rail { display: none; }
+    .canvas-header { padding: 0 12px 0 14px; }
+    .head-right .auto-chip { display: none; }
+    .stack { padding-top: 46px; }
+    .board-region { padding: 6px 10px 0; }
+    .board { padding: 12px 12px 10px; border-radius: 12px; }
+    .board-think { font-size: 14px; }
+    .summon { width: 100%; max-width: 100%; border-left: none; }
+    .input-bar { padding: 8px 14px 14px; }
+    .hero { padding: 0 18px; bottom: 80px; }
+    .hero-title { font-size: 23px; }
+  }
+</style>
+</head>
+<body data-state="idle">
+<div class="workspace">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <div class="obra-mark" style="width:22px;height:22px;">
+        <div class="obra-mark-outer"><svg viewBox="0 0 120 120"><circle class="obra-mark-ring" cx="60" cy="60" r="44"/><circle class="obra-mark-flow-outer" cx="60" cy="60" r="44" fill="none" stroke-width="14"/></svg></div>
+        <div class="obra-mark-inner"><svg viewBox="0 0 120 120"><circle class="obra-mark-dot" cx="60" cy="60" r="18"/><circle class="obra-mark-flow-inner" cx="60" cy="60" r="18" fill="none" stroke-width="4"/></svg></div>
+      </div>Obra
+    </div>
+    <div class="rail-section">Espaço de trabalho</div>
+    <a class="rail-item active"><span class="ri-icon">◯</span> Hoje</a>
+    <a class="rail-item"><span class="ri-icon">▶</span> Rotinas</a>
+    <a class="rail-item"><span class="ri-icon">✓</span> Aprovações</a>
+    <a class="rail-item"><span class="ri-icon">⏱</span> Atividade</a>
+    <div class="rail-section">Conta</div>
+    <a class="rail-item"><span class="ri-icon">$</span> Custo</a>
+    <a class="rail-item"><span class="ri-icon">⚒</span> Equipa</a>
+    <a class="rail-item"><span class="ri-icon">⚙</span> Definições</a>
+    <div class="rail-spacer"></div>
+    <div class="rail-user"><div class="rail-user-avatar">M</div><div><div class="rail-user-name">Maria Costa</div><div class="rail-user-role">Admin · Gems ABC Properties</div></div></div>
+  </aside>
+
+  <main class="canvas">
+    <header class="canvas-header">
+      <div class="head-left"><button class="rail-toggle" id="railToggle" title="Menu">☰</button><div class="canvas-title">Hoje <em>· Sábado</em></div></div>
+      <div class="head-right">
+        <span class="chip-btn auto-chip" id="autoChip">↺ Deixar a Obra organizar a vista</span>
+        <div class="phase-pill" id="phasePill" data-p="talk"><span class="pp-dot"></span><span id="phaseText">Pronta</span></div>
+        <button class="chip-btn" id="replayBtn">Repetir</button>
+      </div>
+    </header>
+
+    <div class="track-dock" id="trackDock"></div>
+
+    <!-- Telegram intro: Obra reaches the host there first, off a detected reservation email -->
+    <div class="tg-intro" id="tgIntro">
+      <div class="tg-phone">
+        <div class="tg-head">
+          <div class="obra-mark" style="width:24px;height:24px;">
+            <div class="obra-mark-outer"><svg viewBox="0 0 120 120"><circle class="obra-mark-ring" cx="60" cy="60" r="44"/><circle class="obra-mark-flow-outer" cx="60" cy="60" r="44" fill="none" stroke-width="14"/></svg></div>
+            <div class="obra-mark-inner"><svg viewBox="0 0 120 120"><circle class="obra-mark-dot" cx="60" cy="60" r="18"/><circle class="obra-mark-flow-inner" cx="60" cy="60" r="18" fill="none" stroke-width="4"/></svg></div>
+          </div>
+          <div><div class="tg-name" id="phName">Obra</div><div class="tg-status" id="phStatus">online</div></div>
+          <div class="tg-app" id="phApp">Telegram</div>
+        </div>
+        <div class="tg-body" id="tgBody"></div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <!-- BOARD REGION -->
+      <div class="board-region" id="boardRegion">
+        <div class="board" id="board">
+          <div class="board-eyebrow">
+            <div class="obra-mark" style="width:15px;height:15px;">
+              <div class="obra-mark-outer"><svg viewBox="0 0 120 120"><circle class="obra-mark-ring" cx="60" cy="60" r="44"/><circle class="obra-mark-flow-outer" cx="60" cy="60" r="44" fill="none" stroke-width="14"/></svg></div>
+              <div class="obra-mark-inner"><svg viewBox="0 0 120 120"><circle class="obra-mark-dot" cx="60" cy="60" r="18"/><circle class="obra-mark-flow-inner" cx="60" cy="60" r="18" fill="none" stroke-width="4"/></svg></div>
+            </div>
+            <span id="boardEyebrow">A mapear o trabalho</span>
+          </div>
+          <h2 class="board-heading">Sábado <em>· a coordenar 4 chegadas</em></h2>
+          <div class="board-think idle" id="boardThink"><span class="tdot"></span><span id="thinkText"></span></div>
+          <div class="stage-wrap"><div class="stage" id="stage"><svg class="edges" id="edges" viewBox="0 0 1330 460"></svg></div></div>
+          <div class="confirm" id="confirm">
+            <div class="confirm-q">Este é o sábado, mapeado. <strong>Quer que eu avance?</strong></div>
+            <button class="chip-btn" id="changeBtn">Mudar algo</button>
+            <button class="chip-btn auto-fill" id="runBtn" style="background:var(--ink);color:var(--paper);border-color:var(--ink);">Está certo, avançar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIVIDER -->
+      <div class="divider" id="divider"><div class="grip"></div></div>
+
+      <!-- CHAT REGION -->
+      <div class="chat-region">
+        <div class="hero" id="hero">
+          <div class="inflight" id="inflight"></div>
+          <div class="obra-mark hero-mark">
+            <div class="obra-mark-outer"><svg viewBox="0 0 120 120"><circle class="obra-mark-ring" cx="60" cy="60" r="44"/><circle class="obra-mark-flow-outer" cx="60" cy="60" r="44" fill="none" stroke-width="14"/></svg></div>
+            <div class="obra-mark-inner"><svg viewBox="0 0 120 120"><circle class="obra-mark-dot" cx="60" cy="60" r="18"/><circle class="obra-mark-flow-inner" cx="60" cy="60" r="18" fill="none" stroke-width="4"/></svg></div>
+          </div>
+          <div class="hero-title">De que tratamos hoje?</div>
+          <div class="hero-sub">Diga-me por palavras suas. Penso em tudo à sua frente e confirmo qualquer dúvida antes de começar.</div>
+        </div>
+        <div class="chat-feed" id="chatFeed"><div class="chat-inner" id="chatInner"></div></div>
+        <div class="input-bar">
+          <div class="input-shell"><input class="input-text" id="inputText" placeholder="Diga-me o que fazer, ou pergunte o que quiser…"><button class="input-send" id="sendBtn">Enviar</button></div>
+          <div class="input-foot">A Obra raciocina no quadro e fala aqui. <em>Nada que saia daqui avança sem o seu sim.</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summon-scrim" id="scrim"></div>
+    <aside class="summon" id="summon">
+      <div class="summon-head">
+        <div class="summon-eyebrow"><span class="pp-dot"></span> Precisa dos seus olhos</div>
+        <h3 class="summon-title">Comunicar 4 registos de hóspedes</h3>
+        <div class="summon-desc">Cada documento foi lido duas vezes e as duas leituras coincidem. Nada é comunicado às autoridades sem a sua aprovação.</div>
+      </div>
+      <div class="summon-body" id="summonBody"></div>
+      <div class="summon-foot"><button class="btn auto-fill" id="approveBtn">Aprovar os 4 e comunicar</button><div class="dwell">Verifique com calma antes de aprovar</div></div>
+    </aside>
+  </main>
+</div>
+
+<script>
+// ───────── graph model (scenes) ─────────
+const SAT_NODES = [
+  { id:'trigger',  x:20,   y:196, title:'Sábado: 4 chegadas', sub:'4 reservas em 3 imóveis', tier:'auto' },
+  { id:'welcome',  x:300,  y:30,  title:'Redigir 4 boas-vindas', sub:'cada uma na língua do hóspede', tier:'gated' },
+  { id:'docs',     x:300,  y:196, title:'Recolher 2 passaportes', sub:'os 2 hóspedes do Airbnb', tier:'gated', hidden:true },
+  { id:'cleaning', x:300,  y:350, title:'Agendar as limpezas', sub:'à volta de cada saída', tier:'auto' },
+  { id:'checkin',  x:585,  y:30,  title:'Enviar check-in + caixa de chaves', sub:'depois de aprovar as mensagens', tier:'auto' },
+  { id:'siba',     x:870,  y:113, title:'Comunicar hóspedes ao SIBA', sub:'ler documentos, preencher, esperar pelo seu sim', tier:'gated' },
+  { id:'report',   x:1078, y:196, title:'Relatório do fim do dia', sub:'o que correu, o que ainda precisa de si', tier:'auto' },
+];
+const SAT_EDGES = [
+  ['trigger','welcome'], ['trigger','cleaning'],
+  ['welcome','checkin'], ['checkin','siba'],
+  ['siba','report'], ['cleaning','report'],
+];
+const CLEAN_NODES = [
+  { id:'checkouts', x:20,   y:196, title:'Saídas desta semana', sub:'4 estadias a terminar, é preciso limpar', tier:'auto' },
+  { id:'contact',   x:300,  y:196, title:'Contactar a equipa de limpeza', sub:'no WhatsApp da empresa', tier:'gated' },
+  { id:'reply',     x:585,  y:196, title:'Acompanhar a resposta', sub:'à espera da confirmação', tier:'auto' },
+  { id:'loop',      x:855,  y:40,  title:'Chamá-la se for preciso', sub:'só se perguntarem algo', tier:'gated' },
+  { id:'followup',  x:855,  y:340, title:'Insistir se ficarem calados', sub:'um lembrete passado um dia', tier:'auto' },
+  { id:'calendar',  x:1076, y:196, title:'Adicionar à sua agenda', sub:'sincronizada com as reservas', tier:'auto' },
+];
+const CLEAN_EDGES = [
+  ['checkouts','contact'], ['contact','reply'],
+  ['reply','calendar'], ['reply','loop'], ['reply','followup'],
+];
+let NODES = [], EDGES = [];
+function loadScene(nodes, edges){ NODES = nodes.map(n=>({...n})); EDGES = edges.map(e=>e.slice()); buildGraph(); }
+const GUESTS = [
+  { name:'Lukas W.', meta:'Passaporte · Alemanha', cc:'DE', lang:'Alemão', source:'airbnb',
+    mrz:['P<DEUWEBER<<LUKAS<<<<<<<<<<<<<<<<<<<<<<<<<<<','X12AB3456<7DEU9004127M3104018<<<<<<<<<<<<<00'],
+    surname:'Weber', given:'Lukas', docType:'Passaporte', docNum:'X12AB3456', dob:'12 abr 1990',
+    nat:'Alemão', birth:'Alemanha', resCountry:'Alemanha', resCity:'Colónia', checkin:'22 mai 2026', checkout:'06 jun 2026',
+    wfull:'Willkommen! Wir freuen uns sehr auf Ihren Aufenthalt am Samstag. Für den Check-in schreiben Sie mir am besten auf WhatsApp (+351 910 000 000), dort kläre ich alles Weitere mit Ihnen.',
+    wtrans:'Bem-vindo! Estamos muito felizes por recebê-lo no sábado. Para o check-in, fale comigo pelo WhatsApp (+351 910 000 000) e trato de tudo o resto consigo por lá.' },
+  { name:'Elena G.', meta:'Cartão de cidadão · Espanha', cc:'ES', lang:'Espanhol', source:'airbnb',
+    mrz:['IDESPGARCIA<<ELENA<<<<<<<<<<<<<<<<<<<','99000111X<2ESP9207234F<<<<<<<<<<<<<8'],
+    surname:'García', given:'Elena', docType:'Cartão de cidadão (DNI)', docNum:'99000111X', dob:'23 jul 1992',
+    nat:'Espanhola', birth:'Espanha', resCountry:'Espanha', resCity:'Valência', checkin:'22 mai 2026', checkout:'25 mai 2026',
+    wfull:'¡Bienvenida! Nos alegra mucho recibirte este sábado. Para el check-in, escríbeme por WhatsApp (+351 910 000 000) y te explico todo por ahí.',
+    wtrans:'Bem-vinda! Ficamos muito contentes por recebê-la este sábado. Para o check-in, escreva-me pelo WhatsApp (+351 910 000 000) e explico-lhe tudo por lá.' },
+  { name:'Camille B.', meta:'Passaporte · França', cc:'FR', lang:'Francês', source:'direct',
+    mrz:['P<FRABERNARD<<CAMILLE<<<<<<<<<<<<<<<<<<<<<<<','11FR22033<1FRA8811053F<<<<<<<<<<<<<<<<04'],
+    surname:'Bernard', given:'Camille', docType:'Passaporte', docNum:'11FR22033', dob:'05 nov 1988',
+    nat:'Francesa', birth:'França', resCountry:'França', resCity:'Nantes', checkin:'22 mai 2026', checkout:'24 mai 2026',
+    wfull:'Bienvenue ! Nous sommes ravis de vous accueillir samedi. Pour le check-in, écrivez-moi sur WhatsApp (+351 910 000 000) et je vous guide pour la suite.',
+    wtrans:'Bem-vinda! É um prazer recebê-la no sábado. Para o check-in, escreva-me pelo WhatsApp (+351 910 000 000) e oriento-a a partir daí.' },
+  { name:'Diego S.', meta:'Passaporte · Brasil', cc:'BR', lang:'Português', source:'direct',
+    mrz:['P<BRASOUZA<<DIEGO<<<<<<<<<<<<<<<<<<<<<<<<<<<<','AA112233<4BRA9102184M<<<<<<<<<<<<<<<<02'],
+    surname:'Souza', given:'Diego', docType:'Passaporte', docNum:'AA112233', dob:'18 fev 1991',
+    nat:'Brasileiro', birth:'Brasil', resCountry:'Brasil', resCity:'Porto Alegre', checkin:'22 mai 2026', checkout:'28 mai 2026',
+    wfull:'Bem-vindo! Estamos felizes em receber você no sábado. Para o check-in, fale comigo no WhatsApp (+351 910 000 000) que combino tudo por lá.',
+    wtrans:'Bem-vindo! Ficamos felizes por recebê-lo no sábado. Para o check-in, fale comigo pelo WhatsApp (+351 910 000 000) e combino tudo por lá.' },
+];
+const NW = 214;
+
+const stage = document.getElementById('stage');
+const edgesSvg = document.getElementById('edges');
+const nodeEls = {}; const edgeEls = {};
+function nodeById(id){ return NODES.find(n=>n.id===id); }
+function nodeH(id){ return nodeEls[id] ? nodeEls[id].offsetHeight : 72; }
+function aOut(n){ return {x:n.x+NW, y:n.y+nodeH(n.id)/2}; }
+function aIn(n){ return {x:n.x, y:n.y+nodeH(n.id)/2}; }
+
+function edgeKey(a,b){ return a+'>'+b; }
+function makeEdge(a,b){
+  const s=aOut(nodeById(a)), t=aIn(nodeById(b));
+  const dx=Math.max(40,(t.x-s.x)/2);
+  const d=`M ${s.x} ${s.y} C ${s.x+dx} ${s.y}, ${t.x-dx} ${t.y}, ${t.x} ${t.y}`;
+  let p=edgeEls[edgeKey(a,b)];
+  if(!p){ p=document.createElementNS('http://www.w3.org/2000/svg','path'); p.setAttribute('class','edge'); edgesSvg.appendChild(p); edgeEls[edgeKey(a,b)]=p; }
+  p.setAttribute('d',d);
+  const len=p.getTotalLength(); p.style.strokeDasharray=len; p.style.strokeDashoffset=len;
+  return p;
+}
+function buildGraph(){
+  edgesSvg.innerHTML=''; for(const k in edgeEls) delete edgeEls[k];
+  Object.values(nodeEls).forEach(el=>el.remove()); for(const k in nodeEls) delete nodeEls[k];
+  NODES.forEach(n=>{
+    const el=document.createElement('div');
+    el.className='node'; el.style.left=n.x+'px'; el.style.top=n.y+'px'; el.dataset.id=n.id;
+    el.innerHTML=`<div class="node-state" data-role="state"></div>
+      <div class="node-top"><div><div class="node-title">${n.title}</div><div class="node-sub">${n.sub}</div></div>
+      <div class="node-badges" data-role="badges"><div class="node-tier ${n.tier==='gated'?'gated':''}">${n.tier==='gated'?'O seu sim':'Auto'}</div></div></div>`;
+    stage.appendChild(el); nodeEls[n.id]=el;
+  });
+  // hidden nodes start not displayed
+  NODES.forEach(n=>{ if(n.hidden) nodeEls[n.id].style.display='none'; });
+  EDGES.forEach(([a,b])=>makeEdge(a,b));
+  camNode = NODES[0] ? NODES[0].id : null;
+  fitStage();
+}
+let camNode=null;
+const isMobile=()=>window.matchMedia('(max-width: 720px)').matches;
+// desktop: scale the whole map to fit the width. mobile: zoom in to a readable
+// size and pan the "camera" so the active node stays centered (a 1330px-wide map
+// is illegible shrunk to phone width, so we follow the action instead).
+function fitStage(){
+  const wrap=stage.parentElement, wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
+  if(!isMobile()){ stage.style.transform=`scale(${Math.min(1, wrapW/1330)})`; return; }
+  const scale=Math.max(0.6, Math.min(0.9, wrapW/450));
+  const n = camNode ? nodeById(camNode) : null;
+  const cx = n ? n.x + NW/2 : 220, cy = n ? n.y + 46 : 200;
+  const sw=1330*scale, sh=460*scale;
+  let tx = wrapW/2 - cx*scale, ty = wrapH/2 - cy*scale;
+  tx = sw>wrapW ? Math.min(0, Math.max(wrapW-sw, tx)) : (wrapW-sw)/2;
+  ty = sh>wrapH ? Math.min(0, Math.max(wrapH-sh, ty)) : (wrapH-sh)/2;
+  stage.style.transform=`translate(${tx}px, ${ty}px) scale(${scale})`;
+}
+function focusNode(id){ if(nodeEls[id]){ camNode=id; fitStage(); } }
+window.addEventListener('resize', ()=>{ fitStage(); });
+
+// ───────── chat ─────────
+const chatInner=document.getElementById('chatInner'), chatFeed=document.getElementById('chatFeed');
+const MARK=`<div class="obra-mark" style="width:26px;height:26px;"><div class="obra-mark-outer"><svg viewBox="0 0 120 120"><circle class="obra-mark-ring" cx="60" cy="60" r="44"/><circle class="obra-mark-flow-outer" cx="60" cy="60" r="44" fill="none" stroke-width="14"/></svg></div><div class="obra-mark-inner"><svg viewBox="0 0 120 120"><circle class="obra-mark-dot" cx="60" cy="60" r="18"/><circle class="obra-mark-flow-inner" cx="60" cy="60" r="18" fill="none" stroke-width="4"/></svg></div></div>`;
+function say(who, html){ const t=document.createElement('div'); t.className='turn '+who; t.innerHTML = who==='claude' ? `<div class="turn-avatar">${MARK}</div><div class="turn-body">${html}</div>` : `<div class="turn-body">${html}</div>`; chatInner.appendChild(t); chatFeed.scrollTop=chatFeed.scrollHeight; return t; }
+function askChips(opts){
+  return new Promise(resolve=>{
+    const wrap=document.createElement('div'); wrap.className='turn-chips';
+    opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='tc'+(i===0?' primary':''); b.textContent=o; b.onclick=()=>{ wrap.remove(); say('user',o); resolve(i); }; wrap.appendChild(b); });
+    chatInner.appendChild(wrap); chatFeed.scrollTop=chatFeed.scrollHeight;
+  });
+}
+// Obra "turns to face you": a clear, explained ask. Board dims + leans back, chat comes forward,
+// the step in question is highlighted, and it is unmistakable that it is your turn.
+async function askForward(token, question, opts, cfg){
+  cfg = cfg || {};
+  setPhase('talk','A perguntar-lhe'); setMark('idle');
+  document.getElementById('board').classList.add('dim');
+  if(cfg.node){ setNode(cfg.node,'asking'); }
+  setPhaseSplit(40);
+  say('claude', question);
+  const choice = await askChips(opts);
+  if(token!==runToken) return choice;
+  if(cfg.node){ setNode(cfg.node,null); }
+  document.getElementById('board').classList.remove('dim');
+  setPhase('work', cfg.workLabel||'A mapear'); setMark('running');
+  setPhaseSplit(cfg.workSplit||78);
+  await sleep(420);
+  return choice;
+}
+
+// ───────── board reasoning ─────────
+const boardThink=document.getElementById('boardThink'), thinkText=document.getElementById('thinkText');
+function think(t, live=true){ thinkText.textContent=t; boardThink.classList.toggle('idle', !live); }
+
+// ───────── split control (the breathing) ─────────
+const root=document.documentElement, autoChip=document.getElementById('autoChip');
+let manual=false, phaseBoard=0;
+function applyBoard(pct){ root.style.setProperty('--board-h', pct+'%'); setTimeout(fitStage, 360); }
+function setPhaseSplit(pct){ phaseBoard=pct; if(!manual) applyBoard(pct); }
+autoChip.addEventListener('click', ()=>{ manual=false; autoChip.classList.remove('show'); applyBoard(phaseBoard); });
+
+// ───────── phase pill / mark ─────────
+const phasePill=document.getElementById('phasePill'), phaseText=document.getElementById('phaseText');
+function setPhase(p, text){ phasePill.dataset.p=p; phaseText.textContent=text; }
+function setMark(s){ document.body.dataset.state=s; }
+
+// ───────── node helpers ─────────
+const PACE=1.5; // global slow-down so the demo is watchable
+const sleep=ms=>new Promise(r=>setTimeout(r,Math.round(ms*PACE)));
+let runToken=0;
+function reveal(id){ const n=nodeById(id); nodeEls[id].style.display=''; if(n.hidden){ /* recompute edges that touch it later */ } requestAnimationFrame(()=>nodeEls[id].classList.add('shown')); focusNode(id); }
+function drawEdge(a,b){ const p=edgeEls[edgeKey(a,b)]||makeEdge(a,b); requestAnimationFrame(()=>{ p.style.strokeDashoffset='0'; }); }
+function nodeStateIcon(id, html){ nodeEls[id].querySelector('[data-role=state]').innerHTML=html; }
+function setNode(id, cls){ const el=nodeEls[id]; el.classList.remove('running','done','gatewait','asking','handoff','extwait'); if(cls){ el.classList.add(cls); focusNode(id); } }
+function setBadges(id, html){ nodeEls[id].querySelector('[data-role=badges]').innerHTML=html; }
+function setNodeText(id, title, sub){ const el=nodeEls[id]; if(!el) return; el.querySelector('.node-title').textContent=title; if(sub!==undefined) el.querySelector('.node-sub').textContent=sub; }
+
+// inline decision rendered ON a node (board stays predominant)
+function askOnNode(id, question, opts){
+  return new Promise(resolve=>{
+    setNode(id,'asking');
+    const el=nodeEls[id];
+    const d=document.createElement('div'); d.className='node-decide';
+    d.innerHTML=`<div class="node-decide-q">${question}</div><div class="node-decide-opts"></div>`;
+    const optsWrap=d.querySelector('.node-decide-opts');
+    opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='nd-opt'+(i===0?' primary':''); b.textContent=o; b.onclick=()=>{ d.remove(); setNode(id,null); EDGES.forEach(([a,bb])=>{ if(a===id||bb===id){} }); resolve(i); }; optsWrap.appendChild(b); });
+    el.appendChild(d);
+  });
+}
+
+// ───────── orchestration ─────────
+const hero=document.getElementById('hero'), confirmBar=document.getElementById('confirm'), boardEyebrow=document.getElementById('boardEyebrow'), workspaceEl=document.querySelector('.workspace');
+document.getElementById('railToggle').addEventListener('click', ()=>workspaceEl.classList.toggle('rail-collapsed'));
+
+// ───────── Telegram intro: Obra reaches the host there first (off a detected reservation email) ─────────
+const tgIntro=document.getElementById('tgIntro'), tgBody=document.getElementById('tgBody');
+const phName=document.getElementById('phName'), phStatus=document.getElementById('phStatus'), phApp=document.getElementById('phApp');
+function phoneSet(name, status, app, theme){ phName.textContent=name; phStatus.textContent=status; phApp.textContent=app; tgIntro.classList.toggle('wa', theme==='wa'); }
+function tgMsg(kind, html){ const d=document.createElement('div'); d.className='tg-msg '+kind; d.innerHTML=html; tgBody.appendChild(d); tgBody.scrollTop=tgBody.scrollHeight; return d; }
+function tgTyping(){ const d=document.createElement('div'); d.className='tg-typing'; d.innerHTML='<span></span><span></span><span></span>'; tgBody.appendChild(d); tgBody.scrollTop=tgBody.scrollHeight; return d; }
+async function runTelegramIntro(token){
+  hero.classList.add('gone'); setPhaseSplit(0); setPhase('talk','Nova reserva'); setMark('running');
+  phoneSet('Obra','online','Telegram','tg'); tgBody.innerHTML=''; tgIntro.classList.add('show');
+  await sleep(900); if(token!==runToken)return;
+  let t=tgTyping(); await sleep(900); if(token!==runToken)return; t.remove();
+  tgMsg('in','Entrou uma nova reserva do <b>Airbnb</b>: 4 hóspedes, este <b>sábado</b>.'); await sleep(1500); if(token!==runToken)return;
+  t=tgTyping(); await sleep(850); if(token!==runToken)return; t.remove();
+  tgMsg('in','Vou coordenar toda a chegada e só a aviso nas partes que precisam de si. Quer que avance?'); await sleep(1800); if(token!==runToken)return;
+  tgMsg('out','Sim, avance'); await sleep(1300); if(token!==runToken)return;
+  t=tgTyping(); await sleep(850); if(token!==runToken)return; t.remove();
+  tgMsg('in','É para já. Vou abrir o seu espaço de trabalho para me ver a mapear.'); await sleep(1800); if(token!==runToken)return;
+  setMark('idle'); tgIntro.classList.remove('show'); await sleep(700);
+}
+
+// passport collection sub-workflow: reach the Airbnb guest on WhatsApp, send a secure link, capture, track auto-delete
+async function runWhatsappCollect(token){
+  phoneSet('Lukas W.','online','WhatsApp','wa'); tgBody.innerHTML=''; tgIntro.classList.add('show');
+  await sleep(800); if(token!==runToken)return false;
+  tgMsg('out','Olá Lukas! Como combinado, dou seguimento aqui à sua reserva. Para o check-in só preciso de uma foto do seu passaporte. Pode carregá-la em segurança aqui:'); await sleep(1400); if(token!==runToken)return false;
+  tgMsg('out','obra.link/u/9f2-secure'); await sleep(1400); if(token!==runToken)return false;
+  let t=tgTyping(); await sleep(1000); if(token!==runToken)return false; t.remove();
+  tgMsg('in','passaporte.jpg · carregado'); await sleep(1300); if(token!==runToken)return false;
+  tgMsg('out','Recebido, obrigada. Guardado encriptado, usado só para o seu registo, e apagado logo após a comunicação.'); await sleep(1800); if(token!==runToken)return false;
+  tgMsg('sys','Encriptado à chegada · apagamento automático após a comunicação: registado. O link da Elena foi entregue; à espera do dela.'); await sleep(2100); if(token!==runToken)return false;
+  tgIntro.classList.remove('show'); await sleep(700);
+  return true;
+}
+
+// Elena's passport landed while the host is on mobile, not at the desk.
+// Obra confirms on Telegram, the host answers in their own time, Obra readies the workspace for that moment.
+async function runReadyOnTelegram(token){
+  phoneSet('Obra','online','Telegram','tg'); tgBody.innerHTML=''; tgIntro.classList.add('show');
+  await sleep(800); if(token!==runToken)return;
+  let t=tgTyping(); await sleep(900); if(token!==runToken)return; t.remove();
+  tgMsg('in','Boas notícias: a Elena acabou de carregar o dela, por isso já tenho os 4 passaportes. O SIBA está pronto para comunicar.'); await sleep(1900); if(token!==runToken)return;
+  tgMsg('in','Sem pressa nenhuma. Abra no computador quando lhe der jeito.'); await sleep(1800); if(token!==runToken)return;
+  tgMsg('out','Só estou no computador às 18h de hoje'); await sleep(1400); if(token!==runToken)return;
+  t=tgTyping(); await sleep(800); if(token!==runToken)return; t.remove();
+  tgMsg('in','Entendido, fica para as 18h. Deixo tudo preparado e aviso-a a essa hora. Não precisa de mais nada de si até lá.'); await sleep(1900); if(token!==runToken)return;
+  tgMsg('sys','18h00 · abre o computador'); await sleep(2000); if(token!==runToken)return;
+  tgIntro.classList.remove('show'); await sleep(800);
+}
+
+// a human-gated approval that happens on the host's PHONE: the crew message, approved from Telegram on the go
+async function runCrewApprovalTelegram(token){
+  phoneSet('Obra','online','Telegram','tg'); tgBody.innerHTML=''; tgIntro.classList.add('show');
+  await sleep(800); if(token!==runToken)return;
+  let t=tgTyping(); await sleep(800); if(token!==runToken)return; t.remove();
+  tgMsg('in','Pronta para contactar a sua equipa de limpeza para as 4 limpezas desta semana. Aqui está o rascunho:'); await sleep(1500); if(token!==runToken)return;
+  tgMsg('in','“Olá! Conseguem confirmar as limpezas desta semana: sáb 24, dom 25, ter 27 e sex 6 jun?”'); await sleep(1900); if(token!==runToken)return;
+  tgMsg('in','Aprova para enviar no WhatsApp?'); await sleep(1300); if(token!==runToken)return;
+  tgMsg('out','Aprovar'); await sleep(1200); if(token!==runToken)return;
+  tgMsg('in','Enviado. Vou acompanhar a resposta e mantê-la a par por aqui.'); await sleep(1600); if(token!==runToken)return;
+  tgIntro.classList.remove('show'); await sleep(700);
+}
+
+async function runScript(token){
+  // Obra detected the reservation and reaches the host on TELEGRAM first
+  await runTelegramIntro(token); if(token!==runToken)return;
+
+  // hand into the workspace canvas. Obra takes the surface, the rail recedes (bring it back with the menu any time)
+  hero.classList.add('gone'); workspaceEl.classList.add('rail-collapsed');
+  // grow the board FIRST, then narrate ON it, so the line lives on the board, never crushed in the chat strip
+  setPhase('work','A mapear'); setMark('running'); boardEyebrow.textContent='A mapear o trabalho';
+  setPhaseSplit(78); await sleep(720); if(token!==runToken)return;
+  think('Aqui está o sábado. Vou mapeá-lo à sua frente e só paro no que precisa de si.');
+  await sleep(1300); if(token!==runToken)return;
+
+  think('Quatro chegadas, em três dos seus imóveis.');
+  reveal('trigger'); await sleep(720); if(token!==runToken)return;
+
+  think('Cada hóspede recebe uma mensagem de boas-vindas, na sua língua.');
+  drawEdge('trigger','welcome'); reveal('welcome'); await sleep(620); if(token!==runToken)return;
+
+  think('E as limpezas, agendadas à volta de cada saída.');
+  drawEdge('trigger','cleaning'); reveal('cleaning'); await sleep(750); if(token!==runToken)return;
+
+  // standing routine: Obra already runs this on every reservation (it auto-detected + initiated), so it states, not asks
+  welcomeRecurring = true;
+  setBadges('welcome', '<div class="node-tier recur">Recorrente</div><div class="node-tier gated">O seu sim</div>');
+  think('As boas-vindas são uma rotina permanente, por isso corro-as em cada reserva, sempre à espera do seu sim de cada vez.');
+  await sleep(950); if(token!==runToken)return;
+
+  // STATED (assume-known): Obra already knows the host's provenance + collection setup (full capacity)
+  think('Quanto aos passaportes, aqui está o que já sei.');
+  collectMethod = 'link'; collectLabel = 'Link seguro de carregamento';
+  docsRequested = true;
+  nodeById('docs').hidden=false; reveal('docs'); drawEdge('trigger','docs');
+  EDGES.push(['docs','siba']); drawEdge('docs','siba');
+  think('Os seus 2 hóspedes diretos deram o passaporte no formulário de reserva, por isso esses já tenho.');
+  await sleep(1500); if(token!==runToken)return;
+  think('Os 2 hóspedes do Airbnb nunca trazem passaporte, por isso recolho-os por link seguro e ponho o seu WhatsApp na mensagem de boas-vindas.');
+  await sleep(1700); if(token!==runToken)return;
+
+  think('Assim que aprovar as mensagens, envio os detalhes de check-in e os códigos da caixa de chaves.');
+  drawEdge('welcome','checkin'); reveal('checkin'); await sleep(720); if(token!==runToken)return;
+
+  think('Depois a parte legal: comunicar todos ao SIBA. Leio cada documento duas vezes e seguro o lote à espera do seu sim.');
+  drawEdge('checkin','siba'); reveal('siba'); await sleep(800); if(token!==runToken)return;
+
+  think('E um único relatório de fim de dia para si.');
+  drawEdge('siba','report'); drawEdge('cleaning','report'); reveal('report'); await sleep(700); if(token!==runToken)return;
+
+  think('É este o sábado todo.', false);
+  setMark('idle'); setPhase('work','Pronta'); confirmBar.classList.add('show');
+  armAuto(token, runBtnEl, 2800);
+}
+
+async function runExecute(token){
+  confirmBar.classList.remove('show');
+  setPhase('work','A correr'); setMark('running'); boardEyebrow.textContent='A executar o trabalho';
+  think('A executar agora. Paro em tudo o que precisar do seu sim.');
+  setPhaseSplit(80);
+  await sleep(500); if(token!==runToken)return;
+
+  await execNode(token,'trigger','A ler as quatro reservas.');
+  // cleaning books the turnovers and hands its follow-up to its own routine (spawned on close)
+  await execHandoff(token,'cleaning'); if(token!==runToken)return;
+
+  // GATE 1: welcome notes are "Your yes". Verify the drafts before they send
+  await gatedStep(token,'welcome',
+    'As 4 mensagens de boas-vindas estão redigidas. Posso enviar aos seus 2 hóspedes diretos; as 2 do Airbnb envia você, porque o Airbnb não me deixa contactar hóspedes.',
+    { title:'Enviar as boas-vindas', desc:'Posso enviar aos seus 2 hóspedes diretos pelo seu canal. Os 2 do Airbnb não os posso contactar (o Airbnb não permite), por isso envie-os você no Airbnb e diga-me quando saírem.', rows: welcomeRows(), button:'Enviei as do Airbnb, envia as 2 diretas' },
+    'As 2 do Airbnb saíram (enviou-as) e eu enviei as 2 diretas.');
+  if(token!==runToken)return;
+
+  await execNode(token,'checkin','Detalhes de check-in e códigos da caixa de chaves enviados.'); if(token!==runToken)return;
+
+  // PASSPORT PREREQUISITE: collect the 2 Airbnb passports (WhatsApp + secure link), then SIBA
+  setPhase('work','A correr'); setMark('running');
+  think('O SIBA precisa dos 4 passaportes. Os 2 hóspedes diretos vieram no formulário de reserva. Os 2 do Airbnb recolho agora: contacto-os pelo seu WhatsApp e envio um link seguro de carregamento.');
+  await sleep(1700); if(token!==runToken)return;
+  setNode('docs','running'); nodeStateIcon('docs','<span class="spin"></span>');
+  await runWhatsappCollect(token); if(token!==runToken)return;
+  setNode('docs','extwait'); nodeStateIcon('docs','<span class="watch"></span>'); liveIn('docs');
+  setPhase('talk','Em espera'); setMark('idle');
+  think('O do Lukas entrou, encriptado e marcado para apagamento. O SIBA fica bloqueado até a Elena carregar o dela, por isso ponho o sábado em pausa como prioridade e retomo-o assim que chegar.', false);
+  await sleep(2100); if(token!==runToken)return;
+  parked = [{ name:'Sábado · registo de hóspedes', sub:'prioridade · à espera do passaporte da Elena (link seguro enviado)', wait:'ext' }];
+  chatInner.innerHTML=''; showIdle();
+  setTimeout(()=>{ if(token!==runToken) return; resumeSaturdaySiba(token); }, 5200);
+}
+
+// the SIBA gate + per-guest filling + deletion, then report + recap.
+// guests = which to file now; heldCount = passports still owed by the host (registered later)
+async function runSibaToEnd(token, guests, heldCount){
+  const n = guests.length;
+  setNode('siba','gatewait'); nodeStateIcon('siba','!');
+  setPhase('waiting','À sua espera'); setMark('gated');
+  think(`O SIBA está pronto. ${n} registo${n>1?'s':''}, cada um lido duas vezes e em concordância. Verifique os dados e depois abro o portal e preencho um a um.`);
+  await summonPanel(token, { title:`Rever ${n} registo${n>1?'s':''}`, desc:'Lidos duas vezes, as duas leituras coincidem. Toque num hóspede para ver os 11 campos. Quando estiver pronta, abro o SIBA e preencho um a um.', rows: guestRows('as duas leituras coincidem', guests), button:'Começar a comunicar no SIBA' });
+  if(token!==runToken)return;
+  const filed = await runSibaFilling(token, guests); if(!filed || token!==runToken) return;
+  setNode('siba','done'); nodeStateIcon('siba','✓'); liveIn('siba');
+  setPhase('work','A correr'); setMark('running');
+  think(`Comuniquei ${n} como registos SIBA separados. Imagens de origem apagadas, comprovativo na sua cadeia de auditoria.`);
+  await sleep(500); if(token!==runToken)return;
+  await execNode(token,'report','Relatório pronto.'); if(token!==runToken)return;
+  setPhase('done','Concluído'); setMark('idle'); boardEyebrow.textContent='Sábado tratado';
+  think('O sábado está tratado.', false);
+  await sleep(450); if(token!==runToken)return;
+  showRecap(token, heldCount||0);
+}
+
+// the 2 direct guests uploaded their passports -> resume the parked Saturday routine at SIBA
+async function resumeSaturdaySiba(token){
+  if(token!==runToken) return;
+  // the host is on mobile, not at the desk. Obra coordinates the timing on Telegram; the host replies in their own time.
+  await runReadyOnTelegram(token); if(token!==runToken)return;
+  parked=[]; renderDock(); hero.classList.add('gone'); chatInner.innerHTML='';
+  loadScene(SAT_NODES, SAT_EDGES);
+  document.querySelector('.board-heading').innerHTML='Sábado <em>· passaportes recebidos, a terminar o registo</em>';
+  boardEyebrow.textContent='Retomado · os 4 passaportes recebidos'; setPhaseSplit(80); setMark('running');
+  ['trigger','welcome','docs','cleaning','checkin','siba','report'].forEach(reveal);
+  EDGES.push(['trigger','docs'],['docs','siba']); makeEdge('trigger','docs'); makeEdge('docs','siba');
+  ['trigger>welcome','trigger>cleaning','welcome>checkin','checkin>siba','siba>report','cleaning>report','trigger>docs','docs>siba'].forEach(k=>{ const p=edgeEls[k]; if(p) p.style.strokeDashoffset='0'; });
+  ['trigger>welcome','welcome>checkin','checkin>siba','trigger>cleaning','trigger>docs','docs>siba'].forEach(k=>{ const p=edgeEls[k]; if(p) p.classList.add('live'); });
+  setNode('trigger','done'); nodeStateIcon('trigger','✓');
+  setNode('cleaning','handoff'); nodeStateIcon('cleaning','↗');
+  setNode('welcome','done'); nodeStateIcon('welcome','✓'); if(welcomeRecurring) setBadges('welcome','<div class="node-tier recur">Recorrente</div><div class="node-tier gated">O seu sim</div>');
+  setNode('checkin','done'); nodeStateIcon('checkin','✓');
+  setNode('docs','done'); nodeStateIcon('docs','✓');
+  await sleep(450); if(token!==runToken)return;
+  think('Bem-vinda de volta. Está tudo pronto à espera; aqui estão os 4 registos a comunicar.');
+  await sleep(1400); if(token!==runToken)return;
+  await runSibaToEnd(token, GUESTS, 0);
+}
+
+// a step marked "Your yes": pause, summon the work for verification, then continue on approval
+async function gatedStep(token, id, askLine, panelCfg, doneLine){
+  setNode(id,'gatewait'); nodeStateIcon(id,'!');
+  setPhase('waiting','À sua espera'); setMark('gated');
+  think(askLine);
+  await summonPanel(token, panelCfg); if(token!==runToken)return;
+  hidePanel(); await sleep(320); if(token!==runToken)return;
+  setNode(id,'done'); nodeStateIcon(id,'✓');
+  EDGES.forEach(([a,b])=>{ if(b===id){ const p=edgeEls[edgeKey(a,b)]; if(p) p.classList.add('live'); }});
+  setPhase('work','A correr'); setMark('running');
+  think(doneLine);
+  await sleep(520);
+}
+
+async function execNode(token, id, doneMsg){
+  setNode(id,'running'); nodeStateIcon(id,'<span class="spin"></span>'); await sleep(900); if(token!==runToken)return;
+  setNode(id,'done'); nodeStateIcon(id,'✓');
+  EDGES.forEach(([a,b])=>{ if(b===id){ const p=edgeEls[edgeKey(a,b)]; if(p) p.classList.add('live'); }});
+  await sleep(320);
+}
+// a node that spins off its own routine: it is not "done", it is handed off (teal, ↗)
+async function execHandoff(token, id){
+  setNode(id,'running'); nodeStateIcon(id,'<span class="spin"></span>'); await sleep(900); if(token!==runToken)return;
+  setNode(id,'handoff'); nodeStateIcon(id,'↗'); liveIn(id);
+  await sleep(320);
+}
+
+// ───────── summon (verification + recap) ─────────
+const scrim=document.getElementById('scrim'), summon=document.getElementById('summon'), summonBody=document.getElementById('summonBody'), approveBtn=document.getElementById('approveBtn');
+const summonEyebrow=summon.querySelector('.summon-eyebrow'), summonTitle=summon.querySelector('.summon-title'), summonDesc=summon.querySelector('.summon-desc'), summonDwell=summon.querySelector('.dwell');
+let approveResolve=null, recapMode=false;
+
+// ───────── landing autoplay engine: the human gates advance themselves, with a visible progress bar ─────────
+const AUTO = true;
+const runBtnEl = document.getElementById('runBtn');
+let autoTimer = null;
+function clearAuto(){
+  if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+  [approveBtn, runBtnEl].forEach(b=>{ if(b){ b.classList.remove('go'); b.style.removeProperty('--auto-ms'); } });
+}
+function armAuto(token, btn, ms){
+  if(!AUTO || !btn) return;
+  if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+  btn.classList.remove('go'); btn.style.setProperty('--auto-ms', ms+'ms');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ if(token===runToken) btn.classList.add('go'); }));
+  autoTimer = setTimeout(()=>{ autoTimer=null; if(token===runToken) btn.click(); }, ms);
+}
+function guestRows(noteText, guests){ return (guests||GUESTS).map((g,i)=>`
+  <div class="guest-row exp" data-i="${i}">
+    <div class="guest-head"><div class="guest-check">✓</div>
+      <div><div class="guest-name">${g.name}</div><div class="guest-meta">${g.meta} · toque para ver os 11 campos do SIBA</div><div class="agree-note">● ${noteText}</div></div>
+      <div class="guest-cc">${g.cc}</div><div class="guest-chev">▾</div></div>
+    <div class="guest-detail">
+      <div class="detail-label">O documento que a Obra leu, e os 11 campos que preencheu</div>
+      ${docPanel(g)}
+      ${sibaFieldsBlock(g)}
+      <div class="agree-note" style="margin-top:9px;">● as duas leituras coincidem e batem certo com a reserva</div>
+    </div></div>`).join(''); }
+function sibaFieldsBlock(g){ return `<div class="detail-fields">
+    <div class="fk">Apelido</div><div class="fv">${g.surname}</div>
+    <div class="fk">Nome próprio</div><div class="fv">${g.given}</div>
+    <div class="fk">Tipo de documento</div><div class="fv">${g.docType}</div>
+    <div class="fk">N.º do documento</div><div class="fv">${g.docNum}</div>
+    <div class="fk">Data de nascimento</div><div class="fv">${g.dob}</div>
+    <div class="fk">Nacionalidade</div><div class="fv">${g.nat}</div>
+    <div class="fk">País de nascimento</div><div class="fv">${g.birth}</div>
+    <div class="fk">País de residência</div><div class="fv">${g.resCountry}</div>
+    <div class="fk">Cidade de residência</div><div class="fv">${g.resCity}</div>
+    <div class="fk">Entrada</div><div class="fv">${g.checkin}</div>
+    <div class="fk">Saída</div><div class="fv">${g.checkout}</div>
+  </div>`; }
+// the SOURCE document Obra read, shown so the host verifies the fields against the real thing (not just trust extraction)
+function docPanel(g){ const via = g.source==='direct' ? 'o seu formulário de reserva direta' : collectLabel.toLowerCase(); return `<div class="doc-panel">
+    <div class="doc-head"><span>O documento que a Obra leu · ${g.docType}</span><span class="doc-src">via ${via}</span></div>
+    <div class="doc-body">
+      <div class="doc-photo">FOTO</div>
+      <div class="doc-mrz">${g.mrz[0]}<br>${g.mrz[1]}</div>
+    </div>
+  </div>`; }
+function deletionReceiptBlock(n){ n=n||4; return `<div class="detail-label">Comprovativo de apagamento</div>
+  <div class="receipt">
+    <div class="rline"><span class="rk">verified_removed</span><span class="rv ok">true</span></div>
+    <div class="rline"><span class="rk">images_destroyed</span><span class="rv">${n}</span></div>
+    <div class="rline"><span class="rk">method</span><span class="rv">cripto-destruição · chave destruída</span></div>
+    <div class="rline"><span class="rk">logged_to</span><span class="rv">a sua cadeia de auditoria</span></div>
+  </div>
+  <div class="agree-note" style="margin-top:9px;">● a prova fica, os dados não</div>`; }
+function welcomeRows(){ return GUESTS.map((g,i)=>`
+  <div class="guest-row exp" data-i="${i}">
+    <div class="guest-head"><div class="guest-check" style="border-color:var(--vertical);color:var(--vertical);background:rgba(45,106,110,.08);">✎</div>
+      <div><div class="guest-name">${g.name} <span style="font-weight:400;color:var(--muted);font-size:11px;">· ${g.lang}</span></div><div class="guest-meta">toque para ler a mensagem completa</div></div>
+      <div class="node-tier ${g.source==='airbnb'?'gated':''}">${g.source==='airbnb'?'envia você · Airbnb':'a Obra envia'}</div>
+      <div class="guest-cc">${g.cc}</div><div class="guest-chev">▾</div></div>
+    <div class="guest-detail">
+      <div class="detail-label">A mensagem · ${g.lang}</div><div class="detail-msg">${g.wfull}</div>
+      <div class="detail-label">O que diz · na sua língua</div><div class="detail-msg trans">${g.wtrans}</div>
+    </div></div>`).join(''); }
+function summonPanel(token, cfg){
+  return new Promise(resolve=>{
+    approveResolve=resolve; recapMode=false;
+    summonEyebrow.style.color='var(--amber)';
+    summonEyebrow.innerHTML='<span class="pp-dot"></span> '+(cfg.eyebrow||'Precisa dos seus olhos');
+    summonTitle.textContent=cfg.title; summonDesc.textContent=cfg.desc; summonBody.innerHTML=cfg.rows;
+    approveBtn.textContent=cfg.button; approveBtn.style.background='var(--ink)'; approveBtn.style.borderColor='var(--ink)';
+    summonDwell.textContent='Verifique com calma antes de aprovar'; summonDwell.style.display='';
+    scrim.classList.add('show'); summon.classList.add('show');
+    armAuto(token, approveBtn, cfg.dwellMs||3200);
+  });
+}
+// expand/collapse a verification row to inspect what Obra captured
+summonBody.addEventListener('click', e=>{ const row=e.target.closest('.guest-row.exp'); if(row && summonBody.contains(row)) row.classList.toggle('open'); });
+function hidePanel(){ summon.classList.remove('show'); scrim.classList.remove('show'); }
+approveBtn.addEventListener('click', ()=>{
+  clearAuto();
+  if(recapMode){ recapMode=false; hidePanel(); finishRun(); return; }
+  if(approveResolve){ const r=approveResolve; approveResolve=null; r(); }
+});
+// low-level panel setters for multi-step flows (the panel stays open between steps)
+function setPanel(cfg){
+  if(cfg.eyebrowColor) summonEyebrow.style.color=cfg.eyebrowColor;
+  if(cfg.eyebrow) summonEyebrow.innerHTML='<span class="pp-dot" style="background:'+(cfg.dotColor||'var(--amber)')+';"></span> '+cfg.eyebrow;
+  if(cfg.title!==undefined) summonTitle.textContent=cfg.title;
+  if(cfg.desc!==undefined) summonDesc.textContent=cfg.desc;
+  if(cfg.body!==undefined) summonBody.innerHTML=cfg.body;
+  if(cfg.hideButton){ approveBtn.style.display='none'; }
+  else if(cfg.button!==undefined){ approveBtn.style.display=''; approveBtn.textContent=cfg.button; approveBtn.style.background=cfg.buttonColor||'var(--ink)'; approveBtn.style.borderColor=cfg.buttonColor||'var(--ink)'; }
+  summonDwell.style.display='none';
+}
+function awaitClick(token){ return new Promise(res=>{ recapMode=false; approveResolve=res; armAuto(token, approveBtn, 2200); }); }
+
+// SIBA filing: per guest, Obra opens the portal, logs in, fills the 11 fields, you confirm, it saves,
+// then the next guest (each is a separate SIBA entry). After all 4, it deletes the source images.
+async function runSibaFilling(token, guests){
+  guests = guests || GUESTS; const N = guests.length;
+  for(let i=0;i<N;i++){
+    const g=guests[i];
+    setPanel({ eyebrow:'A comunicar ao SIBA', eyebrowColor:'var(--amber)', dotColor:'var(--amber)',
+      title:`Hóspede ${i+1} de ${N} · ${g.name}`,
+      desc: i===0 ? 'A abrir o SIBA e a entrar na sua conta…' : 'A abrir um novo registo…',
+      body:`<div class="filing-working"><span class="spin big"></span> A preencher os 11 campos de ${g.given} ${g.surname}…</div>`,
+      hideButton:true });
+    await sleep(i===0?1700:1200); if(token!==runToken)return false;
+    setPanel({ title:`Hóspede ${i+1} de ${N} · ${g.name}`,
+      desc:'Compare o documento que a Obra leu com os 11 campos. Se coincidirem, guardo este registo.',
+      body: docPanel(g)+sibaFieldsBlock(g)+`<div class="agree-note" style="margin-top:9px;">● as duas leituras coincidem e batem certo com a reserva</div>`,
+      button:`Confirmar e guardar · ${i+1} de ${N}` });
+    await awaitClick(token); if(token!==runToken)return false;
+    setPanel({ desc:`Registo ${i+1} de ${N} guardado no SIBA.`,
+      body:`<div class="filing-working" style="color:var(--green);"><span style="font-size:16px;">✓</span> Guardado como registo SIBA separado. A avançar…</div>`,
+      hideButton:true });
+    await sleep(820); if(token!==runToken)return false;
+  }
+  // deletion of the source images (the capture -> use -> provably-delete primitive)
+  setPanel({ eyebrow:'A terminar', eyebrowColor:'var(--vertical)', dotColor:'var(--vertical)',
+    title:'A apagar as imagens de origem',
+    desc:`As ${N} fotos de passaporte só serviram para preencher os formulários. Destruo-as agora e registo a prova.`,
+    body:`<div class="filing-working"><span class="spin big"></span> A cripto-destruir ${N} imagens e depois a destruir a chave…</div>`,
+    hideButton:true });
+  await sleep(1800); if(token!==runToken)return false;
+  setPanel({ title:'Imagens de origem apagadas',
+    desc:'Os originais desapareceram. A prova fica na sua cadeia de auditoria.',
+    body: deletionReceiptBlock(N), button:'Concluído', buttonColor:'var(--green)' });
+  await awaitClick(token); if(token!==runToken)return false;
+  hidePanel(); await sleep(320);
+  return true;
+}
+
+// in-flight routines parked on the idle canvas, color-coded by who they wait on (you vs the world)
+let parked = [];
+let cleaningRelayed = false;   // guards the proactive crew-question relay so it fires once
+let arrivalsRelayed = false;   // guards the proactive guest-message relay so it fires once
+let docsRequested = false;
+let welcomeRecurring = false;
+let collectMethod = 'link';            // how Airbnb-guest passports get collected (link | scan | whatsapp)
+let collectLabel = 'Link seguro de carregamento';
+const inflightEl = document.getElementById('inflight');
+function renderInflight(){
+  if(!parked.length){ inflightEl.innerHTML=''; return; }
+  inflightEl.innerHTML = `<div class="inflight-label">Em curso · ${parked.length} rotina${parked.length>1?'s':''} que a Obra acompanha</div>` +
+    parked.map((p,i)=>`<button class="flight-pill ${p.wait}" data-i="${i}"><span class="fp-dot"></span><div><div class="fp-name">${p.name}</div><div class="fp-sub">${p.sub}</div></div><span class="fp-tag">${p.wait==='you'?'precisa de si':'a observar'}</span></button>`).join('')
+    + `<div class="inflight-note">Mantenho cada uma aberta até estar mesmo concluída, e só a chamo quando uma fica âmbar. Nada se perde pelo caminho.</div>`;
+  inflightEl.querySelectorAll('.flight-pill').forEach(b=>{ const p=parked[+b.dataset.i]; if(p && p.wait==='you' && p.onResume) b.onclick=()=>p.onResume(); });
+}
+function passportsPill(){ return { name:'Passaportes em falta', sub:'à procura de 2 hóspedes · fecha quando ambos estiverem registados', wait:'ext' }; }
+// the two routines that stay live after Saturday closes: the guest channel (arrivals) and the spawned cleaning
+function pillArrivals(sub){ return { name:'Chegadas', sub: sub||'4 hóspedes a chegar hoje · códigos da caixa enviados, a observar o canal dos hóspedes', wait:'ext' }; }
+function pillCleaning(sub){ return { name:'Limpeza', sub: sub||'à espera da equipa · fecha quando tiverem limpado', wait:'ext' }; }
+// the persistent mini-dock: tracked routines stay in view (small) while the board is busy elsewhere
+const trackDock = document.getElementById('trackDock');
+function renderDock(){
+  if(!parked.length){ trackDock.style.display='none'; trackDock.innerHTML=''; return; }
+  trackDock.innerHTML = parked.map((p,i)=>`<span class="dock-pill ${p.wait}" data-i="${i}"><span class="dp-dot"></span>${p.name}${p.wait==='you'?' · precisa de si':''}</span>`).join('');
+  trackDock.style.display='flex';
+  trackDock.querySelectorAll('.dock-pill').forEach(b=>{ const p=parked[+b.dataset.i]; if(p&&p.wait==='you'&&p.onResume) b.onclick=()=>p.onResume(); });
+}
+// idle = the big "what's in flight" board (dock hidden); active = the small dock up top
+function showIdle(){ trackDock.style.display='none'; setPhaseSplit(0); setMark('idle'); setPhase('talk', parked.length?'A acompanhar':'Pronta'); think('',false); renderInflight(); hero.classList.remove('gone'); }
+
+// after the recap is acknowledged: save/file this run, clear its canvas, then auto-spawn the next
+// one-off routine from the leftover task (the cleaning). A finished run owns its own chat + board.
+async function finishRun(){
+  const token=runToken;
+  const recurring = nodeEls['welcome'] && nodeEls['welcome'].querySelector('.node-tier.recur');
+  await sleep(250); if(token!==runToken)return;
+  setPhase('done','Guardado');
+  think(recurring
+    ? 'Guardado como rotina: corre em cada chegada a partir de agora, sempre à espera do seu sim. O dia de hoje fica arquivado em Atividade.'
+    : 'Arquivei o dia de hoje em Atividade.');
+  await sleep(1500); if(token!==runToken)return;
+  think('O sábado está fechado, os 4 registados. Ficam duas coisas a decorrer: o canal dos hóspedes, para quem chega hoje, e uma rotina ligada, a limpeza. Acompanho as duas.');
+  await sleep(1900); if(token!==runToken)return;
+  // brief, calm return to the in-flight board so you SEE both routines are tracked, not lost
+  chatInner.innerHTML='';
+  parked = [ pillArrivals(), { name:'Limpeza', sub:'ligada ao sábado · em fila para correr a seguir, acompanhada', wait:'ext' } ];
+  showIdle();
+  await sleep(2600); if(token!==runToken)return;
+  runCleaningScene(token);       // Obra picks the linked routine up
+}
+
+function liveIn(id){ EDGES.forEach(([a,b])=>{ if(b===id){ const p=edgeEls[edgeKey(a,b)]; if(p) p.classList.add('live'); }}); }
+
+// the chained one-off routine, spawned from Saturday's leftover cleaning task
+async function runCleaningScene(token){
+  cleaningRelayed = false; arrivalsRelayed = false;
+  loadScene(CLEAN_NODES, CLEAN_EDGES);
+  document.querySelector('.board-heading').innerHTML='Limpeza <em>· uma rotina pontual, da tarefa aberta do sábado</em>';
+  boardEyebrow.textContent='Uma nova rotina';
+  setPhase('work','A mapear'); setMark('running'); setPhaseSplit(78);
+  // cleaning is now the ACTIVE routine on the board; the guest channel stays tracked in the dock up top
+  parked=[ pillArrivals() ]; hero.classList.add('gone'); renderDock();
+  think('Aqui está, como rotina pontual própria. Vou prepará-la e depois corro-a.');
+  await sleep(1100); if(token!==runToken)return;
+  think('Quatro estadias terminam esta semana, por isso quatro limpezas a fazer.');
+  reveal('checkouts'); await sleep(650); if(token!==runToken)return;
+  think('Contacto a sua equipa habitual no WhatsApp da empresa.');
+  drawEdge('checkouts','contact'); reveal('contact'); await sleep(720); if(token!==runToken)return;
+  think('Depois fico atenta à resposta.');
+  drawEdge('contact','reply'); reveal('reply'); await sleep(650); if(token!==runToken)return;
+  think('Se perguntarem algo, trago-lho; se ficarem calados, dou-lhes um toque.');
+  drawEdge('reply','loop'); reveal('loop'); drawEdge('reply','followup'); reveal('followup'); await sleep(820); if(token!==runToken)return;
+  think('E vai para a sua agenda, sincronizada com as reservas, para nunca falhar uma limpeza.');
+  drawEdge('reply','calendar'); reveal('calendar'); await sleep(760); if(token!==runToken)return;
+
+  think('Pronta. A correr agora.', false);
+  setPhase('work','A correr'); setMark('running'); boardEyebrow.textContent='A executar a rotina'; setPhaseSplit(80);
+  await sleep(500); if(token!==runToken)return;
+  await execNode(token,'checkouts','Quatro limpezas a agendar.');
+
+  // GATE (crew message): the approval goes to your PHONE (Telegram). Approve on the go; Obra does not block the desk.
+  setNode('contact','gatewait'); nodeStateIcon('contact','!');
+  setPhase('waiting','Aprove no telemóvel'); setMark('gated');
+  think('Redigi a mensagem para a equipa e enviei-a para o seu Telegram. Aprove-a do telemóvel quando quiser; não vou atrasar o resto.');
+  await sleep(600); if(token!==runToken)return;
+  await runCrewApprovalTelegram(token); if(token!==runToken)return;
+  setNode('contact','done'); nodeStateIcon('contact','✓'); liveIn('contact');
+  setPhase('work','A correr'); setMark('running');
+  think('Aprovada do telemóvel e enviada no WhatsApp. Agora à espera da resposta.');
+  await sleep(800); if(token!==runToken)return;
+
+  setNode('calendar','done'); nodeStateIcon('calendar','✓'); liveIn('calendar');
+  think('Adicionada à sua agenda, em sincronia com as reservas.');
+  await sleep(700); if(token!==runToken)return;
+
+  // it now only waits on an EXTERNAL party (the crew) -> park it as a tracking pill, free the canvas
+  setNode('reply','extwait'); nodeStateIcon('reply','<span class="watch"></span>'); liveIn('reply');
+  boardEyebrow.textContent='Rotina ativa · à espera da equipa';
+  setPhase('talk','A acompanhar'); setMark('idle');
+  think('Agora só falta a equipa. Vou pô-la em pausa e ficar a observar, fora da sua tela, e chamo-a assim que precisar de si.', false);
+  await sleep(1700); if(token!==runToken)return;
+  parked = [ pillArrivals(), pillCleaning() ];
+  chatInner.innerHTML='';
+  showIdle();
+  // the crew replies a little later, and their reply needs YOU -> the cleaning pill turns amber,
+  // and since you are not at the laptop, Obra proactively brings it to your phone (no desk click needed)
+  setTimeout(()=>{
+    if(token!==runToken) return;
+    const c = parked.find(p=>p.name==='Limpeza'); if(!c) return;
+    c.sub='a equipa respondeu · estou a levá-lo ao seu telemóvel'; c.wait='you'; c.onResume=()=>resumeCleaning(token);
+    renderInflight();
+    setTimeout(()=>{ if(token===runToken) resumeCleaning(token); }, 1600);
+  }, 4500);
+}
+
+// the amber "needs you" pill: not a wait, an active RELAY. The crew asked something; Obra brings it to the
+// host on Telegram (mobile), gets the answer, and sends it back to the crew. Then re-parks until they actually clean.
+async function resumeCleaning(token){
+  if(token!==runToken || cleaningRelayed) return;
+  cleaningRelayed = true;
+  phoneSet('Obra','online','Telegram','tg'); tgBody.innerHTML=''; tgIntro.classList.add('show');
+  await sleep(800); if(token!==runToken)return;
+  let t=tgTyping(); await sleep(900); if(token!==runToken)return; t.remove();
+  tgMsg('in','A sua equipa de limpeza perguntou algo: podem vir às 11:00 em vez das 09:00 no domingo? Mesmo assim fica pronto antes do próximo check-in. O que lhes digo?');
+  await sleep(2000); if(token!==runToken)return;
+  tgMsg('out','Sim, às 11:00 está bem, obrigada por confirmarem'); await sleep(1400); if(token!==runToken)return;
+  t=tgTyping(); await sleep(900); if(token!==runToken)return; t.remove();
+  tgMsg('in','Enviado à equipa, nas suas palavras. Mantenho o domingo em sincronia na sua agenda e fico a observar até terem limpado.');
+  await sleep(2200); if(token!==runToken)return;
+  tgIntro.classList.remove('show'); await sleep(700);
+  // re-park: both routines stay open. Cleaning waits on the crew; the guest channel keeps watching.
+  parked = [ pillArrivals(), pillCleaning('equipa respondeu · a observar até terem limpado no domingo') ];
+  showIdle();
+  // a little later a GUEST messages on the direct channel and it needs YOU -> the arrivals pill turns amber,
+  // and Obra proactively brings the guest's message to your phone (same mechanic, the guest channel this time)
+  setTimeout(()=>{
+    if(token!==runToken) return;
+    const a = parked.find(p=>p.name==='Chegadas'); if(!a) return;
+    a.sub='um hóspede mandou mensagem · estou a levá-la ao seu telemóvel'; a.wait='you'; a.onResume=()=>resumeArrivals(token);
+    renderInflight();
+    setTimeout(()=>{ if(token===runToken) resumeArrivals(token); }, 1600);
+  }, 4200);
+}
+
+// the guest channel pings: a guest sent a WhatsApp message that needs a human decision. Obra relays it to the
+// host on Telegram (their single pane with Obra), the host types the answer, and Obra sends it on to the guest.
+async function resumeArrivals(token){
+  if(token!==runToken || arrivalsRelayed) return;
+  arrivalsRelayed = true;
+  phoneSet('Obra','online','Telegram','tg'); tgBody.innerHTML=''; tgIntro.classList.add('show');
+  await sleep(800); if(token!==runToken)return;
+  let t=tgTyping(); await sleep(900); if(token!==runToken)return; t.remove();
+  tgMsg('in','Uma das hóspedes de hoje, a Elena, mandou mensagem no WhatsApp: o comboio dela chega por volta das 21:00 e pergunta se pode chegar mais tarde. O que lhe digo?');
+  await sleep(2000); if(token!==runToken)return;
+  tgMsg('out','Sem problema, a caixa de chaves funciona a qualquer hora. Até logo à noite'); await sleep(1400); if(token!==runToken)return;
+  t=tgTyping(); await sleep(900); if(token!==runToken)return; t.remove();
+  tgMsg('in','Enviado à Elena no WhatsApp, nas suas palavras. A caixa de chaves funciona a qualquer hora, por isso está tratado. Volto a observar as suas chegadas.');
+  await sleep(2200); if(token!==runToken)return;
+  tgIntro.classList.remove('show'); await sleep(700);
+  parked = [ pillArrivals('a Elena está tratada para hoje à noite · a observar as restantes chegadas de hoje'), pillCleaning('equipa respondeu · a observar até terem limpado no domingo') ];
+  showIdle();
+  // landing autoplay: rest on the calm tracking board, then loop the whole story
+  if(AUTO){ setTimeout(()=>{ if(token===runToken) start(); }, 7000); }
+}
+
+// end-of-run recap: what happened, and what you can do now
+function showRecap(token, heldCount){
+  heldCount = heldCount||0;
+  const filed = 4 - heldCount;
+  const done = [ ['Boas-vindas','4 enviadas: 2 por si no Airbnb, 2 por mim'] ];
+  done.push(['Passaportes',`2 do seu formulário de reserva direta, 2 do Airbnb via ${collectLabel.toLowerCase()}, todos recebidos`]);
+  done.push(['Registo no SIBA',`${filed} comunicados, comprovativos na sua auditoria (aprovou)`]);
+  done.push(['Relatório','Relatório de fim de dia pronto']);
+
+  const open = [];
+  open.push(['Chegadas','códigos da caixa enviados · observo o canal direto dos hóspedes e trago-lhe tudo o que precisar de si','tracking',true]);
+  open.push(['Limpeza','criei uma rotina pontual: confirmar a equipa e acompanhar até terem limpado após a saída','tracking',true]);
+  if(heldCount>0) open.push([`${heldCount} hóspedes`,'à espera que adicione os passaportes, depois registo-os','precisa de si',false]);
+
+  const meter = `<div class="recap-meter">
+      <div><div class="rm-k">A Obra trabalhou nisto durante</div><div class="rm-v">9h 26m</div></div>
+      <div><div class="rm-k">Custo da execução</div><div class="rm-v">0,41 €</div></div>
+    </div>`;
+  const doneRows = `<div class="detail-label">O que correu</div>` + done.map(s=>`<div class="guest-row"><div class="guest-check">✓</div><div><div class="guest-name">${s[0]}</div><div class="guest-meta">${s[1]}</div></div></div>`).join('');
+  const openRows = `<div class="detail-label">Ainda em curso · a Obra está a vigiar isto por si</div>` + open.map(o=>`<div class="open-row"><div class="od"></div><div><div class="ol">${o[0]}</div><div class="os">${o[1]}</div></div>${o[3]?'<div class="rtag">rotina</div>':`<div class="om">${o[2]}</div>`}</div>`).join('');
+  const actions = `<div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+      <button class="chip-btn" style="text-align:left;padding:10px 13px;" data-recap="report">Abrir o relatório de fim de dia  →</button>
+      <button class="chip-btn" style="text-align:left;padding:10px 13px;" data-recap="receipts">Ver os comprovativos de auditoria do SIBA  →</button>
+    </div>`;
+
+  summonEyebrow.style.color='var(--green)';
+  summonEyebrow.innerHTML='<span class="pp-dot" style="background:var(--green);"></span> Concluído';
+  summonTitle.textContent='Sábado tratado';
+  summonDesc.textContent='Tudo o que podia ficar pronto, ficou. As duas coisas que precisavam do seu sim, as boas-vindas e os registos, foi você que assinou.';
+  summonBody.innerHTML = meter + doneRows + openRows + actions;
+  approveBtn.textContent='Está ótimo, fechar';
+  approveBtn.style.background='var(--green)'; approveBtn.style.borderColor='var(--green)';
+  summonDwell.style.display='none';
+  approveResolve=null; recapMode=true;
+  summonBody.querySelectorAll('[data-recap]').forEach(b=>b.onclick=(ev)=>{ ev.stopPropagation(); summonDesc.textContent = b.dataset.recap==='report' ? 'Na versão final, isto abre o seu relatório de fim de dia. (Protótipo.)' : 'Na versão final, isto abre os comprovativos de auditoria, à prova de adulteração, das 4 comunicações. (Protótipo.)'; });
+  scrim.classList.add('show'); summon.classList.add('show');
+  armAuto(token, approveBtn, 5500);
+}
+
+// ───────── controls (landing autoplay: manual chrome disabled, demo plays + loops itself) ─────────
+const divider=document.getElementById('divider');   // resize disabled in autoplay (see CSS pointer-events:none)
+document.getElementById('runBtn').addEventListener('click', ()=>{ clearAuto(); runExecute(runToken); });
+document.getElementById('replayBtn').addEventListener('click', ()=>{ clearAuto(); start(); });
+const inputTextEl=document.getElementById('inputText'); inputTextEl.disabled=true;
+
+function start(){
+  runToken++; const token=runToken;
+  clearAuto();
+  manual=false; autoChip.classList.remove('show');
+  chatInner.innerHTML=''; confirmBar.classList.remove('show');
+  scrim.classList.remove('show'); summon.classList.remove('show');
+  document.getElementById('board').classList.remove('dim');
+  document.querySelector('.board-heading').innerHTML='Sábado <em>· a coordenar 4 chegadas</em>';
+  parked=[]; cleaningRelayed=false; arrivalsRelayed=false; docsRequested=false; welcomeRecurring=false; collectMethod='link'; collectLabel='Link seguro de carregamento';
+  tgIntro.classList.remove('show'); workspaceEl.classList.remove('rail-collapsed'); renderInflight(); renderDock(); hero.classList.add('gone');
+  loadScene(SAT_NODES, SAT_EDGES);
+  runScript(token);
+}
+
+loadScene(SAT_NODES, SAT_EDGES); start();
+</script>
+</body>
+</html>

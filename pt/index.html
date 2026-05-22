@@ -486,6 +486,39 @@
       color: var(--ink);
     }
 
+    /* ─────────── Living demo embed (breaks out wider than the text column) ─────────── */
+    /* Centered via relative positioning, NOT transform: an iframe inside a
+       transformed element renders blank on iOS/Mac Safari. The parent <section>
+       is already viewport-centered, so left:50% + negative half-width centers it. */
+    .demo-embed {
+      position: relative;
+      left: 50%;
+      width: min(1100px, 94vw);
+      margin-left: max(-550px, -47vw);
+      margin-top: 52px;
+    }
+    .demo-embed iframe {
+      display: block;
+      width: 100%;
+      height: 680px;
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      box-shadow: 0 30px 80px -40px rgba(26, 26, 26, 0.42);
+      background: var(--paper);
+    }
+    .demo-caption {
+      margin-top: 14px;
+      text-align: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+    @media (max-width: 720px) {
+      .demo-embed { position: static; left: auto; width: 100%; margin-left: 0; margin-top: 36px; }
+      .demo-embed iframe { height: 600px; border-radius: 10px; }
+    }
+
     /* ─────────── Sectors ─────────── */
     .sectors {
       display: grid;
@@ -1064,76 +1097,9 @@
         cumprido, e cada decisão que importava continuou a ser dela.
       </p>
     </div>
-    <div class="workflow">
-      <div class="step">
-        <div class="step-number">01</div>
-        <div>
-          <div class="step-title">Antes da chegada</div>
-          <div class="step-detail">
-            Redige as boas-vindas na língua do hóspede, na voz da
-            anfitriã: calorosas, claras sobre o que a lei exige, e
-            escritas para que um hóspede desconfiado se sinta seguro a
-            dizer que sim. Se hesita, a Obra responde à preocupação real
-            em vez de se repetir. A anfitriã aprova e segue.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">02</div>
-        <div>
-          <div class="step-title">O passaporte</div>
-          <div class="step-detail">
-            Lê o documento que o hóspede envia, e uma segunda leitura
-            independente confere os números. A anfitriã valida. A
-            comunicação chega às autoridades dentro do prazo.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">03</div>
-        <div>
-          <div class="step-title">Durante a estadia</div>
-          <div class="step-detail">
-            Responde às pequenas perguntas na língua do hóspede, o
-            wi-fi, as chaves, o bom restaurante ali perto, e recua no
-            momento em que é mesmo preciso decidir.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">04</div>
-        <div>
-          <div class="step-title">Depois da saída</div>
-          <div class="step-detail">
-            Agenda a limpeza. Redige o agradecimento e o pedido de
-            avaliação, no dia certo e na língua certa. A anfitriã aprova
-            tudo o que chega ao hóspede.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">05</div>
-        <div>
-          <div class="step-title">Fecho do mês</div>
-          <div class="step-detail">
-            Junta o mês e entrega ao contabilista um registo limpo em
-            vez de uma caixa de sapatos cheia de recibos. A anfitriã
-            aprova os valores, as contas fecham, e não há correrias.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">06</div>
-        <div>
-          <div class="step-title">O comprovativo</div>
-          <div class="step-detail">
-            Cada passo fica num registo de auditoria criptográfico que
-            a anfitriã controla por inteiro: quem fez o quê, quando e
-            porquê. Pronto para as Finanças, para a CNPD, ou para a sua
-            própria tranquilidade.
-          </div>
-        </div>
-      </div>
+    <div class="demo-embed">
+      <iframe src="../demo/living-canvas-pt.html?v=1" title="A Obra a coordenar um sábado, do início ao fim"></iframe>
+      <div class="demo-caption">Um sábado real, coordenado do início ao fim. Corre sozinho.</div>
     </div>
     <div class="workflow-coda">
       Ela faz o trabalho. A anfitriã guarda as decisões. E o hóspede
