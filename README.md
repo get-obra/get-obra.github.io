@@ -4,6 +4,7 @@
 
 [![Site](https://img.shields.io/badge/site-get--obra.com-1a1a1a?style=flat-square)](https://get-obra.com)
 [![Essay](https://img.shields.io/badge/read-The%20Trust%20Gap-c2410c?style=flat-square)](https://get-obra.com/the-trust-gap)
+[![Reference pack](https://img.shields.io/badge/code-claude--for--portuguese--al--hosts-1a1a1a?style=flat-square)](https://github.com/get-obra/claude-for-portuguese-al-hosts)
 [![Built with Claude](https://img.shields.io/badge/built%20with-Claude-d97757?style=flat-square)](https://claude.com)
 [![Languages](https://img.shields.io/badge/languages-EN%20%7C%20PT-1a1a1a?style=flat-square)](https://get-obra.com)
 
@@ -39,7 +40,11 @@ The brand is sector neutral by design. Hospitality is the wedge, not the ceiling
 
 ## This repository
 
-This repo is the source of the public site at [get-obra.com](https://get-obra.com), in English and Portuguese. The platform itself is a managed service and is not part of this repository.
+This repo is only the source of the public site at [get-obra.com](https://get-obra.com), in English and Portuguese. There is no platform code here, by design.
+
+The open reference pack, with the architecture document, the skills, and the trust-gap essay, lives in a separate public repo: **[claude-for-portuguese-al-hosts](https://github.com/get-obra/claude-for-portuguese-al-hosts)** (Apache 2.0). Start there if you came to read how Obra is built.
+
+The platform itself is a managed service and is not open source.
 
 ## Status
 
