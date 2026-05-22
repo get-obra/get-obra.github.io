@@ -1098,7 +1098,7 @@
       </p>
     </div>
     <div class="demo-embed">
-      <iframe src="../demo/living-canvas-pt.html?v=1" title="A Obra a coordenar um sábado, do início ao fim"></iframe>
+      <iframe data-src="../demo/living-canvas-pt.html?v=1" title="A Obra a coordenar um sábado, do início ao fim"></iframe>
       <div class="demo-caption">Um sábado real, coordenado do início ao fim. Corre sozinho.</div>
     </div>
     <div class="workflow-coda">
@@ -1411,6 +1411,28 @@
       } else {
         // Fallback: show all immediately
         document.querySelectorAll('.step').forEach(s => s.classList.add('in-view'));
+      }
+    })();
+
+    // Living demo: load (and therefore start) only when its section scrolls
+    // into view, so a reader coming from the top does not miss the opening.
+    // Fail-safe: if IntersectionObserver is unavailable, load immediately.
+    (function() {
+      var iframe = document.querySelector('.demo-embed iframe[data-src]');
+      if (!iframe) return;
+      var start = function() {
+        if (iframe.getAttribute('src')) return;
+        iframe.setAttribute('src', iframe.getAttribute('data-src'));
+      };
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) { start(); io.disconnect(); }
+          });
+        }, { threshold: 0.15 });
+        io.observe(iframe);
+      } else {
+        start();
       }
     })();
   </script>
