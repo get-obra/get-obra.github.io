@@ -489,10 +489,14 @@
     }
 
     /* ─────────── Living demo embed (breaks out wider than the text column) ─────────── */
+    /* Centered via relative positioning, NOT transform: an iframe inside a
+       transformed element renders blank on iOS/Mac Safari. The parent <section>
+       is already viewport-centered, so left:50% + negative half-width centers it. */
     .demo-embed {
+      position: relative;
+      left: 50%;
       width: min(1100px, 94vw);
-      margin-left: 50%;
-      transform: translateX(-50%);
+      margin-left: max(-550px, -47vw);
       margin-top: 52px;
     }
     .demo-embed iframe {
@@ -513,7 +517,7 @@
       letter-spacing: 0.01em;
     }
     @media (max-width: 720px) {
-      .demo-embed { width: 94vw; margin-top: 36px; }
+      .demo-embed { margin-top: 36px; }
       .demo-embed iframe { height: 600px; border-radius: 10px; }
     }
 
