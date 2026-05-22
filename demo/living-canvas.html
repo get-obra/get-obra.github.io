@@ -18,7 +18,7 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; height: 100%; }
   body { font-family: 'Inter', system-ui, sans-serif; line-height: 1.55; -webkit-font-smoothing: antialiased; background: var(--paper); color: var(--ink); overflow: hidden; }
-  .workspace { display: grid; grid-template-columns: 240px 1fr; height: 100%; transition: grid-template-columns 440ms var(--ease); }
+  .workspace { display: grid; grid-template-columns: 240px 1fr; height: 100vh; height: 100dvh; transition: grid-template-columns 440ms var(--ease); }
   .workspace.rail-collapsed { grid-template-columns: 0 1fr; }
   .head-left { display: flex; align-items: center; gap: 12px; pointer-events: auto; }
   .rail-toggle { cursor: pointer; width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--rule); background: var(--paper-warm); color: var(--ink-soft); font-size: 14px; line-height: 1; display: grid; place-items: center; transition: all 180ms var(--ease); }
