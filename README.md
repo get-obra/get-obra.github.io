@@ -3,6 +3,7 @@
 > Your team, plus one. The work, attended to.
 
 [![Site](https://img.shields.io/badge/site-get--obra.com-1a1a1a?style=flat-square)](https://get-obra.com)
+[![Watch the demo](https://img.shields.io/badge/watch-the%20living%20demo-2d6a6e?style=flat-square)](https://get-obra.com/demo/living-canvas.html)
 [![Essay](https://img.shields.io/badge/read-The%20Trust%20Gap-c2410c?style=flat-square)](https://get-obra.com/the-trust-gap)
 [![Reference pack](https://img.shields.io/badge/code-claude--for--portuguese--al--hosts-1a1a1a?style=flat-square)](https://github.com/get-obra/claude-for-portuguese-al-hosts)
 [![Built with Claude](https://img.shields.io/badge/built%20with-Claude-d97757?style=flat-square)](https://claude.com)
@@ -29,6 +30,8 @@ Together these are the difference between "an AI that might do something" and "a
 Obra is powered by Claude, and you bring your own key, so the intelligence is yours and so is the bill. It runs where you want it: a small server, your own machine, your own infrastructure. Claude is the power. Obra is the plug that lets a real business receive that power safely.
 
 A typical job looks like this: a trigger arrives (a booking email, a document, a scheduled time), Obra does the steps a member of staff would do, anything critical is double read and checked, and anything that affects a guest, a regulator, or your accounts is held for your approval before it goes out. When it is done, you get a clear report and a record you can keep.
+
+Watch a full day run, start to finish: the [living demo](https://get-obra.com/demo/living-canvas.html) (also [em português](https://get-obra.com/demo/living-canvas-pt.html)). It plays on its own, and the behaviors in it are real and tested.
 
 ## The first vertical: hospitality
 
