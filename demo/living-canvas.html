@@ -92,7 +92,7 @@
   .board-think.idle .tdot { animation: none; background: var(--muted); }
 
   .stage-wrap { flex: 1; overflow: hidden; min-height: 0; }
-  .stage { position: relative; width: 1330px; height: 460px; transform-origin: top left; }
+  .stage { position: relative; width: 1330px; height: 460px; transform-origin: top left; transition: transform 600ms var(--ease); }
   .stage svg.edges { position: absolute; inset: 0; width: 1330px; height: 460px; pointer-events: none; overflow: visible; }
   .edge { fill: none; stroke: var(--rule); stroke-width: 2; transition: stroke 500ms var(--ease), stroke-dashoffset 700ms var(--ease); }
   .edge.live { stroke: var(--green); }
@@ -508,9 +508,27 @@ function buildGraph(){
   // hidden nodes start not displayed
   NODES.forEach(n=>{ if(n.hidden) nodeEls[n.id].style.display='none'; });
   EDGES.forEach(([a,b])=>makeEdge(a,b));
+  camNode = NODES[0] ? NODES[0].id : null;
   fitStage();
 }
-function fitStage(){ const wrap=stage.parentElement; const scale=Math.min(1, wrap.clientWidth/1330); stage.style.transform=`scale(${scale})`; }
+let camNode=null;
+const isMobile=()=>window.matchMedia('(max-width: 720px)').matches;
+// desktop: scale the whole map to fit the width. mobile: zoom in to a readable
+// size and pan the "camera" so the active node stays centered (a 1330px-wide map
+// is illegible shrunk to phone width, so we follow the action instead).
+function fitStage(){
+  const wrap=stage.parentElement, wrapW=wrap.clientWidth, wrapH=wrap.clientHeight;
+  if(!isMobile()){ stage.style.transform=`scale(${Math.min(1, wrapW/1330)})`; return; }
+  const scale=Math.max(0.6, Math.min(0.9, wrapW/450));
+  const n = camNode ? nodeById(camNode) : null;
+  const cx = n ? n.x + NW/2 : 220, cy = n ? n.y + 46 : 200;
+  const sw=1330*scale, sh=460*scale;
+  let tx = wrapW/2 - cx*scale, ty = wrapH/2 - cy*scale;
+  tx = sw>wrapW ? Math.min(0, Math.max(wrapW-sw, tx)) : (wrapW-sw)/2;
+  ty = sh>wrapH ? Math.min(0, Math.max(wrapH-sh, ty)) : (wrapH-sh)/2;
+  stage.style.transform=`translate(${tx}px, ${ty}px) scale(${scale})`;
+}
+function focusNode(id){ if(nodeEls[id]){ camNode=id; fitStage(); } }
 window.addEventListener('resize', ()=>{ fitStage(); });
 
 // ───────── chat ─────────
@@ -563,10 +581,10 @@ function setMark(s){ document.body.dataset.state=s; }
 const PACE=1.5; // global slow-down so the demo is watchable
 const sleep=ms=>new Promise(r=>setTimeout(r,Math.round(ms*PACE)));
 let runToken=0;
-function reveal(id){ const n=nodeById(id); nodeEls[id].style.display=''; if(n.hidden){ /* recompute edges that touch it later */ } requestAnimationFrame(()=>nodeEls[id].classList.add('shown')); }
+function reveal(id){ const n=nodeById(id); nodeEls[id].style.display=''; if(n.hidden){ /* recompute edges that touch it later */ } requestAnimationFrame(()=>nodeEls[id].classList.add('shown')); focusNode(id); }
 function drawEdge(a,b){ const p=edgeEls[edgeKey(a,b)]||makeEdge(a,b); requestAnimationFrame(()=>{ p.style.strokeDashoffset='0'; }); }
 function nodeStateIcon(id, html){ nodeEls[id].querySelector('[data-role=state]').innerHTML=html; }
-function setNode(id, cls){ const el=nodeEls[id]; el.classList.remove('running','done','gatewait','asking','handoff','extwait'); if(cls) el.classList.add(cls); }
+function setNode(id, cls){ const el=nodeEls[id]; el.classList.remove('running','done','gatewait','asking','handoff','extwait'); if(cls){ el.classList.add(cls); focusNode(id); } }
 function setBadges(id, html){ nodeEls[id].querySelector('[data-role=badges]').innerHTML=html; }
 function setNodeText(id, title, sub){ const el=nodeEls[id]; if(!el) return; el.querySelector('.node-title').textContent=title; if(sub!==undefined) el.querySelector('.node-sub').textContent=sub; }
 
