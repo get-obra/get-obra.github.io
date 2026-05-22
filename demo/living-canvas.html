@@ -292,7 +292,10 @@
   .input-text { cursor: default; }
   /* mobile */
   @media (max-width: 720px) {
-    .workspace { grid-template-columns: 0 1fr; }
+    /* single full-width column: the rail is hidden, so the canvas must occupy
+       the only column. (A 0-width first column would leave the canvas at 0 width
+       and overflow:hidden would clip the whole app to a blank screen.) */
+    .workspace, .workspace.rail-collapsed { grid-template-columns: 1fr; }
     .rail { display: none; }
     .canvas-header { padding: 0 12px 0 14px; }
     .head-right .auto-chip { display: none; }
