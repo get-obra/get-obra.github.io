@@ -488,6 +488,35 @@
       color: var(--ink);
     }
 
+    /* ─────────── Living demo embed (breaks out wider than the text column) ─────────── */
+    .demo-embed {
+      width: min(1100px, 94vw);
+      margin-left: 50%;
+      transform: translateX(-50%);
+      margin-top: 52px;
+    }
+    .demo-embed iframe {
+      display: block;
+      width: 100%;
+      height: 680px;
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      box-shadow: 0 30px 80px -40px rgba(26, 26, 26, 0.42);
+      background: var(--paper);
+    }
+    .demo-caption {
+      margin-top: 14px;
+      text-align: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+    @media (max-width: 720px) {
+      .demo-embed { width: 94vw; margin-top: 36px; }
+      .demo-embed iframe { height: 600px; border-radius: 10px; }
+    }
+
     /* ─────────── Sectors ─────────── */
     .sectors {
       display: grid;
@@ -1066,76 +1095,9 @@
         and every decision that mattered stayed hers.
       </p>
     </div>
-    <div class="workflow">
-      <div class="step">
-        <div class="step-number">01</div>
-        <div>
-          <div class="step-title">Pre-arrival</div>
-          <div class="step-detail">
-            Drafts the welcome in the guest's own language, in the
-            host's voice: warm, clear about what the law needs, and
-            written so a wary guest feels safe saying yes. If they
-            hesitate, Obra answers the real worry instead of repeating
-            itself. The host approves, and it sends.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">02</div>
-        <div>
-          <div class="step-title">The passport</div>
-          <div class="step-detail">
-            Reads the document the guest sends back, and a second
-            independent read checks the numbers against it. The host
-            signs off. The report reaches the police inside the window.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">03</div>
-        <div>
-          <div class="step-title">During the stay</div>
-          <div class="step-detail">
-            Answers the small questions in the guest's language, the
-            wifi, the keys, the good restaurant nearby, and steps back
-            the moment real judgment is needed.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">04</div>
-        <div>
-          <div class="step-title">After check-out</div>
-          <div class="step-detail">
-            Schedules the cleaning. Drafts the thank-you and the review
-            request, timed for the right day in the right language. The
-            host approves anything that reaches the guest.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">05</div>
-        <div>
-          <div class="step-title">Month end</div>
-          <div class="step-detail">
-            Pulls the month together and hands the accountant a clean
-            record instead of a shoebox of receipts. The host approves
-            the figures, the books close, and there is no scramble.
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-number">06</div>
-        <div>
-          <div class="step-title">The receipt</div>
-          <div class="step-detail">
-            Every step lands in a cryptographic audit trail the host
-            controls entirely: who did what, when, and why. Ready for
-            the tax office, the data regulator, or her own peace of
-            mind.
-          </div>
-        </div>
-      </div>
+    <div class="demo-embed">
+      <iframe src="demo/living-canvas.html" title="Obra coordinating a Saturday, start to finish" loading="lazy"></iframe>
+      <div class="demo-caption">A real Saturday, coordinated start to finish. This plays on its own.</div>
     </div>
     <div class="workflow-coda">
       She does the work. The host keeps the decisions. And the guest
