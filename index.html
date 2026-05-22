@@ -517,7 +517,8 @@
       letter-spacing: 0.01em;
     }
     @media (max-width: 720px) {
-      .demo-embed { margin-top: 36px; }
+      /* mobile: plain in-flow block, no breakout positioning at all */
+      .demo-embed { position: static; left: auto; width: 100%; margin-left: 0; margin-top: 36px; }
       .demo-embed iframe { height: 600px; border-radius: 10px; }
     }
 
@@ -1100,7 +1101,7 @@
       </p>
     </div>
     <div class="demo-embed">
-      <iframe src="demo/living-canvas.html" title="Obra coordinating a Saturday, start to finish"></iframe>
+      <iframe src="demo/living-canvas.html?v=3" title="Obra coordinating a Saturday, start to finish"></iframe>
       <div class="demo-caption">A real Saturday, coordinated start to finish. This plays on its own.</div>
     </div>
     <div class="workflow-coda">
