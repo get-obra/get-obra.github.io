@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Skills with Obra · Obra</title>
+  <meta name="description" content="How Obra implements the agentskills.io open standard: discovery, activation, execution, spec compliance, and the install paths for vertical libraries.">
+  <meta name="theme-color" content="#faf9f5">
+
+  <meta property="og:title" content="Agent Skills with Obra">
+  <meta property="og:description" content="How Obra implements the agentskills.io open standard: discovery, activation, execution, and where to put a SKILL.md folder.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://get-obra.com/agent-skills">
+
+  <link rel="canonical" href="https://get-obra.com/agent-skills">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #faf9f5;
+      --paper-warm: #f3f1e8;
+      --paper-deep: #ece9dc;
+      --rule: #d9d6c8;
+      --muted: #6e6a5d;
+      --ink: #1a1a1a;
+      --accent: #b75740;
+      --accent-soft: rgba(183, 87, 64, 0.08);
+      --accent-line: rgba(183, 87, 64, 0.25);
+
+      --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+      --dur-instant: 100ms;
+      --dur-fast: 200ms;
+      --dur-medium: 350ms;
+      --dur-slow: 700ms;
+      --dur-glacial: 1200ms;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Spectral', Georgia, serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 25% 35%, rgba(217, 214, 200, 0.18) 0%, transparent 35%),
+        radial-gradient(circle at 75% 65%, rgba(217, 214, 200, 0.15) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: rgba(250, 249, 245, 0.85);
+      backdrop-filter: saturate(180%) blur(10px);
+      -webkit-backdrop-filter: saturate(180%) blur(10px);
+      border-bottom: 1px solid var(--rule);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .lockup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .mark { width: 32px; height: 32px; color: var(--ink); flex-shrink: 0; }
+    .mark svg { width: 100%; height: 100%; transition: transform var(--dur-glacial) var(--ease-in-out); }
+    .lockup:hover .mark svg { transform: rotateX(60deg); }
+
+    .wordmark {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: -0.005em;
+      color: var(--ink);
+    }
+
+    .nav-link {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color var(--dur-fast) var(--ease-standard);
+    }
+
+    .nav-link:hover { color: var(--ink); }
+    .nav-link::before {
+      content: '←';
+      display: inline-block;
+      margin-right: 6px;
+      transition: transform var(--dur-fast) var(--ease-standard);
+    }
+    .nav-link:hover::before { transform: translateX(-2px); }
+
+    @media (max-width: 600px) {
+      .topbar { padding: 14px 20px; }
+      .wordmark { font-size: 20px; }
+      .nav-link { font-size: 12px; }
+    }
+
+    /* Article container — slightly wider than essays since this is docs */
+    article {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 32px 64px;
+    }
+
+    @media (max-width: 600px) {
+      article { padding: 56px 24px 48px; }
+    }
+
+    .doc-eyebrow {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .doc-title {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 52px;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 600px) {
+      .doc-title { font-size: 36px; }
+    }
+
+    .doc-deck {
+      font-family: 'Spectral', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 21px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 600px) {
+      .doc-deck { font-size: 18px; margin-bottom: 36px; }
+    }
+
+    .doc-meta {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      padding-top: 24px;
+      padding-bottom: 36px;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 48px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .doc-meta .meta-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 11px;
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    .doc-meta a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      transition: color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
+    }
+
+    .doc-meta a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Prose */
+    .prose p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .prose p { font-size: 17px; line-height: 1.65; margin-bottom: 20px; }
+    }
+
+    .prose em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .prose strong {
+      font-weight: 500;
+    }
+
+    .prose h2 {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-top: 56px;
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+
+    @media (max-width: 600px) {
+      .prose h2 { font-size: 24px; margin-top: 44px; }
+    }
+
+    .prose h2::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      margin-bottom: 20px;
+      opacity: 0.6;
+    }
+
+    .prose h3 {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 500;
+      font-size: 21px;
+      line-height: 1.3;
+      color: var(--ink);
+      margin-top: 36px;
+      margin-bottom: 16px;
+    }
+
+    .prose a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-line);
+      transition: border-color var(--dur-fast) var(--ease-standard);
+    }
+
+    .prose a:hover {
+      border-bottom-color: var(--accent);
+    }
+
+    .prose ul {
+      padding-left: 0;
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .prose ul li {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--ink);
+      margin-bottom: 12px;
+      padding-left: 28px;
+      position: relative;
+    }
+
+    .prose ul li::before {
+      content: '·';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 600px) {
+      .prose ul li { font-size: 17px; padding-left: 24px; }
+    }
+
+    .prose ol {
+      padding-left: 0;
+      list-style: none;
+      counter-reset: prose-ol;
+      margin-bottom: 28px;
+    }
+
+    .prose ol li {
+      counter-increment: prose-ol;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--ink);
+      margin-bottom: 18px;
+      padding-left: 40px;
+      position: relative;
+    }
+
+    .prose ol li::before {
+      content: counter(prose-ol, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 4px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+    }
+
+    /* Code styling — both inline and block */
+    .prose code {
+      font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+      font-size: 14px;
+      background: var(--paper-warm);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: var(--ink);
+      border: 1px solid var(--rule);
+    }
+
+    .prose pre {
+      font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+      font-size: 13.5px;
+      line-height: 1.6;
+      background: var(--paper-warm);
+      padding: 20px 24px;
+      border-radius: 4px;
+      border: 1px solid var(--rule);
+      margin: 28px 0;
+      overflow-x: auto;
+      color: var(--ink);
+    }
+
+    .prose pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      font-size: inherit;
+    }
+
+    @media (max-width: 600px) {
+      .prose pre { font-size: 12.5px; padding: 16px 18px; }
+    }
+
+    /* Compliance table */
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    .prose thead th {
+      text-align: left;
+      padding: 12px 16px 10px 0;
+      font-weight: 500;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent-line);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+    }
+
+    .prose tbody td {
+      padding: 12px 16px 12px 0;
+      border-bottom: 1px solid var(--rule);
+      color: var(--ink);
+      vertical-align: top;
+    }
+
+    .prose tbody td:last-child { padding-right: 0; }
+
+    /* CTA box */
+    .cta {
+      margin-top: 64px;
+      padding: 32px 32px;
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      font-family: 'Spectral', Georgia, serif;
+    }
+
+    .cta h2 {
+      margin-top: 0;
+    }
+
+    .cta h2::before {
+      display: none;
+    }
+
+    .cta .cta-button {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 10px 20px;
+      background: var(--accent);
+      color: var(--paper);
+      text-decoration: none;
+      border-radius: 3px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      border: none;
+      transition: background var(--dur-fast) var(--ease-standard);
+    }
+
+    .cta .cta-button:hover {
+      background: #9a4936;
+      border-bottom: none;
+    }
+
+    /* Footer */
+    footer {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 32px 64px;
+      border-top: 1px solid var(--rule);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      footer { padding: 28px 24px 48px; }
+    }
+
+    .footer-link {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--dur-fast) var(--ease-standard);
+    }
+
+    .footer-link:hover { color: var(--ink); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .lockup:hover .mark svg { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="/" class="lockup">
+      <div class="mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
+          <title>Obra mark</title>
+          <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+          <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="wordmark">Obra</div>
+    </a>
+    <a href="/" class="nav-link">Back to home</a>
+  </header>
+
+  <article>
+    <div class="doc-eyebrow">Docs</div>
+    <h1 class="doc-title">Agent Skills with Obra</h1>
+    <p class="doc-deck">
+      How Obra implements the agentskills.io open standard: discovery, activation,
+      execution, spec compliance, and where to put a <code>SKILL.md</code> folder.
+    </p>
+
+    <div class="doc-meta">
+      <div><span class="meta-label">Spec</span><a href="https://agentskills.io/specification">agentskills.io/specification</a></div>
+      <div><span class="meta-label">Verified</span>28 May 2026</div>
+    </div>
+
+    <div class="prose">
+      <p>Obra is a <a href="/">managed-service AI virtual employee for regulated SMBs</a> — today focused on EU short-term-rental hosts who must register each arriving guest with their national identity registry (Portugal's SEF SIBA, Spain's SES Hospedajes, Italy's Polizia Hotelier, others).</p>
+
+      <p>We are also the first <strong>vertical-managed-service</strong> implementation of the <a href="https://agentskills.io">agentskills.io</a> open standard — joining a client list otherwise dominated by horizontal coding agents (Claude Code, Cursor, GitHub Copilot, VS Code, Codex, Gemini CLI, Goose, Letta, Hermes Agent, OpenHands, and 30+ more).</p>
+
+      <p>This page documents how Obra implements the standard: how skills are discovered, how the chat brain activates them, what the runtime executes, and where to put a skill folder if you want Obra to pick it up.</p>
+
+      <h2>What a skill is, in one sentence</h2>
+
+      <p>A skill is a folder with a <code>SKILL.md</code> file that teaches an AI agent how to do a specific task. Obra reads them as procedural knowledge — the chat brain knows when to use a skill from its <code>description</code>, then loads the full instructions when activated.</p>
+
+      <p>The full agentskills.io specification is at <a href="https://agentskills.io/specification">agentskills.io/specification</a>. Obra's compliance is verified against the upstream <a href="https://github.com/agentskills/agentskills/tree/main/skills-ref"><code>skills-ref</code></a> library via our adapter package.</p>
+
+      <h2>Where Obra looks</h2>
+
+      <p>After installation, Obra reads skills from <code>&lt;OBRA_HOME&gt;/skills/</code> — typically <code>~/.obra/skills</code> on Linux and macOS or <code>%USERPROFILE%\.obra\skills</code> on Windows. Each subdirectory is one skill; the directory name must match the <code>name</code> field in the skill's <code>SKILL.md</code> frontmatter (this is an agentskills.io spec requirement, enforced by Obra at load time).</p>
+
+      <pre><code>~/.obra/
+└── skills/
+    ├── siba-checkin-fill/
+    │   ├── SKILL.md          # required
+    │   ├── scripts/          # optional
+    │   ├── references/       # optional
+    │   └── assets/           # optional
+    ├── airbnb-reservation-extract/
+    │   └── SKILL.md
+    └── passport-mrz-verify/
+        └── SKILL.md</code></pre>
+
+      <h2>How activation works — progressive disclosure</h2>
+
+      <p>Obra implements the spec's three-stage discovery → activation → execution model.</p>
+
+      <h3>Discovery — every chat turn</h3>
+
+      <p>On every turn, the brain reads the <strong>name + description</strong> of every installed skill — roughly 100 tokens per skill. This block lives in the system prompt next to Obra's connector capability list, so the brain knows what procedural knowledge it has on hand without the host having to remind it.</p>
+
+      <p>If a host says <em>"file this guest's passport with SIBA"</em>, the brain sees <code>siba-checkin-fill</code> in the discovery list and knows it has procedural knowledge for the task. If the request matches no skill, the brain replies from its own knowledge.</p>
+
+      <h3>Activation — on relevance</h3>
+
+      <p>When a request matches a skill's <code>description</code>, Obra's runtime loads the full <code>SKILL.md</code> body into the brain's next-turn context. The body's instructions guide the brain through the task.</p>
+
+      <p>You can also inspect the loaded state via Obra's local API:</p>
+
+      <pre><code>GET http://localhost:3737/api/skills              # list all installed
+GET http://localhost:3737/api/skills/&lt;skill-name&gt; # load full detail</code></pre>
+
+      <h3>Execution — on demand</h3>
+
+      <p>When a skill's instructions reference bundled files (a <code>scripts/extract.py</code> or a <code>references/REFERENCE.md</code>), the brain reads them via its file-read tools at the moment they are needed. Resource paths are relative to the skill folder.</p>
+
+      <h2>Spec compliance Obra enforces</h2>
+
+      <p>Every skill goes through validation before it is surfaced in the chat brain's prompt. Skills that do not pass are silently skipped, so a broken skill folder never poisons your Home screen.</p>
+
+      <table>
+        <thead>
+          <tr><th>Rule</th><th>Enforced</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Folder contains <code>SKILL.md</code></td><td>✓</td></tr>
+          <tr><td>YAML frontmatter is parseable</td><td>✓</td></tr>
+          <tr><td><code>name</code> is 1-64 lowercase-alnum + hyphens; no leading/trailing/consecutive hyphens</td><td>✓</td></tr>
+          <tr><td><code>name</code> matches parent directory name</td><td>✓</td></tr>
+          <tr><td><code>description</code> is 1-1024 chars</td><td>✓</td></tr>
+          <tr><td>Optional <code>license</code>, <code>compatibility</code>, <code>metadata</code>, <code>allowed-tools</code></td><td>✓</td></tr>
+        </tbody>
+      </table>
+
+      <p>Soft warnings (do not block loading): description shorter than 40 chars (probably under-described) and body longer than 500 lines (consider splitting into <code>references/</code>).</p>
+
+      <h2>Installing a skill into Obra</h2>
+
+      <p>Three supported paths:</p>
+
+      <ol>
+        <li><strong>Manual copy.</strong> For dev or personal use, drop a SKILL.md folder directly into the skills directory: <code>cp -r my-skill ~/.obra/skills/</code>. The next chat turn discovers it.</li>
+        <li><strong>Operator-pushed bundle (managed clients).</strong> When you are on a managed Obra deploy, your operator can publish a signed bundle of type <code>skill</code> through the capability-intake pipeline. The bundle lands at your machine, surfaces on Home as a "new capability awaiting your review" card, and installs into <code>&lt;OBRA_HOME&gt;/skills/</code> after you accept at the PC. This is the trusted distribution path for vertical libraries Obra's operator maintains for your industry.</li>
+        <li><strong>Obra-shipped showcase skills.</strong> Obra publishes 3 MIT-licensed vertical reference skills: <code>siba-checkin-fill</code> (Portuguese SEF SIBA boletim filling), <code>airbnb-reservation-extract</code> (extract structured reservation data from Airbnb host emails), <code>passport-mrz-verify</code> (ICAO 9303 passport MRZ parse + checksum verification). Any of these can drop into a client's skills directory as-is, or load into any other agentskills.io-compatible agent.</li>
+      </ol>
+
+      <h2>Authoring a skill that targets Obra</h2>
+
+      <p>Most agentskills.io-compatible skills work in Obra unchanged. A few Obra-specific notes:</p>
+
+      <ul>
+        <li><strong>Lean on description keywords.</strong> Obra's brain matches host requests against descriptions. Include both <em>what</em> the skill does and <em>when</em> to use it, with 2-3 keywords the host might naturally say.</li>
+        <li><strong>Body should read as procedural knowledge.</strong> Step-by-step instructions work; narrative prose with no concrete steps doesn't.</li>
+        <li><strong>References live one level deep.</strong> Big detail blocks belong in <code>references/REFERENCE.md</code>. Keep <code>SKILL.md</code> under 500 lines for fast activation.</li>
+        <li><strong><code>compatibility</code> is for environment requirements</strong> — "Designed for Obra managed runtime" is fine if the skill depends on Obra-specific connectors.</li>
+      </ul>
+
+      <h2>The broader ecosystem</h2>
+
+      <p>Skills written for Obra work in any agentskills.io-compatible agent — and vice versa. The spec is implemented by 41+ agents at the time of writing. We are the first regulated-SMB vertical implementation on a list that is otherwise dominated by horizontal coding agents.</p>
+
+      <p>For the full ecosystem context, see <a href="https://agentskills.io#clients">agentskills.io's client showcase</a>.</p>
+
+      <div class="cta">
+        <h2>Want the full Obra pipeline?</h2>
+        <p>This page documents how Obra <em>consumes</em> skills. The full Obra product also maintains a curated vertical library of skills and routines (operator-side; clients receive signed bundles), closes the operator–client loop with a tamper-evident audit chain (operator-blind by structural design — we see event types and counts, never content), orchestrates multi-stage stateful workflows across days (reservation arrival → SIBA cred check → guest channel → passport extraction → SIBA filing), and ships as a managed service for regulated SMBs.</p>
+        <p>If that is the shape you need, talk to us about a managed deploy.</p>
+        <a href="/" class="cta-button">Back to get-obra.com</a>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <div>© 2026 Obra</div>
+    <div><a href="https://agentskills.io" class="footer-link">agentskills.io</a></div>
+  </footer>
+
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d5b534fcfdc24e97afe3103783b3869c"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
