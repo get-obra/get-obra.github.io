@@ -499,15 +499,34 @@
       margin-left: max(-550px, -47vw);
       margin-top: 52px;
     }
-    .demo-embed iframe {
+    .demo-embed video {
       display: block;
       width: 100%;
-      height: 680px;
+      aspect-ratio: 16 / 9;
       border: 1px solid var(--rule);
       border-radius: 14px;
       box-shadow: 0 30px 80px -40px rgba(26, 26, 26, 0.42);
       background: var(--paper);
     }
+    .demo-sound {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 15px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: rgba(26, 26, 26, 0.78);
+      color: #faf9f5;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: background 200ms ease;
+    }
+    .demo-sound:hover { background: rgba(26, 26, 26, 0.94); }
     .demo-caption {
       margin-top: 14px;
       text-align: center;
@@ -519,7 +538,7 @@
     @media (max-width: 720px) {
       /* mobile: plain in-flow block, no breakout positioning at all */
       .demo-embed { position: static; left: auto; width: 100%; margin-left: 0; margin-top: 36px; }
-      .demo-embed iframe { height: 600px; border-radius: 10px; }
+      .demo-embed video { border-radius: 10px; }
     }
 
     /* ─────────── Sectors ─────────── */
@@ -1102,8 +1121,11 @@
       </p>
     </div>
     <div class="demo-embed">
-      <iframe data-src="demo/living-canvas.html?v=7" title="Obra coordinating a Saturday, start to finish"></iframe>
-      <div class="demo-caption">A real Saturday, coordinated start to finish. This plays on its own.</div>
+      <video data-src="demo/obra-demo.mp4?v=1" poster="demo/obra-demo-poster.jpg"
+             muted loop playsinline preload="none"
+             title="Obra coordinating a real Saturday, start to finish"></video>
+      <button class="demo-sound" type="button" aria-label="Turn on sound">Tap for sound</button>
+      <div class="demo-caption">A real Saturday, coordinated start to finish — every step Obra runs for you.</div>
     </div>
     <div class="workflow-coda">
       She does the work. The host keeps the decisions. And the guest
@@ -1409,15 +1431,21 @@
       }
     })();
 
-    // Living demo: load (and therefore start) only when its section scrolls
-    // into view, so a reader coming from the top does not miss the opening.
-    // Fail-safe: if IntersectionObserver is unavailable, load immediately.
+    // Demo film: load + autoplay (muted) only when its section scrolls into
+    // view, so the 7MB file is never fetched off-screen and a reader from the
+    // top does not miss the opening. Fail-safe: load immediately if there is
+    // no IntersectionObserver.
     (function() {
-      var iframe = document.querySelector('.demo-embed iframe[data-src]');
-      if (!iframe) return;
+      var v = document.querySelector('.demo-embed video[data-src]');
+      if (!v) return;
+      var btn = document.querySelector('.demo-sound');
+      var started = false;
       var start = function() {
-        if (iframe.getAttribute('src')) return;
-        iframe.setAttribute('src', iframe.getAttribute('data-src'));
+        if (started) return;
+        started = true;
+        v.src = v.getAttribute('data-src');
+        var p = v.play();
+        if (p && p.catch) p.catch(function() {});
       };
       if ('IntersectionObserver' in window) {
         var io = new IntersectionObserver(function(entries) {
@@ -1425,9 +1453,19 @@
             if (entry.isIntersecting) { start(); io.disconnect(); }
           });
         }, { threshold: 0.15 });
-        io.observe(iframe);
+        io.observe(v);
       } else {
         start();
+      }
+      // One-tap sound: the film autoplays muted (browsers require it); this
+      // lets the visitor hear the music.
+      if (btn) {
+        btn.addEventListener('click', function() {
+          v.muted = !v.muted;
+          if (!v.muted) { var pp = v.play(); if (pp && pp.catch) pp.catch(function() {}); }
+          btn.textContent = v.muted ? 'Tap for sound' : 'Sound on';
+          btn.setAttribute('aria-label', v.muted ? 'Turn on sound' : 'Mute');
+        });
       }
     })();
   </script>
