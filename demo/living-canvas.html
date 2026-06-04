@@ -1148,7 +1148,7 @@ function showRecap(token, heldCount){
 
   const meter = `<div class="recap-meter">
       <div><div class="rm-k">Obra ran this for</div><div class="rm-v">9h 26m</div></div>
-      <div><div class="rm-k">Cost to run</div><div class="rm-v">$0.41</div></div>
+      <div><div class="rm-k">Cost to run</div><div class="rm-v">$1.09</div></div>
     </div>`;
   const doneRows = `<div class="detail-label">What ran</div>` + done.map(s=>`<div class="guest-row"><div class="guest-check">✓</div><div><div class="guest-name">${s[0]}</div><div class="guest-meta">${s[1]}</div></div></div>`).join('');
   const openRows = `<div class="detail-label">Still in flight · Obra is watching these for you</div>` + open.map(o=>`<div class="open-row"><div class="od"></div><div><div class="ol">${o[0]}</div><div class="os">${o[1]}</div></div>${o[3]?'<div class="rtag">routine</div>':`<div class="om">${o[2]}</div>`}</div>`).join('');
