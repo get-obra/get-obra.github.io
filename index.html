@@ -535,6 +535,16 @@
       color: var(--muted);
       letter-spacing: 0.01em;
     }
+    .demo-credit {
+      margin-top: 5px;
+      text-align: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+    .demo-credit a { color: inherit; text-decoration: underline; }
+    .demo-credit__lic { opacity: 0.7; }
     @media (max-width: 720px) {
       /* mobile: plain in-flow block, no breakout positioning at all */
       .demo-embed { position: static; left: auto; width: 100%; margin-left: 0; margin-top: 36px; }
@@ -1126,6 +1136,7 @@
              title="Obra coordinating a real Saturday, start to finish"></video>
       <button class="demo-sound" type="button" aria-label="Turn on sound">Tap for sound</button>
       <div class="demo-caption">A real Saturday, coordinated start to finish — every step Obra runs for you.</div>
+      <div class="demo-credit">Music: <a href="https://uppbeat.io/t/mountaineer/good-old-tape" target="_blank" rel="noopener">&ldquo;Mountaineer&rdquo; by Good Old Tape</a> via Uppbeat <span class="demo-credit__lic">(license LSQSGRBKIETV0YNC)</span></div>
     </div>
     <div class="workflow-coda">
       She does the work. The host keeps the decisions. And the guest
