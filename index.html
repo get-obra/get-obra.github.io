@@ -280,6 +280,7 @@
       animation: hero-mark-in 700ms var(--ease-standard) both;
       position: relative;
       z-index: 1;
+      perspective: 560px;
     }
 
     @media (max-width: 600px) {
@@ -295,22 +296,59 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    .hero-mark svg {
-      width: 100%;
-      height: 100%;
-      animation: hero-mark-tilt 8s var(--ease-in-out) infinite;
-      transform-origin: center;
+    /* The mark reveals itself on load — two concentric rings tilt flat into a
+       single line, the small one returns first, the large sweeps through the
+       Saturn tilt, and it settles into the torus (same motion as the demo film's
+       end card). Real 3D via the parent's perspective; then a gentle resting
+       breath keeps it alive. */
+    .hero-mark__torus {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      animation: hero-mark-breath 9s var(--ease-in-out) 3.7s infinite;
     }
-
-    @keyframes hero-mark-tilt {
-      0%, 100% { transform: rotateX(0deg); }
-      50% { transform: rotateX(15deg); }
+    .hero-ring {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 50%;
+      border-style: solid;
+      border-color: var(--ink);
+      background: transparent;
+      transform-origin: center center;
+      will-change: transform;
     }
+    .hero-ring--outer { width: 70px; height: 70px; border-width: 8px;
+      animation: hero-ring-outer 3.4s both; }
+    .hero-ring--inner { width: 42px; height: 42px; border-width: 2.5px;
+      animation: hero-ring-inner 3.4s both; }
 
-    .hero-mark:hover svg {
-      animation: none;
-      transform: rotateX(60deg);
+    @keyframes hero-ring-outer {
+      0%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      8%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      36%  { transform: rotateX(90deg);  animation-timing-function: linear; }
+      54%  { transform: rotateX(90deg);  animation-timing-function: var(--ease-in-out); }
+      100% { transform: rotateX(180deg); }
+    }
+    @keyframes hero-ring-inner {
+      0%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      8%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      36%  { transform: rotateX(90deg);  animation-timing-function: var(--ease-in-out); }
+      66%  { transform: rotateX(180deg); }
+      100% { transform: rotateX(180deg); }
+    }
+    @keyframes hero-mark-breath {
+      0%, 100% { transform: rotateX(0deg) rotateY(0deg); }
+      50%      { transform: rotateX(10deg) rotateY(-6deg); }
+    }
+    .hero-mark:hover .hero-mark__torus {
+      animation-play-state: paused;
+      transform: rotateX(12deg) rotateY(-8deg);
       transition: transform var(--dur-glacial) var(--ease-in-out);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-mark__torus, .hero-ring--outer, .hero-ring--inner { animation: none; }
+      .hero-ring--outer, .hero-ring--inner { transform: rotateX(0deg); }
     }
 
     .tagline {
@@ -1055,12 +1093,11 @@
   </header>
 
   <section id="top" class="hero">
-    <div class="hero-mark">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
-        <title>Obra mark</title>
-        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
-        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
-      </svg>
+    <div class="hero-mark" role="img" aria-label="Obra mark">
+      <div class="hero-mark__torus">
+        <div class="hero-ring hero-ring--outer"></div>
+        <div class="hero-ring hero-ring--inner"></div>
+      </div>
     </div>
     <h1 class="tagline">Your team,<br>plus one.</h1>
     <p class="essence">The work, attended to.</p>
