@@ -94,16 +94,36 @@
       height: 32px;
       color: var(--ink);
       flex-shrink: 0;
+      position: relative;
+      perspective: 280px;
     }
 
-    .mark svg {
-      width: 100%;
-      height: 100%;
+    .mark__torus {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      animation: hero-mark-breath 9s var(--ease-standard) 4.2s infinite;
+    }
+    .mark-ring {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 50%;
+      border-style: solid;
+      border-color: currentColor;
+      background: transparent;
+      transform-origin: center center;
+      will-change: transform;
+    }
+    .mark-ring--outer { width: 32px; height: 32px; border-width: 2.3px;
+      animation: hero-ring-outer 4s both; }
+    .mark-ring--inner { width: 18px; height: 18px; border-width: 1px;
+      animation: hero-ring-inner 4s both; }
+
+    .lockup:hover .mark__torus {
+      animation-play-state: paused;
+      transform: rotateX(12deg) rotateY(-8deg);
       transition: transform var(--dur-glacial) var(--ease-in-out);
-    }
-
-    .lockup:hover .mark svg {
-      transform: rotateX(60deg);
     }
 
     .wordmark {
@@ -280,7 +300,7 @@
       animation: hero-mark-in 700ms var(--ease-standard) both;
       position: relative;
       z-index: 1;
-      perspective: 560px;
+      perspective: 760px;
     }
 
     @media (max-width: 600px) {
@@ -289,6 +309,8 @@
         height: 72px;
         margin-bottom: 40px;
       }
+      .hero-ring--outer { width: 72px; height: 72px; border-width: 5px; }
+      .hero-ring--inner { width: 42px; height: 42px; border-width: 1.7px; }
     }
 
     @keyframes hero-mark-in {
@@ -305,7 +327,7 @@
       position: absolute;
       inset: 0;
       transform-style: preserve-3d;
-      animation: hero-mark-breath 9s var(--ease-in-out) 3.7s infinite;
+      animation: hero-mark-breath 9s var(--ease-standard) 4.2s infinite;
     }
     .hero-ring {
       position: absolute;
@@ -318,10 +340,10 @@
       transform-origin: center center;
       will-change: transform;
     }
-    .hero-ring--outer { width: 70px; height: 70px; border-width: 8px;
-      animation: hero-ring-outer 3.4s both; }
-    .hero-ring--inner { width: 42px; height: 42px; border-width: 2.5px;
-      animation: hero-ring-inner 3.4s both; }
+    .hero-ring--outer { width: 96px; height: 96px; border-width: 7px;
+      animation: hero-ring-outer 4s both; }
+    .hero-ring--inner { width: 56px; height: 56px; border-width: 2.2px;
+      animation: hero-ring-inner 4s both; }
 
     @keyframes hero-ring-outer {
       0%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
@@ -1105,12 +1127,11 @@
 <body>
   <header class="topbar">
     <a href="#top" class="lockup">
-      <div class="mark">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
-          <title>Obra mark</title>
-          <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
-          <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
-        </svg>
+      <div class="mark" role="img" aria-label="Obra mark">
+        <div class="mark__torus">
+          <div class="mark-ring mark-ring--outer"></div>
+          <div class="mark-ring mark-ring--inner"></div>
+        </div>
       </div>
       <div class="wordmark">Obra</div>
     </a>

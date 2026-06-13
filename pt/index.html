@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Obra · A sua equipa, mais um.</title>
-  <meta name="description" content="Um funcionário virtual de IA, em serviço gerido, para negócios operacionais. Arquitetura cega ao operador, com um registo de auditoria criptográfico que controla. Construído sobre o Claude. Em breve, verão de 2026.">
+  <title>Obra · O funcionário de IA do seu alojamento.</title>
+  <meta name="description" content="A Obra é o funcionário de IA para anfitriões de alojamento local: trata do registo no SIBA, responde aos hóspedes e envia relatórios aos proprietários, a correr na sua própria máquina para que os dados nunca saiam dela. Construído sobre o Claude. 10 pilotos a funcionar em Portugal.">
   <meta name="theme-color" content="#faf9f5">
 
-  <meta property="og:title" content="Obra · A sua equipa, mais um.">
-  <meta property="og:description" content="Um funcionário virtual de IA, em serviço gerido, para negócios operacionais onde os dados não podem sair de casa. Construído sobre o Claude. Em breve, verão de 2026.">
+  <meta property="og:title" content="Obra · O funcionário de IA do seu alojamento.">
+  <meta property="og:description" content="O funcionário de IA para anfitriões de alojamento local: registo no SIBA, comunicação com hóspedes, relatórios aos proprietários, na sua própria máquina para que os dados nunca saiam dela. Construído sobre o Claude. 10 pilotos a funcionar em Portugal.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://get-obra.com/pt">
   <link rel="alternate" hreflang="en" href="https://get-obra.com/">
@@ -92,16 +92,36 @@
       height: 32px;
       color: var(--ink);
       flex-shrink: 0;
+      position: relative;
+      perspective: 280px;
     }
 
-    .mark svg {
-      width: 100%;
-      height: 100%;
+    .mark__torus {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      animation: hero-mark-breath 9s var(--ease-standard) 4.2s infinite;
+    }
+    .mark-ring {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 50%;
+      border-style: solid;
+      border-color: currentColor;
+      background: transparent;
+      transform-origin: center center;
+      will-change: transform;
+    }
+    .mark-ring--outer { width: 32px; height: 32px; border-width: 2.3px;
+      animation: hero-ring-outer 4s both; }
+    .mark-ring--inner { width: 18px; height: 18px; border-width: 1px;
+      animation: hero-ring-inner 4s both; }
+
+    .lockup:hover .mark__torus {
+      animation-play-state: paused;
+      transform: rotateX(12deg) rotateY(-8deg);
       transition: transform var(--dur-glacial) var(--ease-in-out);
-    }
-
-    .lockup:hover .mark svg {
-      transform: rotateX(60deg);
     }
 
     .wordmark {
@@ -278,6 +298,7 @@
       animation: hero-mark-in 700ms var(--ease-standard) both;
       position: relative;
       z-index: 1;
+      perspective: 760px;
     }
 
     @media (max-width: 600px) {
@@ -286,6 +307,8 @@
         height: 72px;
         margin-bottom: 40px;
       }
+      .hero-ring--outer { width: 72px; height: 72px; border-width: 5px; }
+      .hero-ring--inner { width: 42px; height: 42px; border-width: 1.7px; }
     }
 
     @keyframes hero-mark-in {
@@ -293,22 +316,54 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    .hero-mark svg {
-      width: 100%;
-      height: 100%;
-      animation: hero-mark-tilt 8s var(--ease-in-out) infinite;
-      transform-origin: center;
+    .hero-mark__torus {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      animation: hero-mark-breath 9s var(--ease-standard) 4.2s infinite;
     }
-
-    @keyframes hero-mark-tilt {
-      0%, 100% { transform: rotateX(0deg); }
-      50% { transform: rotateX(15deg); }
+    .hero-ring {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 50%;
+      border-style: solid;
+      border-color: var(--ink);
+      background: transparent;
+      transform-origin: center center;
+      will-change: transform;
     }
+    .hero-ring--outer { width: 96px; height: 96px; border-width: 7px;
+      animation: hero-ring-outer 4s both; }
+    .hero-ring--inner { width: 56px; height: 56px; border-width: 2.2px;
+      animation: hero-ring-inner 4s both; }
 
-    .hero-mark:hover svg {
-      animation: none;
-      transform: rotateX(60deg);
+    @keyframes hero-ring-outer {
+      0%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      8%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      36%  { transform: rotateX(90deg);  animation-timing-function: linear; }
+      54%  { transform: rotateX(90deg);  animation-timing-function: var(--ease-in-out); }
+      100% { transform: rotateX(180deg); }
+    }
+    @keyframes hero-ring-inner {
+      0%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      8%   { transform: rotateX(0deg);   animation-timing-function: var(--ease-in-out); }
+      36%  { transform: rotateX(90deg);  animation-timing-function: var(--ease-in-out); }
+      66%  { transform: rotateX(180deg); }
+      100% { transform: rotateX(180deg); }
+    }
+    @keyframes hero-mark-breath {
+      0%, 100% { transform: rotateX(0deg) rotateY(0deg); }
+      50%      { transform: rotateX(10deg) rotateY(-6deg); }
+    }
+    .hero-mark:hover .hero-mark__torus {
+      animation-play-state: paused;
+      transform: rotateX(12deg) rotateY(-8deg);
       transition: transform var(--dur-glacial) var(--ease-in-out);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-mark__torus, .hero-ring--outer, .hero-ring--inner { animation: none; }
+      .hero-ring--outer, .hero-ring--inner { transform: rotateX(0deg); }
     }
 
     .tagline {
@@ -1005,12 +1060,11 @@
 <body>
   <header class="topbar">
     <a href="#top" class="lockup">
-      <div class="mark">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
-          <title>Obra mark</title>
-          <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
-          <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
-        </svg>
+      <div class="mark" role="img" aria-label="Obra mark">
+        <div class="mark__torus">
+          <div class="mark-ring mark-ring--outer"></div>
+          <div class="mark-ring mark-ring--inner"></div>
+        </div>
       </div>
       <div class="wordmark">Obra</div>
     </a>
@@ -1018,25 +1072,24 @@
       <a href="/" class="topbar-lang" hreflang="en" aria-label="View in English">EN</a>
       <a href="/pt/the-trust-gap" class="topbar-essay-link">A lacuna de confiança</a>
       <a href="/pt/the-unenforced-law" class="topbar-essay-link">A lei por aplicar</a>
-      <span class="pill"><span class="pill-prefix">Em breve · </span>verão 2026</span>
+      <span class="pill"><span class="pill-prefix">Portugal · </span>10 pilotos a funcionar</span>
     </div>
   </header>
 
   <section id="top" class="hero">
-    <div class="hero-mark">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
-        <title>Obra mark</title>
-        <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
-        <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
-      </svg>
+    <div class="hero-mark" role="img" aria-label="Obra mark">
+      <div class="hero-mark__torus">
+        <div class="hero-ring hero-ring--outer"></div>
+        <div class="hero-ring hero-ring--inner"></div>
+      </div>
     </div>
-    <h1 class="tagline">A sua equipa,<br>mais um.</h1>
-    <p class="essence">O trabalho, tratado.</p>
+    <h1 class="tagline">O funcionário de IA<br>do seu alojamento.</h1>
+    <p class="essence">Comprovado com anfitriões de alojamento local. Construído sobre um motor para qualquer negócio regulado.</p>
     <p class="hero-lead">
-      A Obra é um funcionário virtual para os negócios que o software
-      esqueceu, os que são geridos por uma só pessoa a vestir todos os
-      chapéus. Trata do trabalho operacional sem alarido, traz-lhe só o
-      que precisa mesmo de uma pessoa, e nunca age sem o seu sim.
+      A Obra trata do registo dos seus hóspedes no SIBA, responde aos
+      hóspedes na língua deles, e envia relatórios aos proprietários.
+      Faz o trabalho, traz-lhe só o que precisa mesmo de uma pessoa, e
+      nunca age sem o seu sim.
     </p>
   </section>
 
@@ -1051,11 +1104,12 @@
     <h2 class="section-heading">Cada reserva arranca um relógio.</h2>
     <div class="prose">
       <p>
-        A Inês aluga uns quartos na costa. A lei dá-lhe 24 horas após a
-        chegada de um hóspede para verificar o passaporte e comunicá-lo
-        às autoridades, por isso precisa de o recolher antes de eles
-        chegarem à porta, para o conferir em pessoa e manter a chegada
-        sem atritos.
+        A Inês aluga uns quartos na costa. A lei dá-lhe um prazo curto
+        depois de cada hóspede fazer o check-in para o registar no
+        SIBA, a autoridade portuguesa de registo de hóspedes. Por isso
+        precisa dos dados do passaporte antes da chegada, para conferir
+        o hóspede em pessoa e manter a chegada sem atritos. Falhar o
+        prazo dá multa.
       </p>
       <p>
         Mas o passaporte é a coisa mais difícil de pedir. O hóspede
@@ -1084,10 +1138,9 @@
         Quando chega uma reserva, a Obra põe mãos à obra. Escreve ao
         hóspede uma primeira mensagem calorosa, na língua dele, do tipo
         que faz o passaporte parecer seguro de entregar em vez de
-        estranho de pedir. Lê os detalhes, prepara a comunicação às
-        autoridades, organiza a limpeza, deixa o mês pronto para o
-        contabilista. As partes silenciosas e repetitivas avançam por
-        si.
+        estranho de pedir. Lê os detalhes, prepara o registo no SIBA,
+        organiza a limpeza, deixa o mês pronto para o contabilista. As
+        partes silenciosas e repetitivas avançam por si.
       </p>
       <p>
         E no instante em que algo importa, a comunicação ao regulador,
@@ -1189,42 +1242,38 @@
       </svg>
       <span class="section-label">Onde estamos</span>
     </div>
-    <h2 class="section-heading">Construído com cuidado, à vista de todos.</h2>
+    <h2 class="section-heading">A funcionar com anfitriões hoje.</h2>
     <div class="prose">
       <p>
-        A Obra está em desenvolvimento ativo, e construímo-la à vista
-        de todos. A base está pronta: a framework de conectores, o
-        motor de fluxos durável, a cadeia de auditoria que controla, o
-        pilar de confiança de três barreiras. E já passou da teoria. Na
-        nossa primeira execução de ponta a ponta, a Obra preencheu
-        automaticamente, campo a campo, um formulário da autoridade de
-        fronteiras e enviou um email aprovado pelo anfitrião a partir da
-        conta do próprio anfitrião, com cada passo assinado na cadeia de
-        auditoria e a submissão final ao regulador deixada para um
-        humano aprovar. O primeiro piloto arranca com um pequeno grupo
-        de anfitriões no verão de 2026.
+        O motor está pronto: a framework de conectores, o motor de
+        fluxos durável, a cadeia de auditoria que controla, o pilar de
+        confiança de três barreiras. E está a trabalhar no terreno. Dez
+        anfitriões usam a Obra hoje. Ao longo do grupo, já tratou de
+        dezasseis reservas de ponta a ponta, da reserva ao registo no
+        SIBA, à comunicação com hóspedes, ao relatório ao proprietário,
+        sem uma única chamada de apoio para além da instalação.
       </p>
     </div>
     <div class="status">
       <div class="status-row">
-        <span class="status-row-label">Base da plataforma</span>
-        <span class="status-row-value"><span class="status-dot"></span>Completa</span>
+        <span class="status-row-label">Pilotos a funcionar · anfitriões de AL em Portugal</span>
+        <span class="status-row-value accent"><span class="status-dot"></span>10 ativos</span>
       </div>
       <div class="status-row">
-        <span class="status-row-label">Ciclo de execução ao vivo (propor, aprovar, agir, auditar)</span>
-        <span class="status-row-value accent"><span class="status-dot"></span>Demonstrado</span>
+        <span class="status-row-label">Reservas tratadas de ponta a ponta</span>
+        <span class="status-row-value accent"><span class="status-dot"></span>16 · zero chamadas de apoio</span>
       </div>
       <div class="status-row">
-        <span class="status-row-label">Primeiro piloto · anfitriões de alojamento local</span>
-        <span class="status-row-value accent"><span class="status-dot"></span>Verão de 2026</span>
+        <span class="status-row-label">O motor (conectores, fluxos, auditoria, barreiras de aprovação)</span>
+        <span class="status-row-value"><span class="status-dot"></span>Completo</span>
       </div>
       <div class="status-row">
-        <span class="status-row-label">Contabilidade e gestão de propriedades</span>
-        <span class="status-row-value">Final de 2026</span>
+        <span class="status-row-label">Segundo pacote · contabilidade</span>
+        <span class="status-row-value">A seguir</span>
       </div>
       <div class="status-row">
-        <span class="status-row-label">Jurídico, saúde, logística</span>
-        <span class="status-row-value">2027</span>
+        <span class="status-row-label">Pacotes de país na UE · Espanha, Itália</span>
+        <span class="status-row-value">2026-27</span>
       </div>
       <div class="status-row">
         <span class="status-row-label"><a href="https://github.com/get-obra/claude-for-portuguese-al-hosts" style="color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent-line);">Pacotes de referência verticais em código aberto</a></span>
@@ -1239,23 +1288,28 @@
         <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
         <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
       </svg>
-      <span class="section-label">A mesma forma, em todo o lado</span>
+      <span class="section-label">O motor</span>
     </div>
-    <h2 class="section-heading">Um padrão, setor após setor.</h2>
+    <h2 class="section-heading">O alojamento é o primeiro pacote.</h2>
     <div class="prose">
       <p>
-        Afaste-se da história e a forma não é exclusiva de um anfitrião.
-        Um negócio guarda dados sensíveis demais para entregar a um
-        serviço alojado por terceiros. Mais cedo ou mais tarde, um
-        regulador pede um comprovativo. O processo é o trabalho, e não
-        há a quem o passar. Essa forma repete-se por setores inteiros.
-        Começamos pelos anfitriões de alojamento local porque é aí que
-        a dor é mais aguda, e seguimos a mesma forma para fora.
+        Não construímos uma aplicação de hospitalidade. Construímos um
+        motor, a framework de conectores, o motor de fluxos, as
+        barreiras de confiança, a cadeia de auditoria, e apontámo-lo
+        primeiro à hospitalidade. Cada novo vertical é um pacote sobre
+        esse mesmo motor. Só mudam os conectores e o fluxo; o modelo de
+        confiança e a auditoria viajam com ele. É por isso que o segundo
+        pacote chega em semanas, não em anos, e que o mesmo motor
+        alcança um mercado tão vasto.
       </p>
+    </div>
+    <div style="margin-top:32px;padding:18px 24px;background:var(--ink);border-radius:12px;">
+      <div style="font-family:'Inter',system-ui,sans-serif;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);margin-bottom:8px;">O motor da Obra · partilhado por cada pacote</div>
+      <div style="font-family:'Spectral',Georgia,serif;font-size:15px;line-height:1.5;color:rgba(250,249,245,0.85);">Framework de conectores · motor de fluxos · execução cega ao operador · cadeia de auditoria à prova de adulteração · barreiras de aprovação humana. Construído uma vez, reutilizado por cada vertical.</div>
     </div>
     <div class="sectors">
       <div class="sector sector-pilot">
-        <div class="sector-tag">Primeiro piloto · 2026</div>
+        <div class="sector-tag">Ativo · 10 pilotos</div>
         <div class="sector-title">Anfitriões de alojamento local</div>
         <div class="sector-body">
           Anfitriões independentes e de pequena escala no setor do
@@ -1265,7 +1319,7 @@
         </div>
       </div>
       <div class="sector">
-        <div class="sector-tag">Em breve · 2026</div>
+        <div class="sector-tag">Próximo pacote</div>
         <div class="sector-title">Escritórios de contabilidade</div>
         <div class="sector-body">
           Um multiplicador de força sobre o trabalho que um único
@@ -1274,7 +1328,7 @@
         </div>
       </div>
       <div class="sector">
-        <div class="sector-tag">Em breve · 2026</div>
+        <div class="sector-tag">No horizonte</div>
         <div class="sector-title">Gestão de propriedades</div>
         <div class="sector-body">
           Manutenção, coordenação de fornecedores, conformidade de
@@ -1283,7 +1337,7 @@
         </div>
       </div>
       <div class="sector">
-        <div class="sector-tag">Em breve · 2027</div>
+        <div class="sector-tag">No horizonte</div>
         <div class="sector-title">Escritórios de advocacia</div>
         <div class="sector-body">
           Documentos sob sigilo profissional, prazos regulatórios,
@@ -1292,7 +1346,7 @@
         </div>
       </div>
       <div class="sector">
-        <div class="sector-tag">Em breve · 2027</div>
+        <div class="sector-tag">No horizonte</div>
         <div class="sector-title">Clínicas de saúde</div>
         <div class="sector-body">
           Comunicação com pacientes, agendamento, coordenação com
@@ -1301,7 +1355,7 @@
         </div>
       </div>
       <div class="sector">
-        <div class="sector-tag">Em breve · 2027</div>
+        <div class="sector-tag">No horizonte</div>
         <div class="sector-title">Logística e transporte</div>
         <div class="sector-body">
           Cadeia de custódia, coordenação entre várias partes,
