@@ -1134,7 +1134,28 @@
         transform: translateX(0);
       }
     }
+    /* Scroll reveal — progressive disclosure (calm, premium) */
+    .js .section-signature,
+    .js .section-heading,
+    .js .prose,
+    .js .gate,
+    .js .primitive,
+    .js .sector,
+    .js .status-row,
+    .js .workflow-coda,
+    .js .demo-embed,
+    .js .beta-card,
+    .js .mission-tagline {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .js .reveal-in { opacity: 1 !important; transform: none !important; }
+    @media (prefers-reduced-motion: reduce) {
+      .js .section-signature, .js .section-heading, .js .prose, .js .gate, .js .primitive, .js .sector, .js .status-row, .js .workflow-coda, .js .demo-embed, .js .beta-card, .js .mission-tagline { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
   </style>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
   <header class="topbar">
@@ -1618,6 +1639,25 @@
           btn.setAttribute('aria-label', v.muted ? 'Turn on sound' : 'Mute');
         });
       }
+    })();
+  </script>
+  <script>
+    // Scroll-reveal: progressive disclosure across sections (calm, staggered).
+    (function(){
+      try {
+        var sel = '.section-signature, .section-heading, .prose, .gate, .primitive, .sector, .status-row, .workflow-coda, .demo-embed, .beta-card, .mission-tagline';
+        var els = [].slice.call(document.querySelectorAll(sel));
+        if (!els.length) return;
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce || !('IntersectionObserver' in window)) { els.forEach(function(el){ el.classList.add('reveal-in'); }); return; }
+        var byParent = new Map();
+        els.forEach(function(el){ var p = el.parentNode; var a = byParent.get(p) || []; a.push(el); byParent.set(p, a); });
+        byParent.forEach(function(a){ a.forEach(function(el, i){ el.style.transitionDelay = Math.min(i * 70, 420) + 'ms'; }); });
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('reveal-in'); io.unobserve(e.target); } });
+        }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+        els.forEach(function(el){ io.observe(el); });
+      } catch (err) { document.documentElement.classList.remove('js'); }
     })();
   </script>
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d5b534fcfdc24e97afe3103783b3869c"}'></script><!-- End Cloudflare Web Analytics -->
