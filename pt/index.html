@@ -675,6 +675,18 @@
     }
 
     /* ─────────── Trust primitives ─────────── */
+    .gates { display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; align-items: stretch; margin-top: 32px; }
+    .gate { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 22px 22px; display: flex; flex-direction: column; }
+    .gate.hl { background: var(--ink); border-color: var(--ink); }
+    .gate-n { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 10px; }
+    .gate.hl .gate-n { color: #8fb98c; }
+    .gate-h { font-family: 'Spectral', Georgia, serif; font-size: 19px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+    .gate.hl .gate-h { color: var(--paper); }
+    .gate-t { font-size: 14px; line-height: 1.55; color: var(--muted); }
+    .gate.hl .gate-t { color: rgba(250, 249, 245, 0.8); }
+    .gate-arr { align-self: center; text-align: center; color: var(--rule); font-size: 22px; }
+    @media (max-width: 700px) { .gates { grid-template-columns: 1fr; gap: 12px; } .gate-arr { display: none; } }
+
     .primitives {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1171,9 +1183,29 @@
       <p>
         A maioria dos agentes de IA não merece confiança para trabalho
         regulado. A Obra merece, porque a confiança está construída na
-        arquitetura, não prometida numa política. Seis propriedades, cada
-        uma imposta pelo próprio sistema.
+        arquitetura, não prometida numa política. As ações de risco
+        passam três barreiras, e seis propriedades sustentam todo o
+        sistema.
       </p>
+    </div>
+    <div class="gates">
+      <div class="gate">
+        <div class="gate-n">Barreira 1</div>
+        <div class="gate-h">Raciocínio estruturado</div>
+        <div class="gate-t">O Claude trabalha o caso passo a passo.</div>
+      </div>
+      <div class="gate-arr">›</div>
+      <div class="gate hl">
+        <div class="gate-n">Barreira 2</div>
+        <div class="gate-h">Revisão adversarial</div>
+        <div class="gate-t">Um segundo Claude, independente, tenta derrubar a resposta do primeiro.</div>
+      </div>
+      <div class="gate-arr">›</div>
+      <div class="gate">
+        <div class="gate-n">Barreira 3</div>
+        <div class="gate-h">Aprovação humana</div>
+        <div class="gate-t">Nada toca no mundo exterior sem o seu sim.</div>
+      </div>
     </div>
     <div class="primitives">
       <div class="primitive">

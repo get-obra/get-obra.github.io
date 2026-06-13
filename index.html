@@ -712,6 +712,18 @@
     }
 
     /* ─────────── Trust primitives ─────────── */
+    .gates { display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; align-items: stretch; margin-top: 32px; }
+    .gate { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 22px 22px; display: flex; flex-direction: column; }
+    .gate.hl { background: var(--ink); border-color: var(--ink); }
+    .gate-n { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 10px; }
+    .gate.hl .gate-n { color: #8fb98c; }
+    .gate-h { font-family: 'Spectral', Georgia, serif; font-size: 19px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+    .gate.hl .gate-h { color: var(--paper); }
+    .gate-t { font-size: 14px; line-height: 1.55; color: var(--muted); }
+    .gate.hl .gate-t { color: rgba(250, 249, 245, 0.8); }
+    .gate-arr { align-self: center; text-align: center; color: var(--rule); font-size: 22px; }
+    @media (max-width: 700px) { .gates { grid-template-columns: 1fr; gap: 12px; } .gate-arr { display: none; } }
+
     .primitives {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1238,8 +1250,28 @@
       <p>
         Most AI agents can't be trusted with regulated work. Obra can,
         because trust is built into the architecture, not promised in a
-        policy. Six properties, each one enforced by the system itself.
+        policy. Risky actions pass three gates, and six properties hold
+        the whole system.
       </p>
+    </div>
+    <div class="gates">
+      <div class="gate">
+        <div class="gate-n">Gate 1</div>
+        <div class="gate-h">Structured reasoning</div>
+        <div class="gate-t">Claude works the case through, step by step.</div>
+      </div>
+      <div class="gate-arr">›</div>
+      <div class="gate hl">
+        <div class="gate-n">Gate 2</div>
+        <div class="gate-h">Adversarial review</div>
+        <div class="gate-t">A second, independent Claude tries to break the first one's answer.</div>
+      </div>
+      <div class="gate-arr">›</div>
+      <div class="gate">
+        <div class="gate-n">Gate 3</div>
+        <div class="gate-h">Human approval</div>
+        <div class="gate-t">Nothing touches the outside world without your yes.</div>
+      </div>
     </div>
     <div class="primitives">
       <div class="primitive">
