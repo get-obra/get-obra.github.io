@@ -1120,9 +1120,10 @@
     <p class="essence">IA de fronteira, finalmente segura para trabalho regulado. Local-first, confiança estrutural, auditoria que é sua.</p>
     <p class="hero-lead">
       A maioria dos agentes de IA não merece confiança para trabalho
-      regulado a sério. Construímos a harness que o torna possível, e
-      comprovámo-la no caso mais difícil que encontrámos: a conformidade
-      do alojamento local em Portugal.
+      regulado a sério. A Obra é a harness que torna um modelo de
+      fronteira seguro para pôr ao comando: corre na sua máquina, cada
+      ação é verificada e aprovada, e cada passo fica num registo que é
+      seu.
     </p>
   </section>
 
@@ -1233,6 +1234,34 @@
     <div class="primitives">
       <div class="primitive">
         <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h8"/>
+          <path d="M3 16h8"/>
+          <path d="M15 10l3 3 4-4"/>
+        </svg>
+        <div class="primitive-title">Duas leituras têm de coincidir</div>
+        <div class="primitive-body">
+          Cada facto crítico, um número de passaporte, uma data de
+          submissão, um valor, é lido duas vezes por duas passagens
+          independentes do Claude. O trabalho só avança quando ambas dão
+          a mesma resposta. Se divergirem, a Obra para e leva-o até si.
+          Nenhuma leitura isolada pode estar errada e passar.
+        </div>
+      </div>
+      <div class="primitive">
+        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l9 5-9 5-9-5 9-5z"/>
+          <path d="M3 13l9 5 9-5"/>
+        </svg>
+        <div class="primitive-title">Ações tipadas</div>
+        <div class="primitive-body">
+          Cada ação tem um nível de permissão fixo. Autónoma corre
+          sozinha. Controlada espera pela sua aprovação. Proibida nunca
+          pode acontecer. O modelo não pode subir-se um nível, por isso
+          nunca se concede um poder que não lhe deu.
+        </div>
+      </div>
+      <div class="primitive">
+        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="4" y="11" width="16" height="9" rx="2"/>
           <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
         </svg>
@@ -1240,19 +1269,6 @@
         <div class="primitive-body">
           A Obra corre na sua própria máquina, com a sua própria chave do
           Claude. Os dados em bruto nunca saem do seu controlo.
-        </div>
-      </div>
-      <div class="primitive">
-        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 8h8"/>
-          <path d="M3 16h8"/>
-          <path d="M15 10l3 3 4-4"/>
-        </svg>
-        <div class="primitive-title">Duas leituras têm de coincidir</div>
-        <div class="primitive-body">
-          As extrações críticas são lidas por duas passagens
-          independentes do Claude. Têm de coincidir antes de avançar. Se
-          não coincidirem, para e chega às suas mãos.
         </div>
       </div>
       <div class="primitive">
@@ -1265,17 +1281,6 @@
           As ações de risco passam três barreiras: raciocínio
           estruturado, uma segunda leitura adversarial por um Claude
           separado, e depois a sua aprovação.
-        </div>
-      </div>
-      <div class="primitive">
-        <svg class="primitive-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3l9 5-9 5-9-5 9-5z"/>
-          <path d="M3 13l9 5 9-5"/>
-        </svg>
-        <div class="primitive-title">Ações tipadas</div>
-        <div class="primitive-body">
-          Cada ação é tipada Autónoma, Controlada ou Proibida. O modelo
-          não pode contornar um nível. Proibida continua proibida.
         </div>
       </div>
       <div class="primitive">
