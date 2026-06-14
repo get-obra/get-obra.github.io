@@ -1138,7 +1138,6 @@
     .js .section-signature,
     .js .section-heading,
     .js .prose,
-    .js .gate,
     .js .primitive,
     .js .sector,
     .js .status-row,
@@ -1152,8 +1151,30 @@
     }
     .js .reveal-in { opacity: 1 !important; transform: none !important; }
     @media (prefers-reduced-motion: reduce) {
-      .js .section-signature, .js .section-heading, .js .prose, .js .gate, .js .primitive, .js .sector, .js .status-row, .js .workflow-coda, .js .demo-embed, .js .beta-card, .js .mission-tagline { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .js .section-signature, .js .section-heading, .js .prose, .js .primitive, .js .sector, .js .status-row, .js .workflow-coda, .js .demo-embed, .js .beta-card, .js .mission-tagline { opacity: 1 !important; transform: none !important; transition: none !important; }
     }
+
+    /* Three-gate diagram: the gates activate in sequence as the section
+       scrolls in, so the eye reads the pipeline reasoning › adversarial ›
+       approval in order. Each gate lifts in, then a brief accent glow. */
+    .js .gates .gate {
+      opacity: 0;
+      transform: translateY(16px) scale(0.985);
+      transition: opacity 0.55s var(--ease-standard), transform 0.55s var(--ease-standard), box-shadow 0.5s var(--ease-standard);
+    }
+    .js .gates .gate-arr {
+      opacity: 0;
+      transition: opacity 0.45s var(--ease-standard);
+    }
+    .js .gates.seq .gate.on { opacity: 1; transform: none; }
+    .js .gates.seq .gate-arr.on { opacity: 1; }
+    .js .gates.seq .gate.flash { box-shadow: 0 10px 34px -14px rgba(183, 87, 64, 0.55); }
+    @media (prefers-reduced-motion: reduce) {
+      .js .gates .gate, .js .gates .gate-arr { opacity: 1 !important; transform: none !important; box-shadow: none !important; }
+    }
+
+    /* Proof numbers count up once, in view */
+    .count { font-variant-numeric: tabular-nums; }
   </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -1403,11 +1424,11 @@
     <div class="status">
       <div class="status-row">
         <span class="status-row-label">Live pilots · Portugal AL hosts</span>
-        <span class="status-row-value accent"><span class="status-dot"></span>10 running</span>
+        <span class="status-row-value accent"><span class="status-dot"></span><span class="count" data-to="10">10</span> running</span>
       </div>
       <div class="status-row">
         <span class="status-row-label">Reservations run end-to-end</span>
-        <span class="status-row-value accent"><span class="status-dot"></span>16 · zero support calls</span>
+        <span class="status-row-value accent"><span class="status-dot"></span><span class="count" data-to="16">16</span> · zero support calls</span>
       </div>
       <div class="status-row">
         <span class="status-row-label">The engine (connectors, runtime, audit, approval gates)</span>
@@ -1656,7 +1677,7 @@
     // Scroll-reveal: progressive disclosure across sections (calm, staggered).
     (function(){
       try {
-        var sel = '.section-signature, .section-heading, .prose, .gate, .primitive, .sector, .status-row, .workflow-coda, .demo-embed, .beta-card, .mission-tagline';
+        var sel = '.section-signature, .section-heading, .prose, .primitive, .sector, .status-row, .workflow-coda, .demo-embed, .beta-card, .mission-tagline';
         var els = [].slice.call(document.querySelectorAll(sel));
         if (!els.length) return;
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1669,6 +1690,61 @@
         }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
         els.forEach(function(el){ io.observe(el); });
       } catch (err) { document.documentElement.classList.remove('js'); }
+    })();
+
+    // Three-gate diagram: sequential activation (gate › arrow › gate › arrow › gate).
+    (function(){
+      var gates = document.querySelector('.gates');
+      if (!gates) return;
+      var kids = [].slice.call(gates.children);
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) {
+        gates.classList.add('seq');
+        kids.forEach(function(el){ el.classList.add('on'); });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          gates.classList.add('seq');
+          kids.forEach(function(el, i){
+            setTimeout(function(){
+              el.classList.add('on');
+              if (el.classList.contains('gate')) {
+                el.classList.add('flash');
+                setTimeout(function(){ el.classList.remove('flash'); }, 520);
+              }
+            }, i * 260);
+          });
+        });
+      }, { threshold: 0.4 });
+      io.observe(gates);
+    })();
+
+    // Proof numbers: smooth count-up once, in view.
+    (function(){
+      var els = [].slice.call(document.querySelectorAll('.count'));
+      if (!els.length) return;
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) return;
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          var el = e.target; io.unobserve(el);
+          var to = parseInt(el.getAttribute('data-to'), 10);
+          var dur = 750, start = null;
+          el.textContent = '0';
+          requestAnimationFrame(function tick(t){
+            if (!start) start = t;
+            var p = Math.min((t - start) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(eased * to);
+            if (p < 1) requestAnimationFrame(tick); else el.textContent = to;
+          });
+        });
+      }, { threshold: 0.6 });
+      els.forEach(function(el){ io.observe(el); });
     })();
   </script>
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d5b534fcfdc24e97afe3103783b3869c"}'></script><!-- End Cloudflare Web Analytics -->
