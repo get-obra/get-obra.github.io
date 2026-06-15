@@ -1,0 +1,61 @@
+import type { Metadata, Viewport } from "next";
+import { Spectral, Inter } from "next/font/google";
+import "./globals.css";
+
+const spectral = Spectral({
+  variable: "--font-spectral",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://get-obra.com"),
+  title: "Obra · The harness for trusted AI employees.",
+  description:
+    "Obra is the harness that makes a frontier model safe to put to work in regulated business: local-first, two-read verification, typed actions, host-owned audit. Proven on Portugal's short-term-rental compliance. Built on Claude.",
+  alternates: {
+    canonical: "https://get-obra.com/",
+    languages: {
+      en: "https://get-obra.com/",
+      "pt-PT": "https://get-obra.com/pt/",
+    },
+  },
+  openGraph: {
+    title: "Obra · The harness for trusted AI employees.",
+    description:
+      "The harness that makes frontier AI safe for regulated work: local-first, structurally trusted, audit you own. First vertical live: Portugal's short-term rentals. Built on Claude.",
+    type: "website",
+    url: "https://get-obra.com",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Obra — the harness for trusted AI employees" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Obra · The harness for trusted AI employees.",
+    description:
+      "The harness that makes frontier AI safe for regulated work: local-first, structurally trusted, audit you own. Built on Claude.",
+    images: ["/og.png"],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#faf9f5",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" className={`${spectral.variable} ${inter.variable}`}>
+      <body>{children}</body>
+    </html>
+  );
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:630px; }
+  body {
+    position:relative; overflow:hidden;
+    background:#faf9f5;
+    background-image:
+      radial-gradient(circle at 22% 30%, rgba(217,214,200,0.22) 0%, transparent 38%),
+      radial-gradient(circle at 80% 75%, rgba(217,214,200,0.18) 0%, transparent 42%);
+    font-family:'Spectral',Georgia,serif; color:#1a1a1a;
+  }
+  .motif { position:absolute; right:-150px; top:-60px; width:620px; height:620px; opacity:0.4;
+    background-repeat:no-repeat; background-size:contain;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='44' fill='none' stroke='%23d9d6c8' stroke-width='1'/><circle cx='60' cy='60' r='26' fill='none' stroke='%23d9d6c8' stroke-width='0.5'/></svg>"); }
+  .wrap { position:absolute; inset:0; padding:72px 80px; display:flex; flex-direction:column; justify-content:space-between; }
+  .lockup { display:flex; align-items:center; gap:18px; }
+  .mark { width:52px; height:52px; }
+  .wordmark { font-size:34px; letter-spacing:-0.005em; }
+  .headline { font-size:62px; line-height:1.0; letter-spacing:-0.02em; max-width:960px; }
+  .sub { font-style:italic; font-size:26px; line-height:1.45; color:#6e6a5d; margin-top:22px; max-width:780px; }
+  .foot { display:flex; align-items:center; gap:16px; font-family:'Inter',system-ui,sans-serif; font-size:17px; color:#6e6a5d; letter-spacing:0.01em; }
+  .dot { width:7px; height:7px; border-radius:999px; background:#b75740; }
+  .sep { opacity:0.45; }
+  .url { color:#b75740; font-weight:500; }
+  .mid { margin-top:-8px; }
+</style>
+</head>
+<body>
+  <div class="motif"></div>
+  <div class="wrap">
+    <div class="lockup">
+      <svg class="mark" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="44" fill="none" stroke="#1a1a1a" stroke-width="9"/>
+        <circle cx="60" cy="60" r="26" fill="none" stroke="#1a1a1a" stroke-width="2.8"/>
+      </svg>
+      <div class="wordmark">Obra</div>
+    </div>
+
+    <div class="mid">
+      <div class="headline">A harness para<br>funcionários de IA<br>de confiança.</div>
+      <div class="sub">IA de fronteira, finalmente segura para trabalho regulado. Local-first, confiança estrutural, auditoria que é sua.</div>
+    </div>
+
+    <div class="foot">
+      <span class="dot"></span>
+      <span>Construído sobre o Claude</span>
+      <span class="sep">·</span>
+      <span>Membro da Claude Partner Network</span>
+      <span class="sep">·</span>
+      <span class="url">get-obra.com</span>
+    </div>
+  </div>
+</body>
+</html>
