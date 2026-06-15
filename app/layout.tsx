@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Spectral, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const spectral = Spectral({
@@ -55,7 +56,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${spectral.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Cloudflare Web Analytics — restored after the Next.js rebuild dropped it */}
+        <Script
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          strategy="afterInteractive"
+          data-cf-beacon='{"token": "d5b534fcfdc24e97afe3103783b3869c"}'
+        />
+      </body>
     </html>
   );
 }
