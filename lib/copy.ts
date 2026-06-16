@@ -81,6 +81,11 @@ export type Copy = {
     footerX: string;
     footerBuilt: string;
   };
+  faq?: {
+    label: string;
+    heading: string;
+    items: { q: string; a: string }[];
+  };
   diagrams: {
     harness: {
       layers: string[];
@@ -239,6 +244,40 @@ export const en: Copy = {
     footerUnenforcedHref: "/the-unenforced-law",
     footerX: "Follow on X",
     footerBuilt: "Built on Claude.",
+  },
+  faq: {
+    label: "FAQ",
+    heading: "Questions, answered.",
+    items: [
+      {
+        q: "What is Obra?",
+        a: "Obra turns a frontier AI model into a reliable employee for small regulated businesses. It handles real operational work across your inbox, calendar, and the tools you already use, acting only through approved actions, stopping at the decisions a human must own, and keeping a signed record of everything it does. The model supplies the intelligence; Obra supplies the trust.",
+      },
+      {
+        q: "Where does my data go? Is it safe?",
+        a: "Obra runs on your own machine. Your data, your logins, your memory, and your audit trail stay local, so the vendor cannot read them, hold your keys, or be breached into your accounts. Only the model's reasoning calls out, and you control what it sees.",
+      },
+      {
+        q: "What does Obra do today?",
+        a: "Obra works like an operations employee for your business. It triages your inbox and surfaces what needs you, stays on top of your calendar, drafts and sends replies for your approval, tracks what you are owed and reminds you, remembers the details you tell it, sets the reminders and routines you ask for, and can drive the web to finish a task. You work with it over chat, like a colleague. Its deepest proven workflow is Portuguese short-term-rental compliance, where it reads a guest's passport, double-checks the details, and files the mandatory SIBA registration on the government portal, with you approving before anything is submitted.",
+      },
+      {
+        q: "Who is Obra for?",
+        a: "Small regulated businesses that hand off real operational work but cannot afford a mistake. The first vertical is short-term-rental hosts in Portugal, and the same harness extends to any regulated workflow.",
+      },
+      {
+        q: "How is it different from ChatGPT or a cloud AI assistant?",
+        a: "A chatbot answers; Obra acts. It carries out the task through gated, typed actions, runs on your machine instead of a vendor's cloud, and proves every step in an audit trail you own. The chatbot is a brain; Obra is the brain plus the boundaries.",
+      },
+      {
+        q: "Which AI model does it use?",
+        a: "Obra is built on Claude. By design the model is a swappable component, so the harness can run on other frontier models as they improve. The durable part is the harness, not the model.",
+      },
+      {
+        q: "Can I trust it to act on its own?",
+        a: "Every action is tagged autonomous, needs-a-human, or forbidden. Obra does the safe, routine work itself, pauses for your approval on anything that matters, and never crosses the lines you set, and you can check exactly what it did afterward.",
+      },
+    ],
   },
   diagrams: {
     harness: {

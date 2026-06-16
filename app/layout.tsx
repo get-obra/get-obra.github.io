@@ -66,6 +66,7 @@ const jsonLd = {
       description:
         "Obra is the harness that makes a frontier AI model safe to put to work in regulated business: local-first, structurally trusted, with a host-owned audit trail.",
       sameAs: ["https://x.com/getobra", "https://github.com/get-obra"],
+      founder: { "@id": "https://get-obra.com/#francisco" },
     },
     {
       "@type": "WebSite",
@@ -83,6 +84,15 @@ const jsonLd = {
       description:
         "A local-first trust layer (harness) around an AI agent for regulated small businesses. It acts only through approved tools, stops at the decisions a human must own, and keeps a signed, host-owned audit trail. First vertical: Portugal's short-term-rental (SIBA) compliance. Built on Claude.",
       creator: { "@id": "https://get-obra.com/#organization" },
+    },
+    {
+      "@type": "Person",
+      "@id": "https://get-obra.com/#francisco",
+      name: "Francisco Ribeiro Silva",
+      jobTitle: "Founder",
+      url: "https://www.linkedin.com/in/francisco-ribeiro-silva/",
+      sameAs: ["https://www.linkedin.com/in/francisco-ribeiro-silva/"],
+      worksFor: { "@id": "https://get-obra.com/#organization" },
     },
   ],
 };

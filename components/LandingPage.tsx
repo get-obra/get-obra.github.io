@@ -5,6 +5,7 @@ import { TrustSection } from "./TrustSection";
 import { ProofSection } from "./Proof";
 import { EngineSection } from "./Engine";
 import { MissionSection, BetaSection, ContactInvestorFooter } from "./Closing";
+import { FaqSection } from "./Faq";
 import { LangSetter } from "./LangSetter";
 import type { Copy } from "@/lib/copy";
 
@@ -21,6 +22,7 @@ export function LandingPage({ c }: { c: Copy }) {
       <EngineSection c={c.engine} packs={c.diagrams.packs} />
       <MissionSection c={c.mission} />
       <BetaSection c={c.beta} />
+      {c.faq && <FaqSection c={c.faq} />}
       <ContactInvestorFooter c={c.closing} />
     </main>
   );
