@@ -27,8 +27,8 @@ export function MissionSection({ c }: { c: Copy["mission"] }) {
         <Stagger amount={0.3}>
           <SectionLabel center>{c.label}</SectionLabel>
           <p
-            className="mb-7 max-[600px]:text-[30px]"
-            style={{ fontFamily: "var(--font-brand)", fontWeight: 400, fontSize: 44, lineHeight: 1.15, letterSpacing: "-0.015em", color: "var(--color-ink)", textAlign: "center" }}
+            className="mb-7"
+            style={{ fontFamily: "var(--font-brand)", fontWeight: 400, fontSize: "clamp(28px, 6.5vw, 44px)", lineHeight: 1.15, letterSpacing: "-0.015em", color: "var(--color-ink)", textAlign: "center" }}
           >
             <MaskUp lines={c.taglineLines} stagger={0.1} />
           </p>
@@ -68,7 +68,7 @@ export function BetaSection({ c }: { c: Copy["beta"] }) {
         />
         <div className="relative z-[1] max-w-[480px]">
           <div className="micro-label mb-4">{c.cardLabel}</div>
-          <h3 className="mb-5 max-[600px]:text-[24px]" style={{ fontFamily: "var(--font-brand)", fontWeight: 400, fontSize: 32, lineHeight: 1.15, color: "var(--color-paper)", letterSpacing: "-0.01em" }}>
+          <h3 className="mb-5" style={{ fontFamily: "var(--font-brand)", fontWeight: 400, fontSize: "clamp(24px, 5vw, 32px)", lineHeight: 1.15, color: "var(--color-paper)", letterSpacing: "-0.01em" }}>
             {c.cardHeading}
           </h3>
           <p className="mb-7" style={{ fontSize: 16, lineHeight: 1.65, color: "rgba(250,249,245,0.78)" }}>
@@ -96,7 +96,7 @@ export function ContactInvestorFooter({ c }: { c: Copy["closing"] }) {
         <p className="mb-[14px]" style={{ fontFamily: "var(--font-brand)", fontSize: 24, color: "var(--color-ink)" }}>
           {c.contactPrompt}
         </p>
-        <a href={`mailto:${c.email}`} className="no-underline" style={{ fontFamily: "var(--font-brand)", fontSize: 28, color: "var(--color-accent)" }}>
+        <a href={`mailto:${c.email}`} className="no-underline" style={{ fontFamily: "var(--font-brand)", fontSize: "clamp(18px, 5.5vw, 28px)", color: "var(--color-accent)", wordBreak: "break-word" }}>
           {c.email}
         </a>
       </section>

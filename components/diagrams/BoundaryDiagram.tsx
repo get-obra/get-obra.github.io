@@ -19,7 +19,7 @@ export function BoundaryDiagram({ c }: { c: Copy["diagrams"]["boundary"] }) {
       viewport={{ once: true, amount: 0.4 }}
       variants={{ show: { transition: { staggerChildren: 0.12 } } }}
     >
-      <div className="grid items-stretch gap-3 max-[700px]:grid-cols-1" style={{ gridTemplateColumns: "1.6fr auto 1fr" }}>
+      <div className="grid items-stretch gap-3 grid-cols-[1.6fr_auto_1fr] max-[700px]:grid-cols-1">
         {/* Your machine — the boundary */}
         <motion.div
           variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }}

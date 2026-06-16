@@ -46,6 +46,9 @@ body {
   color: var(--color-ink);
   line-height: 1.6;
   min-height: 100vh;
+  /* Safety net: clip any stray horizontal overflow on small screens without
+     creating a scroll container (so the sticky header keeps working). */
+  overflow-x: clip;
   /* subtle paper-grain, fixed (brand: paper tone is the texture) */
   background-image:
     radial-gradient(circle at 25% 35%, rgba(217, 214, 200, 0.18) 0%, transparent 35%),

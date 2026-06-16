@@ -37,11 +37,11 @@ export function Heading({ children }: { children: string | string[] }) {
   const lines = Array.isArray(children) ? children : [children];
   return (
     <h2
-      className="mb-7 max-w-[640px] max-[600px]:text-[30px]"
+      className="mb-7 max-w-[640px]"
       style={{
         fontFamily: "var(--font-brand)",
         fontWeight: 400,
-        fontSize: 40,
+        fontSize: "clamp(28px, 6vw, 40px)",
         lineHeight: 1.12,
         letterSpacing: "-0.015em",
         color: "var(--color-ink)",

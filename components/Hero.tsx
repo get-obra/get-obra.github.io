@@ -81,11 +81,11 @@ export function Hero({ c }: { c: Copy["hero"] }) {
         </motion.div>
 
         <h1
-          className="mb-5 max-[600px]:text-[48px]"
+          className="mb-5"
           style={{
             fontFamily: "var(--font-brand)",
             fontWeight: 400,
-            fontSize: 72,
+            fontSize: "clamp(40px, 9vw, 72px)",
             lineHeight: 0.98,
             letterSpacing: "-0.02em",
             color: "var(--color-ink)",

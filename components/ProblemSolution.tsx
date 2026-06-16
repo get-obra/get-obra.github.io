@@ -89,7 +89,7 @@ function DemoEmbed({ caption, soundOn, soundOff }: { caption: string; soundOn: s
   }, [inView]);
 
   return (
-    <div ref={wrapRef} className="relative left-1/2 w-[min(1100px,94vw)] max-[720px]:static max-[720px]:left-auto max-[720px]:w-full" style={{ marginLeft: "max(-550px,-47vw)", marginTop: 52 }}>
+    <div ref={wrapRef} className="relative left-1/2 ml-[max(-550px,-47vw)] w-[min(1100px,94vw)] max-[720px]:static max-[720px]:left-auto max-[720px]:ml-0 max-[720px]:w-full" style={{ marginTop: 52 }}>
       <motion.div
         initial={reduce ? undefined : { opacity: 0, y: 36, scale: 0.97 }}
         whileInView={reduce ? undefined : { opacity: 1, y: 0, scale: 1 }}

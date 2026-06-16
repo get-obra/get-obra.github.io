@@ -28,8 +28,7 @@ function ThreeGates({ gatesCopy }: { gatesCopy: Copy["trust"]["gates"] }) {
 
   return (
     <motion.div
-      className="mt-8 grid items-stretch gap-3 max-[700px]:grid-cols-1"
-      style={{ gridTemplateColumns: "1fr 24px 1fr 24px 1fr" }}
+      className="mt-8 grid items-stretch gap-3 grid-cols-[1fr_24px_1fr_24px_1fr] max-[700px]:grid-cols-1"
       initial={reduce ? undefined : "hidden"}
       whileInView={reduce ? undefined : "show"}
       viewport={{ once: true, amount: 0.4 }}
