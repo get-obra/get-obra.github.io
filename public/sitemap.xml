@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://get-obra.com/</loc>
+    <lastmod>2026-06-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://get-obra.com/"/>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://get-obra.com/pt/"/>
+  </url>
+  <url>
+    <loc>https://get-obra.com/pt/</loc>
+    <lastmod>2026-06-17</lastmod>
+  </url>
+  <url>
+    <loc>https://get-obra.com/the-trust-gap/</loc>
+  </url>
+  <url>
+    <loc>https://get-obra.com/the-unenforced-law/</loc>
+  </url>
+  <url>
+    <loc>https://get-obra.com/agent-skills/</loc>
+  </url>
+  <url>
+    <loc>https://get-obra.com/pt/the-trust-gap/</loc>
+  </url>
+  <url>
+    <loc>https://get-obra.com/pt/the-unenforced-law/</loc>
+  </url>
+  <url>
+    <loc>https://get-obra.com/deck.pdf</loc>
+  </url>
+</urlset>

@@ -1,0 +1,5 @@
+# get-obra.com — open to search crawlers and AI agents.
+User-agent: *
+Allow: /
+
+Sitemap: https://get-obra.com/sitemap.xml

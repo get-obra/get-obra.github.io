@@ -1,0 +1,21 @@
+# Obra
+
+> Obra is the harness that makes a frontier AI model safe to put to work in regulated business: local-first, two-read verification, typed actions, and a host-owned audit trail. The model is a commodity; the harness is the product. First vertical live: Portugal's short-term-rental (SIBA) compliance. Built on Claude.
+
+## What Obra is
+Obra runs on the customer's own machine, not in the cloud. It wraps any frontier model in a trust layer that acts only through approved tools, stops at the decisions a human must own, and writes a signed, tamper-evident audit trail. The customer's data, credentials, memory, and audit stay local; only the model reasoning calls out, and that is controllable and swappable. The durable layer is the harness, not the model.
+
+## Core pages
+- [Home](https://get-obra.com/): what Obra is and how the harness works.
+- [The trust gap](https://get-obra.com/the-trust-gap/): why a frontier model alone is not enough for regulated work, and what the harness adds.
+- [The unenforced law](https://get-obra.com/the-unenforced-law/): the compliance gap Obra was built for.
+- [Pitch deck (PDF)](https://get-obra.com/deck.pdf): investor overview.
+
+## Portuguese (pt-PT)
+- [Início](https://get-obra.com/pt/)
+- [The trust gap](https://get-obra.com/pt/the-trust-gap/)
+- [The unenforced law](https://get-obra.com/pt/the-unenforced-law/)
+
+## Contact
+- Email: francisco@get-obra.com
+- X: https://x.com/getobra

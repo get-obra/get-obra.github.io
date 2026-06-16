@@ -51,12 +51,52 @@ export const viewport: Viewport = {
   themeColor: "#faf9f5",
 };
 
+// Structured data (schema.org) so agents get explicit, parseable facts about
+// Obra instead of inferring them from prose. sameAs links the same entity
+// across the web (add the LinkedIn URL when confirmed).
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://get-obra.com/#organization",
+      name: "Obra",
+      url: "https://get-obra.com/",
+      logo: "https://get-obra.com/og.png",
+      description:
+        "Obra is the harness that makes a frontier AI model safe to put to work in regulated business: local-first, structurally trusted, with a host-owned audit trail.",
+      sameAs: ["https://x.com/getobra", "https://github.com/get-obra"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://get-obra.com/#website",
+      url: "https://get-obra.com/",
+      name: "Obra",
+      publisher: { "@id": "https://get-obra.com/#organization" },
+      inLanguage: ["en", "pt-PT"],
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Obra",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Windows, macOS",
+      description:
+        "A local-first trust layer (harness) around an AI agent for regulated small businesses. It acts only through approved tools, stops at the decisions a human must own, and keeps a signed, host-owned audit trail. First vertical: Portugal's short-term-rental (SIBA) compliance. Built on Claude.",
+      creator: { "@id": "https://get-obra.com/#organization" },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${spectral.variable} ${inter.variable}`}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
         {/* Cloudflare Web Analytics — restored after the Next.js rebuild dropped it */}
         <Script
