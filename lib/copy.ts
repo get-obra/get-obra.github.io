@@ -51,6 +51,16 @@ export type Copy = {
     cards: { title: string; body: string }[];
   };
   proof: { label: string; heading: string; paras: string[]; rows: ProofRow[] };
+  web3: {
+    label: string;
+    heading: string;
+    paras: string[];
+    caption: string;
+    verifyLabel: string;
+    verifyLinks: { label: string; href: string }[];
+    soundOn: string;
+    soundOff: string;
+  };
   engine: {
     label: string;
     heading: string;
@@ -199,6 +209,22 @@ export const en: Copy = {
       { label: "Second pack · accounting", value: "Next" },
       { label: "EU country packs · Spain, Italy", value: "2026-27" },
     ],
+  },
+  web3: {
+    label: "Proof of range",
+    heading: "The same harness, on-chain.",
+    paras: [
+      "Hospitality proved the harness on regulated stakes. On-chain proves it on a different kind: an action that is irreversible, where one slip moves real money. Same harness, harder stakes. The model proposes a transaction, you approve it, and the key signs on your own machine.",
+      "Here Obra prepares one test transfer on each of three chains and asks for approval per transaction. You approve two and refuse one. Two land on-chain, one is refused and never signed, and the signing key never leaves your machine. It runs on testnet, to prove the plumbing before anything touches a live chain.",
+    ],
+    caption: "Non-custodial, human-approved, audited. The refusal is the proof.",
+    verifyLabel: "Verify the two transactions on-chain:",
+    verifyLinks: [
+      { label: "Avalanche · Snowtrace", href: "https://testnet.snowtrace.io/tx/0x11cde8ea853852e6ad75bbe49b8fb476c4dda09234836902db3ec3fe5b5be207" },
+      { label: "Solana Explorer", href: "https://explorer.solana.com/tx/4ZWAKoB5NWeA2MKkz2FFTZoDeP4bfHyEYMKxpRjM4TcbXV7bwhbb14zbvszLykaaXJLDeiZUP1ey3fY4FhcjfHFr?cluster=devnet" },
+    ],
+    soundOn: "Sound on",
+    soundOff: "Tap for sound",
   },
   engine: {
     label: "The harness",
@@ -404,6 +430,22 @@ export const pt: Copy = {
       { label: "Segundo pacote · contabilidade", value: "A seguir" },
       { label: "Pacotes de país na UE · Espanha, Itália", value: "2026-27" },
     ],
+  },
+  web3: {
+    label: "Prova de alcance",
+    heading: "A mesma harness, on-chain.",
+    paras: [
+      "A hospitalidade provou a harness em risco regulado. O on-chain prova-a noutro tipo: uma ação irreversível, onde um deslize move dinheiro real. A mesma harness, risco maior. O modelo propõe a transação, você aprova, e a chave assina na sua própria máquina.",
+      "Aqui a Obra prepara uma transferência de teste em cada uma de três blockchains e pede aprovação por transação. Aprova duas e recusa uma. Duas ficam on-chain, uma é recusada e nunca assinada, e a chave de assinatura nunca sai da sua máquina. Corre em testnet, para provar tudo antes de algo tocar numa rede real.",
+    ],
+    caption: "Sem custódia, aprovada por humanos, auditada. A recusa é a prova.",
+    verifyLabel: "Verifique as duas transações on-chain:",
+    verifyLinks: [
+      { label: "Avalanche · Snowtrace", href: "https://testnet.snowtrace.io/tx/0x11cde8ea853852e6ad75bbe49b8fb476c4dda09234836902db3ec3fe5b5be207" },
+      { label: "Solana Explorer", href: "https://explorer.solana.com/tx/4ZWAKoB5NWeA2MKkz2FFTZoDeP4bfHyEYMKxpRjM4TcbXV7bwhbb14zbvszLykaaXJLDeiZUP1ey3fY4FhcjfHFr?cluster=devnet" },
+    ],
+    soundOn: "Som ligado",
+    soundOff: "Toque para som",
   },
   engine: {
     label: "A harness",
