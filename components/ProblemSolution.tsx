@@ -5,7 +5,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Section, Heading } from "./Section";
 import { SectionLabel } from "./brand";
 import { Stagger, Reveal } from "./motion";
-import { HarnessDiagram } from "./diagrams/HarnessDiagram";
+import { StaffingModelDiagram } from "./diagrams/StaffingModelDiagram";
 import { JobLoopDiagram } from "./diagrams/JobLoopDiagram";
 import type { Copy } from "@/lib/copy";
 
@@ -31,11 +31,11 @@ export function ProblemSection({ c }: { c: Copy["problem"] }) {
 
 export function SolutionSection({
   c,
-  harness,
+  model,
   loop,
 }: {
   c: Copy["solution"];
-  harness: Copy["diagrams"]["harness"];
+  model: Copy["diagrams"]["model"];
   loop: Copy["diagrams"]["loop"];
 }) {
   return (
@@ -52,7 +52,7 @@ export function SolutionSection({
         </Reveal>
       </Stagger>
 
-      <HarnessDiagram c={harness} />
+      <StaffingModelDiagram c={model} />
 
       <Stagger amount={0.2} className="mt-20">
         <Reveal>

@@ -50,15 +50,21 @@ export function BoundaryDiagram({ c }: { c: Copy["diagrams"]["boundary"] }) {
           </div>
         </motion.div>
 
-        {/* the boundary line + blocked peek */}
+        {/* only status/metadata crosses to the operator — never the data */}
         <motion.div
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.4 } } }}
-          className="relative flex items-center justify-center max-[700px]:h-10"
+          className="flex flex-col items-center justify-center gap-1.5 max-[700px]:h-16"
           aria-hidden
         >
-          <span className="absolute inset-y-0 left-1/2 w-px max-[700px]:inset-x-0 max-[700px]:inset-y-auto max-[700px]:top-1/2 max-[700px]:h-px max-[700px]:w-full" style={{ background: "var(--color-rule)", borderLeft: "1px dashed var(--color-rule)" }} />
-          <span className="relative z-[1] flex h-7 w-7 items-center justify-center rounded-full" style={{ background: "var(--color-paper)", border: "1px solid var(--accent-line)", color: "var(--color-accent)", fontSize: 14 }}>
-            ✕
+          <span className="font-ui" style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-muted)", whiteSpace: "nowrap" }}>
+            status only
+          </span>
+          <span className="flex items-center max-[700px]:rotate-90" style={{ color: "var(--color-accent)" }}>
+            <span className="h-px w-8 max-[700px]:w-6" style={{ background: "var(--color-accent)" }} />
+            <span style={{ fontSize: 15, lineHeight: 1, marginLeft: 1 }}>▸</span>
+          </span>
+          <span className="font-ui" style={{ fontSize: 9, color: "var(--color-rule)", whiteSpace: "nowrap" }}>
+            no data
           </span>
         </motion.div>
 

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: pt.metaDescription,
     type: "website",
     url: "https://get-obra.com/pt",
-    images: [{ url: "/og-pt.png", width: 1200, height: 630, alt: "Obra — a harness para funcionários de IA de confiança" }],
+    images: [{ url: "/og-pt.png", width: 1200, height: 630, alt: "Obra — uma força de trabalho de IA gerida para empresas em setores regulados" }],
   },
   twitter: {
     card: "summary_large_image",
