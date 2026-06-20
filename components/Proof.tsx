@@ -39,7 +39,16 @@ export function ProofSection({ c }: { c: Copy["proof"] }) {
         </Reveal>
       </Stagger>
 
-      <Stagger amount={0.2} className="mt-9 rounded-xl p-9 max-[600px]:p-6" style={{ background: "var(--color-paper)", border: "1px solid var(--color-rule)" }}>
+      <Stagger amount={0.2} className="mt-9 grid grid-cols-3 gap-3 max-[600px]:grid-cols-1">
+        {c.metrics.map((m) => (
+          <Reveal key={m.label} className="rounded-xl p-7 text-center max-[600px]:p-5" style={{ background: "var(--color-paper-warm)", border: "1px solid var(--color-rule)" }}>
+            <div style={{ fontFamily: "var(--font-brand)", fontSize: 58, fontWeight: 600, lineHeight: 1, color: "var(--color-accent)" }}>{m.value}</div>
+            <div className="font-ui" style={{ fontSize: 14, color: "var(--color-muted)", marginTop: 12, lineHeight: 1.4 }}>{m.label}</div>
+          </Reveal>
+        ))}
+      </Stagger>
+
+      <Stagger amount={0.2} className="mt-3 rounded-xl p-9 max-[600px]:p-6" style={{ background: "var(--color-paper)", border: "1px solid var(--color-rule)" }}>
         {c.rows.map((row) => (
           <Row key={row.label} row={row} />
         ))}

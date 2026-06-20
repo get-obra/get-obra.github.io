@@ -52,7 +52,20 @@ export type Copy = {
     gates: { n: string; h: string; t: string }[];
     cards: { title: string; body: string }[];
   };
-  proof: { label: string; heading: string; paras: string[]; rows: ProofRow[] };
+  proof: { label: string; heading: string; metrics: { value: string; label: string }[]; paras: string[]; rows: ProofRow[] };
+  compare: {
+    label: string;
+    heading: string;
+    normalLabel: string;
+    obraLabel: string;
+    rows: { normal: string; obra: string }[];
+  };
+  audit: {
+    label: string;
+    heading: string;
+    caption: string;
+    lines: { ev: string; detail: string; ok?: boolean }[];
+  };
   web3: {
     label: string;
     heading: string;
@@ -150,7 +163,7 @@ export const en: Copy = {
   hero: {
     titleLines: ["Employ AI.", "Don't operate it."],
     essence:
-      "A managed AI workforce for regulated businesses. We place accountable AI employees on your machines and run them for you.",
+      "A managed AI workforce for regulated businesses. Runs on your machine. Stops at your approval. Leaves the audit trail you own.",
     lead: "Regulated businesses are buried in back-office work, and it can't be safely handed to raw AI. So we don't sell you AI to run. We staff you with AI employees: one per role, working on your own machines, with the workflows built, deployed, and operated by us. They stop only at the decisions a human must own. You employ the work. We run it.",
     credibility: [
       "Built on Claude",
@@ -203,17 +216,47 @@ export const en: Copy = {
   },
   proof: {
     label: "Proof",
-    heading: "We proved it on the hardest job to trust an agent with.",
+    heading: "Live, with real businesses, across three regulated verticals.",
+    metrics: [
+      { value: "10", label: "pilots live · hospitality, accounting, legal" },
+      { value: "16", label: "reservations run end-to-end" },
+      { value: "0", label: "support calls beyond setup" },
+    ],
     paras: [
-      "To prove a managed AI workforce for regulated work, you pick a job with real stakes and a hard deadline. We picked Portugal's short-term-rental compliance: a guest registration filed with the SIBA authority on every stay, fines when it slips. Ten hosts run Obra today. Across the cohort the AI receptionist has carried sixteen reservations end to end, from booking to SIBA filing to guest comms to owner report, with zero support calls beyond setup.",
-      "Sixteen clean runs under a real deadline is not a hospitality result. It is the operation holding under stakes. The same operation runs the next role.",
+      "To prove a managed AI workforce, you pick jobs with real stakes and hard deadlines. Ten pilots run Obra today across three regulated verticals: eight short-term-rental hosts, one accounting practice, and one law firm.",
+      "Our deepest proof is hospitality, the hardest job to trust an agent with: a guest registration filed with the SIBA authority on every stay, fines when it slips. Across the host cohort the AI receptionist has carried sixteen reservations end to end, booking to SIBA filing to guest comms to owner report, with zero support calls beyond setup. The same operation now runs in accounting and legal.",
     ],
     rows: [
-      { label: "Live pilots · Portugal AL hosts", count: 10, value: " running", accent: true },
-      { label: "Reservations run end-to-end", count: 16, value: " · zero support calls", accent: true },
-      { label: "The engine (connectors, runtime, audit, approval gates)", value: "Complete" },
-      { label: "Second role · accounting", value: "Next" },
-      { label: "EU country packs · Spain, Italy", value: "2026-27" },
+      { label: "The engine + control plane (connectors, runtime, audit, gates, fleet ops)", value: "Built" },
+      { label: "EU STR Regulation (2024/1028)", value: "In force since May 2026", accent: true },
+      { label: "Next country packs · Spain, Italy", value: "2026-27" },
+    ],
+  },
+  compare: {
+    label: "At a glance",
+    heading: "A managed workforce, not a raw agent.",
+    normalLabel: "A raw AI agent",
+    obraLabel: "Obra",
+    rows: [
+      { normal: "One read, no second check", obra: "Two reads must agree" },
+      { normal: "Runs in a vendor's cloud", obra: "Runs on your machine" },
+      { normal: "No record of what it did", obra: "An audit trail you own" },
+      { normal: "Acts on anything", obra: "Typed, gated actions" },
+      { normal: "You operate it", obra: "We operate it for you" },
+      { normal: "Confidently wrong", obra: "Stops at human approval" },
+    ],
+  },
+  audit: {
+    label: "Proof you can read",
+    heading: "Every action, on a record you own.",
+    caption: "How a gated run is recorded. Each line is hash-chained to the one before it, tamper-evident and yours to export.",
+    lines: [
+      { ev: "reservation.intake", detail: "guest booking received" },
+      { ev: "passport.extract", detail: "two reads · both agree", ok: true },
+      { ev: "siba.fill", detail: "prepared · awaiting approval" },
+      { ev: "approval.granted", detail: "by the host", ok: true },
+      { ev: "siba.submit", detail: "filed with the authority", ok: true },
+      { ev: "audit.commit", detail: "hash-chained to the record" },
     ],
   },
   web3: {
@@ -237,10 +280,10 @@ export const en: Copy = {
     heading: "One workforce. Every regulated business.",
     para: "We did not build a hospitality app. We built a managed AI workforce, the engine, the trust layer, and the operation that runs it, and pointed it at hospitality first. Each new vertical is a new role on the same operation. Only the workflows and connectors change; the trust model, the audit, and the way we run it travel with every role. That is why the next role ships in weeks, not years.",
     sectors: [
-      { tag: "Live · 10 pilots", title: "Vacation rental hosts", body: "Independent and small-portfolio hosts across the EU's regulated tourism sector. Multilingual guest comms, identity reporting, channel sync, accountant handoff." },
-      { tag: "Next role", title: "Accounting firms", body: "A force multiplier on the work a single qualified accountant can sign off, with audit-chain evidence ready for the tax authority." },
+      { tag: "Live · 8 pilots", title: "Vacation rental hosts", body: "Independent and small-portfolio hosts across the EU's regulated tourism sector. Multilingual guest comms, identity reporting, channel sync, accountant handoff." },
+      { tag: "Live · pilot", title: "Accounting firms", body: "A force multiplier on the work a single qualified accountant can sign off, with audit-chain evidence ready for the tax authority." },
+      { tag: "Live · pilot", title: "Legal practices", body: "Privilege-bound documents, regulatory deadlines, intake, billing, with audit evidence and structural privilege protection." },
       { tag: "Roadmap", title: "Property management", body: "Maintenance, vendor coordination, lease compliance, tenant comms. Each property isolated, one surface for the manager." },
-      { tag: "Roadmap", title: "Legal practices", body: "Privilege-bound documents, regulatory deadlines, intake, billing, with audit evidence and structural privilege protection." },
       { tag: "Roadmap", title: "Healthcare clinics", body: "Patient comms, scheduling, insurance coordination, intake, on an architecture where your data stays local and every action is audited." },
       { tag: "Roadmap", title: "Logistics and freight", body: "Chain-of-custody, multi-party coordination, customs paperwork, dispatch, with compliance trails ready for audit." },
     ],
@@ -267,7 +310,7 @@ export const en: Copy = {
     contactPrompt: "If you'd like to talk,",
     email: "team@get-obra.com",
     investor:
-      "Obra is raising pre-seed to own the Portuguese AL market before the EU STR Regulation brings the same compliance burden to five million hosts across Europe. Ten pilots are live. The service runs without babysitting.",
+      "Obra is raising pre-seed to own the Portuguese AL market as the EU STR Regulation (in force since May 2026) brings the same compliance burden across Europe. Ten pilots are live across three regulated verticals. The service runs without babysitting.",
     deckHref: "/deck.pdf",
     footerEssays: "Essays:",
     footerTrustGap: "The trust gap",
@@ -337,9 +380,9 @@ export const en: Copy = {
     packs: {
       packs: [
         { name: "Hospitality", status: "Live", kind: "live" },
-        { name: "Accounting", status: "Next", kind: "next" },
+        { name: "Accounting", status: "Pilot", kind: "next" },
+        { name: "Legal", status: "Pilot", kind: "next" },
         { name: "Property", status: "Roadmap", kind: "road" },
-        { name: "Legal", status: "Roadmap", kind: "road" },
         { name: "Clinics", status: "Roadmap", kind: "road" },
       ],
       engineLabel: "The Obra operation · shared by every role",
@@ -375,7 +418,7 @@ export const pt: Copy = {
   hero: {
     titleLines: ["Empregue IA.", "Não a opere."],
     essence:
-      "Uma força de trabalho de IA gerida para empresas em setores regulados. Colocamos funcionários de IA responsáveis nas suas máquinas e operamo-los por si.",
+      "Uma força de trabalho de IA gerida para empresas em setores regulados. Corre na sua máquina. Para na sua aprovação. Deixa um registo de auditoria que é seu.",
     lead: "As empresas reguladas estão soterradas em trabalho de retaguarda que não pode ser entregue, sem mais, a uma IA em bruto. Por isso não lhe vendemos IA para operar. Damos-lhe funcionários de IA: um por função, a trabalhar nas suas próprias máquinas, com os fluxos de trabalho desenvolvidos, instalados e operados por nós. Param apenas nas decisões que uma pessoa tem de assumir. Você emprega o trabalho. Nós operamo-lo.",
     credibility: [
       "Construído sobre o Claude",
@@ -428,17 +471,47 @@ export const pt: Copy = {
   },
   proof: {
     label: "Prova",
-    heading: "Comprovámo-la no trabalho mais difícil de confiar a um agente.",
+    heading: "A funcionar, com negócios reais, em três setores regulados.",
+    metrics: [
+      { value: "10", label: "pilotos ativos · hotelaria, contabilidade, jurídico" },
+      { value: "16", label: "reservas tratadas de ponta a ponta" },
+      { value: "0", label: "chamadas de apoio para além da instalação" },
+    ],
     paras: [
-      "Para provar uma força de trabalho de IA gerida para trabalho regulado, escolhe-se um trabalho com riscos reais e um prazo apertado. Escolhemos a conformidade do alojamento local em Portugal: um registo de hóspedes comunicado ao SIBA em cada estadia, multas quando falha. Dez anfitriões usam a Obra hoje. Ao longo do grupo, a rececionista de IA já tratou de dezasseis reservas de ponta a ponta, da reserva ao registo no SIBA, à comunicação com hóspedes, ao relatório ao proprietário, sem uma única chamada de apoio para além da instalação.",
-      "Dezasseis execuções limpas sob um prazo real não são um resultado de alojamento local. São a operação a aguentar sob pressão. A mesma operação corre a função seguinte.",
+      "Para provar uma força de trabalho de IA gerida, escolhem-se trabalhos com riscos reais e prazos apertados. Dez pilotos usam a Obra hoje, em três setores regulados: oito anfitriões de alojamento local, um gabinete de contabilidade e um escritório de advocacia.",
+      "A nossa prova mais profunda é a hotelaria, o trabalho mais difícil de confiar a um agente: um registo de hóspedes comunicado ao SIBA em cada estadia, multas quando falha. Ao longo do grupo de anfitriões, a rececionista de IA já tratou de dezasseis reservas de ponta a ponta, da reserva ao registo no SIBA, à comunicação com hóspedes, ao relatório ao proprietário, sem uma única chamada de apoio para além da instalação. A mesma operação corre agora na contabilidade e no jurídico.",
     ],
     rows: [
-      { label: "Pilotos a funcionar · anfitriões de AL em Portugal", count: 10, value: " ativos", accent: true },
-      { label: "Reservas tratadas de ponta a ponta", count: 16, value: " · zero chamadas de apoio", accent: true },
-      { label: "O motor (conectores, fluxos, auditoria, barreiras de aprovação)", value: "Completo" },
-      { label: "Segunda função · contabilidade", value: "A seguir" },
-      { label: "Pacotes de país na UE · Espanha, Itália", value: "2026-27" },
+      { label: "O motor + plano de controlo (conectores, fluxos, auditoria, barreiras, operação da frota)", value: "Construído" },
+      { label: "Regulamento STR da UE (2024/1028)", value: "Em vigor desde maio de 2026", accent: true },
+      { label: "Próximos pacotes de país · Espanha, Itália", value: "2026-27" },
+    ],
+  },
+  compare: {
+    label: "Num relance",
+    heading: "Uma força de trabalho gerida, não um agente em bruto.",
+    normalLabel: "Um agente de IA em bruto",
+    obraLabel: "Obra",
+    rows: [
+      { normal: "Uma leitura, sem segunda verificação", obra: "Duas leituras têm de coincidir" },
+      { normal: "Corre na cloud de um fornecedor", obra: "Corre na sua máquina" },
+      { normal: "Sem registo do que fez", obra: "Um registo de auditoria que é seu" },
+      { normal: "Age sobre qualquer coisa", obra: "Ações tipadas e controladas" },
+      { normal: "É você que o opera", obra: "Nós operamo-lo por si" },
+      { normal: "Erra com confiança", obra: "Para na aprovação humana" },
+    ],
+  },
+  audit: {
+    label: "Prova que pode ler",
+    heading: "Cada ação, num registo que é seu.",
+    caption: "Como fica registada uma execução controlada. Cada linha é encadeada por hash à anterior, à prova de adulteração e sua para exportar.",
+    lines: [
+      { ev: "reservation.intake", detail: "reserva de hóspede recebida" },
+      { ev: "passport.extract", detail: "duas leituras · ambas coincidem", ok: true },
+      { ev: "siba.fill", detail: "preparado · a aguardar aprovação" },
+      { ev: "approval.granted", detail: "pelo anfitrião", ok: true },
+      { ev: "siba.submit", detail: "comunicado à autoridade", ok: true },
+      { ev: "audit.commit", detail: "encadeado por hash ao registo" },
     ],
   },
   web3: {
@@ -462,10 +535,10 @@ export const pt: Copy = {
     heading: "Uma força de trabalho. Todos os negócios regulados.",
     para: "Não construímos uma aplicação de hospitalidade. Construímos uma força de trabalho de IA gerida, o motor, a camada de confiança e a operação que a faz funcionar, e apontámo-la primeiro à hospitalidade. Cada novo vertical é uma nova função sobre a mesma operação. Só mudam os fluxos e os conectores; o modelo de confiança, a auditoria e a forma como a operamos viajam com cada função. É por isso que a função seguinte chega em semanas, não em anos.",
     sectors: [
-      { tag: "Ativo · 10 pilotos", title: "Anfitriões de alojamento local", body: "Anfitriões independentes e de pequena escala no setor do turismo regulado da UE. Comunicação multilingue com hóspedes, comunicação de identidades, sincronização de canais, entrega ao contabilista." },
-      { tag: "Próxima função", title: "Escritórios de contabilidade", body: "Um multiplicador de força sobre o trabalho que um único contabilista certificado consegue validar, com prova em cadeia de auditoria pronta para as Finanças." },
+      { tag: "Ativo · 8 pilotos", title: "Anfitriões de alojamento local", body: "Anfitriões independentes e de pequena escala no setor do turismo regulado da UE. Comunicação multilingue com hóspedes, comunicação de identidades, sincronização de canais, entrega ao contabilista." },
+      { tag: "Ativo · piloto", title: "Escritórios de contabilidade", body: "Um multiplicador de força sobre o trabalho que um único contabilista certificado consegue validar, com prova em cadeia de auditoria pronta para as Finanças." },
+      { tag: "Ativo · piloto", title: "Escritórios de advocacia", body: "Documentos sob sigilo profissional, prazos regulatórios, angariação, faturação, com prova de auditoria e proteção estrutural do sigilo." },
       { tag: "No horizonte", title: "Gestão de propriedades", body: "Manutenção, coordenação de fornecedores, conformidade de contratos, comunicação com inquilinos. Cada propriedade isolada, uma só interface para o gestor." },
-      { tag: "No horizonte", title: "Escritórios de advocacia", body: "Documentos sob sigilo profissional, prazos regulatórios, angariação, faturação, com prova de auditoria e proteção estrutural do sigilo." },
       { tag: "No horizonte", title: "Clínicas de saúde", body: "Comunicação com pacientes, agendamento, coordenação com seguradoras, admissões, numa arquitetura onde os seus dados ficam locais e cada ação é auditada." },
       { tag: "No horizonte", title: "Logística e transporte", body: "Cadeia de custódia, coordenação entre várias partes, documentação aduaneira, despacho, com registos de conformidade prontos para auditoria." },
     ],
@@ -492,7 +565,7 @@ export const pt: Copy = {
     contactPrompt: "Se quiser conversar,",
     email: "team@get-obra.com",
     investor:
-      "A Obra está a levantar pre-seed para conquistar o mercado do AL português antes de o Regulamento STR da UE trazer a mesma carga de conformidade a cinco milhões de anfitriões na Europa. Dez pilotos estão a funcionar. O serviço corre sem supervisão constante.",
+      "A Obra está a levantar pre-seed para conquistar o mercado do AL português enquanto o Regulamento STR da UE (em vigor desde maio de 2026) traz a mesma carga de conformidade a toda a Europa. Dez pilotos estão a funcionar em três setores regulados. O serviço corre sem supervisão constante.",
     deckHref: "/deck.pdf",
     footerEssays: "Ensaios:",
     footerTrustGap: "A lacuna de confiança",
@@ -562,9 +635,9 @@ export const pt: Copy = {
     packs: {
       packs: [
         { name: "Hospitalidade", status: "Ativo", kind: "live" },
-        { name: "Contabilidade", status: "A seguir", kind: "next" },
+        { name: "Contabilidade", status: "Piloto", kind: "next" },
+        { name: "Jurídico", status: "Piloto", kind: "next" },
         { name: "Propriedades", status: "No horizonte", kind: "road" },
-        { name: "Jurídico", status: "No horizonte", kind: "road" },
         { name: "Clínicas", status: "No horizonte", kind: "road" },
       ],
       engineLabel: "A operação da Obra · partilhada por cada função",
