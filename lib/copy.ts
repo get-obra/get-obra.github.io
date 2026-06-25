@@ -22,8 +22,6 @@ export type Copy = {
     langHref: string;
     cv: string;
     cvHref: string;
-    pillPrefix: string;
-    pill: string;
   };
   hero: {
     titleLines: string[];
@@ -149,10 +147,8 @@ export const en: Copy = {
   nav: {
     langLabel: "PT",
     langHref: "/pt",
-    cv: "CV",
+    cv: "Obra CV",
     cvHref: "/cv",
-    pillPrefix: "Portugal · ",
-    pill: "10 pilots live",
   },
   hero: {
     titleLines: ["Employ AI.", "Don't operate it."],
@@ -399,10 +395,8 @@ export const pt: Copy = {
   nav: {
     langLabel: "EN",
     langHref: "/",
-    cv: "CV",
+    cv: "Obra CV",
     cvHref: "/cv",
-    pillPrefix: "Portugal · ",
-    pill: "10 pilotos a funcionar",
   },
   hero: {
     titleLines: ["Empregue IA.", "Não a opere."],

@@ -27,20 +27,18 @@ export function TopBar({ nav }: { nav: Copy["nav"] }) {
           Obra
         </span>
       </a>
-      <div className="flex items-center gap-[18px] max-[600px]:gap-3">
+      <div className="flex items-center gap-3 max-[600px]:gap-2">
         <a href={nav.langHref} className="font-ui rounded-md px-[9px] py-[3px] no-underline" style={{ fontWeight: 600, fontSize: 12, letterSpacing: "0.04em", color: "var(--color-muted)", border: "1px solid var(--color-rule)" }}>
           {nav.langLabel}
         </a>
-        <a href={nav.cvHref} className="font-ui no-underline" style={{ fontWeight: 500, fontSize: 13, color: "var(--color-muted)" }}>
-          {nav.cv}
-        </a>
-        <span
-          className="font-ui inline-flex items-center gap-2 rounded-full px-[14px] py-[6px]"
-          style={{ fontWeight: 500, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-accent)", border: "1px solid var(--accent-line)", background: "var(--accent-soft)" }}
+        <a
+          href={nav.cvHref}
+          className="font-ui inline-flex items-center gap-[7px] rounded-full px-[16px] py-[7px] no-underline max-[600px]:px-[13px]"
+          style={{ background: "var(--color-accent)", color: "var(--color-paper)", fontWeight: 600, fontSize: 13 }}
         >
-          <span className="inline-block h-[6px] w-[6px] rounded-full" style={{ background: "var(--color-accent)", animation: "pulse-soft 2.4s ease-in-out infinite" }} />
-          <span className="max-[600px]:hidden">{nav.pillPrefix}</span>{nav.pill}
-        </span>
+          {nav.cv}
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </a>
       </div>
     </motion.header>
   );
