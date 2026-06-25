@@ -101,15 +101,6 @@ export function ContactInvestorFooter({ c }: { c: Copy["closing"] }) {
         </a>
       </section>
 
-      <section className="mx-auto max-w-[560px] px-8 pb-20 pt-10 text-center" style={{ borderTop: "1px solid var(--color-rule)" }}>
-        <p style={{ fontFamily: "var(--font-brand)", fontSize: 16, lineHeight: 1.65, color: "var(--color-muted)" }}>
-          {c.investor}
-          <br />
-          <br />
-          <a href={c.deckHref} style={{ color: "var(--color-accent)" }}>get-obra.com/deck.pdf</a> · <a href="mailto:francisco@get-obra.com" style={{ color: "var(--color-accent)" }}>francisco@get-obra.com</a>
-        </p>
-      </section>
-
       <footer className="mx-auto flex max-w-[760px] flex-wrap items-center justify-between gap-3 px-8 pb-14 pt-7 max-[600px]:px-6" style={{ borderTop: "1px solid var(--color-rule)", fontFamily: "var(--font-utility)", fontSize: 13, color: "var(--color-muted)" }}>
         <div>© 2026 Obra</div>
         <div>

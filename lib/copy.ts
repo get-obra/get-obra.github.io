@@ -20,10 +20,8 @@ export type Copy = {
   nav: {
     langLabel: string;
     langHref: string;
-    trustGap: string;
-    unenforcedLaw: string;
-    trustGapHref: string;
-    unenforcedLawHref: string;
+    cv: string;
+    cvHref: string;
     pillPrefix: string;
     pill: string;
   };
@@ -96,8 +94,6 @@ export type Copy = {
   closing: {
     contactPrompt: string;
     email: string;
-    investor: string;
-    deckHref: string;
     footerEssays: string;
     footerTrustGap: string;
     footerUnenforced: string;
@@ -153,10 +149,8 @@ export const en: Copy = {
   nav: {
     langLabel: "PT",
     langHref: "/pt",
-    trustGap: "The trust gap",
-    unenforcedLaw: "The unenforced law",
-    trustGapHref: "/the-trust-gap",
-    unenforcedLawHref: "/the-unenforced-law",
+    cv: "CV",
+    cvHref: "/cv",
     pillPrefix: "Portugal · ",
     pill: "10 pilots live",
   },
@@ -309,9 +303,6 @@ export const en: Copy = {
   closing: {
     contactPrompt: "If you'd like to talk,",
     email: "team@get-obra.com",
-    investor:
-      "Obra is raising pre-seed to own the Portuguese AL market as the EU STR Regulation (in force since May 2026) brings the same compliance burden across Europe. Ten pilots are live across three regulated verticals. The service runs without babysitting.",
-    deckHref: "/deck.pdf",
     footerEssays: "Essays:",
     footerTrustGap: "The trust gap",
     footerUnenforced: "The unenforced law",
@@ -408,10 +399,8 @@ export const pt: Copy = {
   nav: {
     langLabel: "EN",
     langHref: "/",
-    trustGap: "A lacuna de confiança",
-    unenforcedLaw: "A lei por aplicar",
-    trustGapHref: "/pt/the-trust-gap",
-    unenforcedLawHref: "/pt/the-unenforced-law",
+    cv: "CV",
+    cvHref: "/cv",
     pillPrefix: "Portugal · ",
     pill: "10 pilotos a funcionar",
   },
@@ -564,9 +553,6 @@ export const pt: Copy = {
   closing: {
     contactPrompt: "Se quiser conversar,",
     email: "team@get-obra.com",
-    investor:
-      "A Obra está a levantar pre-seed para conquistar o mercado do AL português enquanto o Regulamento STR da UE (em vigor desde maio de 2026) traz a mesma carga de conformidade a toda a Europa. Dez pilotos estão a funcionar em três setores regulados. O serviço corre sem supervisão constante.",
-    deckHref: "/deck.pdf",
     footerEssays: "Ensaios:",
     footerTrustGap: "A lacuna de confiança",
     footerUnenforced: "A lei por aplicar",

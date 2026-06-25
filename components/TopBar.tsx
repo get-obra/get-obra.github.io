@@ -31,11 +31,8 @@ export function TopBar({ nav }: { nav: Copy["nav"] }) {
         <a href={nav.langHref} className="font-ui rounded-md px-[9px] py-[3px] no-underline" style={{ fontWeight: 600, fontSize: 12, letterSpacing: "0.04em", color: "var(--color-muted)", border: "1px solid var(--color-rule)" }}>
           {nav.langLabel}
         </a>
-        <a href={nav.trustGapHref} className="font-ui no-underline max-[800px]:hidden" style={{ fontWeight: 500, fontSize: 13, color: "var(--color-muted)" }}>
-          {nav.trustGap}
-        </a>
-        <a href={nav.unenforcedLawHref} className="font-ui no-underline max-[800px]:hidden" style={{ fontWeight: 500, fontSize: 13, color: "var(--color-muted)" }}>
-          {nav.unenforcedLaw}
+        <a href={nav.cvHref} className="font-ui no-underline" style={{ fontWeight: 500, fontSize: 13, color: "var(--color-muted)" }}>
+          {nav.cv}
         </a>
         <span
           className="font-ui inline-flex items-center gap-2 rounded-full px-[14px] py-[6px]"
