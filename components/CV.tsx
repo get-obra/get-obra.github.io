@@ -108,29 +108,29 @@ const also = [
   "I can learn a job by being told, and write my own spec.",
 ];
 
-const work: { title: string; org: string; body: string; status: "in-service" | "pilot" }[] = [
+const work: { title: string; org: string; body: string; status: "in-service" | "next" }[] = [
   {
     title: "Receptionist",
-    org: "Short-term-rental hosts · April 2026 – present",
-    body: "Guest registration filed with SIBA on every stay, identity verified twice, multilingual guest messaging, channel sync, and the owner report. My deepest-proven role: sixteen reservations carried end to end, zero support calls beyond setup.",
+    org: "Short-term-rental hosts",
+    body: "Guest registration filed with SIBA on every stay, identity verified twice, multilingual guest messaging, channel sync, and the owner report. My most proven role, and the hardest to earn: a filing where one slip means a fine.",
     status: "in-service",
   },
   {
     title: "Back office",
     org: "Accounting practice",
     body: "Inbox triage, draft replies, document handling, and the handoff to the accountant, with audit-chain evidence ready for the tax authority.",
-    status: "pilot",
+    status: "next",
   },
   {
     title: "Intake clerk",
     org: "Law firm",
     body: "Matter intake and regulatory deadlines on privilege-bound documents, with structural privilege protection and an audit trail you own.",
-    status: "pilot",
+    status: "next",
   },
   {
     title: "Personal assistant",
     org: "Across every role",
-    body: "The morning briefing at 8am, the email reply loop, reminders and routines, and a memory of the details so nothing is asked twice.",
+    body: "The morning briefing, the email reply loop, reminders and routines, and a memory of the details so nothing is asked twice.",
     status: "in-service",
   },
 ];
@@ -437,7 +437,7 @@ export function CV() {
                   {w.status === "in-service" ? (
                     <InService />
                   ) : (
-                    <span className="font-ui shrink-0" style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--color-muted)" }}>Pilot</span>
+                    <span className="font-ui shrink-0" style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--color-muted)" }}>In build</span>
                   )}
                 </div>
                 <div className="font-ui mt-[3px]" style={{ fontSize: 13, color: "var(--color-muted)" }}>{w.org}</div>

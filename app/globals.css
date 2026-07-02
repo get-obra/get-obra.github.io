@@ -111,6 +111,30 @@ body {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
+@keyframes live-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.82); }
+}
+
+/* Vertical "live feed" ticker: the track holds the list twice and scrolls up
+   by half its height, so the loop is seamless. Paused on hover. */
+.ticker-viewport { overflow: hidden; }
+.ticker-track {
+  display: flex;
+  flex-direction: column;
+  animation: ticker-scroll 22s linear infinite;
+}
+.ticker-viewport:hover .ticker-track { animation-play-state: paused; }
+@keyframes ticker-scroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+.live-dot { animation: live-dot 1.6s var(--ease-in-out) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+  .live-dot { animation: none; }
+}
 
 .torus {
   position: relative;

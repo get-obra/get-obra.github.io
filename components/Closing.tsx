@@ -89,28 +89,17 @@ export function BetaSection({ c }: { c: Copy["beta"] }) {
   );
 }
 
-export function ContactInvestorFooter({ c }: { c: Copy["closing"] }) {
+/* Contact call-to-action for the managed (/employ) door. The proper site
+   footer is rendered separately by <Footer>. */
+export function ContactCta({ c }: { c: Copy["closing"] }) {
   return (
-    <>
-      <section className="px-8 pt-24 pb-18 text-center max-[600px]:pt-16">
-        <p className="mb-[14px]" style={{ fontFamily: "var(--font-brand)", fontSize: 24, color: "var(--color-ink)" }}>
-          {c.contactPrompt}
-        </p>
-        <a href={`mailto:${c.email}`} className="no-underline" style={{ fontFamily: "var(--font-brand)", fontSize: "clamp(18px, 5.5vw, 28px)", color: "var(--color-accent)", wordBreak: "break-word" }}>
-          {c.email}
-        </a>
-      </section>
-
-      <footer className="mx-auto flex max-w-[760px] flex-wrap items-center justify-between gap-3 px-8 pb-14 pt-7 max-[600px]:px-6" style={{ borderTop: "1px solid var(--color-rule)", fontFamily: "var(--font-utility)", fontSize: 13, color: "var(--color-muted)" }}>
-        <div>© 2026 Obra</div>
-        <div>
-          {c.footerEssays}{" "}
-          <a href={c.footerTrustGapHref} style={{ color: "var(--color-ink)" }}>{c.footerTrustGap}</a> ·{" "}
-          <a href={c.footerUnenforcedHref} style={{ color: "var(--color-ink)" }}>{c.footerUnenforced}</a>
-        </div>
-        <div><a href="https://x.com/getobra" target="_blank" rel="noopener" style={{ color: "var(--color-ink)" }}>{c.footerX}</a></div>
-        <div>{c.footerBuilt}</div>
-      </footer>
-    </>
+    <section className="px-8 pt-24 pb-24 text-center max-[600px]:pt-16" style={{ borderTop: "1px solid var(--color-rule)" }}>
+      <p className="mb-[14px]" style={{ fontFamily: "var(--font-brand)", fontSize: 24, color: "var(--color-ink)" }}>
+        {c.contactPrompt}
+      </p>
+      <a href={`mailto:${c.email}`} className="no-underline" style={{ fontFamily: "var(--font-brand)", fontSize: "clamp(18px, 5.5vw, 28px)", color: "var(--color-accent)", wordBreak: "break-word" }}>
+        {c.email}
+      </a>
+    </section>
   );
 }
