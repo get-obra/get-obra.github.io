@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The trust gap · Obra</title>
+  <meta name="description" content="How Europe's short-term rental compliance silently breaks at the channel layer, and what kind of infrastructure is required to fix it. An essay by the Obra team.">
+  <meta name="theme-color" content="#faf9f5">
+
+  <meta property="og:title" content="The trust gap · Obra">
+  <meta property="og:description" content="How Europe's short-term rental compliance silently breaks at the channel layer, and the architecture that fixes it.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://get-obra.com/the-trust-gap">
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"The trust gap","description":"How Europe's short-term rental compliance silently breaks at the channel layer, and what kind of infrastructure is required to fix it. An essay by the Obra team.","inLanguage":"en","datePublished":"2026-05-19","dateModified":"2026-05-19","url":"https://get-obra.com/the-trust-gap","mainEntityOfPage":"https://get-obra.com/the-trust-gap","image":"https://get-obra.com/og.png","author":{"@type":"Organization","name":"Obra","url":"https://get-obra.com/"},"publisher":{"@type":"Organization","name":"Obra","url":"https://get-obra.com/","logo":{"@type":"ImageObject","url":"https://get-obra.com/og.png"}}}
+  </script>
+
+  <link rel="canonical" href="https://get-obra.com/the-trust-gap">
+  <link rel="alternate" hreflang="en" href="https://get-obra.com/the-trust-gap">
+  <link rel="alternate" hreflang="pt-PT" href="https://get-obra.com/pt/the-trust-gap">
+  <link rel="alternate" hreflang="x-default" href="https://get-obra.com/the-trust-gap">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #faf9f5;
+      --paper-warm: #f3f1e8;
+      --paper-deep: #ece9dc;
+      --rule: #d9d6c8;
+      --muted: #6e6a5d;
+      --ink: #1a1a1a;
+      --accent: #b75740;
+      --accent-soft: rgba(183, 87, 64, 0.08);
+      --accent-line: rgba(183, 87, 64, 0.25);
+
+      --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+      --dur-instant: 100ms;
+      --dur-fast: 200ms;
+      --dur-medium: 350ms;
+      --dur-slow: 700ms;
+      --dur-glacial: 1200ms;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Spectral', Georgia, serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 25% 35%, rgba(217, 214, 200, 0.18) 0%, transparent 35%),
+        radial-gradient(circle at 75% 65%, rgba(217, 214, 200, 0.15) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: rgba(250, 249, 245, 0.85);
+      backdrop-filter: saturate(180%) blur(10px);
+      -webkit-backdrop-filter: saturate(180%) blur(10px);
+      border-bottom: 1px solid var(--rule);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .lockup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .mark { width: 32px; height: 32px; color: var(--ink); flex-shrink: 0; }
+    .mark svg { width: 100%; height: 100%; transition: transform var(--dur-glacial) var(--ease-in-out); }
+    .lockup:hover .mark svg { transform: rotateX(60deg); }
+
+    .wordmark {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: -0.005em;
+      color: var(--ink);
+    }
+
+    .nav-link {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color var(--dur-fast) var(--ease-standard);
+    }
+
+    .nav-link:hover { color: var(--ink); }
+    .nav-link::before {
+      content: '←';
+      display: inline-block;
+      margin-right: 6px;
+      transition: transform var(--dur-fast) var(--ease-standard);
+    }
+    .nav-link:hover::before { transform: translateX(-2px); }
+
+    @media (max-width: 600px) {
+      .topbar { padding: 14px 20px; }
+      .wordmark { font-size: 20px; }
+      .nav-link { font-size: 12px; }
+    }
+
+    /* Essay container */
+    article {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 80px 32px 64px;
+    }
+
+    @media (max-width: 600px) {
+      article { padding: 56px 24px 48px; }
+    }
+
+    /* Header block */
+    .essay-eyebrow {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .essay-title {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 400;
+      font-size: 56px;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 600px) {
+      .essay-title { font-size: 40px; }
+    }
+
+    .essay-deck {
+      font-family: 'Spectral', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 21px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 600px) {
+      .essay-deck { font-size: 18px; margin-bottom: 36px; }
+    }
+
+    .essay-byline {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      padding-top: 24px;
+      padding-bottom: 48px;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 56px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .essay-byline .meta-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 11px;
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    /* Prose */
+    .prose p {
+      font-size: 19px;
+      line-height: 1.7;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 600px) {
+      .prose p { font-size: 18px; line-height: 1.65; margin-bottom: 24px; }
+    }
+
+    .prose em {
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .prose strong {
+      font-weight: 500;
+    }
+
+    .prose h2 {
+      font-family: 'Spectral', Georgia, serif;
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-top: 64px;
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+
+    @media (max-width: 600px) {
+      .prose h2 { font-size: 24px; margin-top: 48px; }
+    }
+
+    .prose h2::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      margin-bottom: 20px;
+      opacity: 0.6;
+    }
+
+    .prose hr {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 56px auto;
+      width: 64px;
+    }
+
+    .prose ol {
+      padding-left: 0;
+      list-style: none;
+      counter-reset: prose-ol;
+      margin-bottom: 28px;
+    }
+
+    .prose ol li {
+      counter-increment: prose-ol;
+      font-size: 19px;
+      line-height: 1.7;
+      color: var(--ink);
+      margin-bottom: 18px;
+      padding-left: 40px;
+      position: relative;
+    }
+
+    .prose ol li::before {
+      content: counter(prose-ol, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 4px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+    }
+
+    @media (max-width: 600px) {
+      .prose ol li { font-size: 18px; padding-left: 32px; }
+    }
+
+    .prose a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-line);
+      transition: border-color var(--dur-fast) var(--ease-standard);
+    }
+
+    .prose a:hover {
+      border-bottom-color: var(--accent);
+    }
+
+    .prose blockquote {
+      margin: 32px 0;
+      padding: 8px 0 8px 24px;
+      border-left: 3px solid var(--accent);
+      font-family: 'Spectral', Georgia, serif;
+      font-style: italic;
+      font-size: 21px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .endnote {
+      margin-top: 80px;
+      padding: 28px 0 0;
+      border-top: 1px solid var(--rule);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    .endnote p { font-size: 13px; margin-bottom: 12px; }
+    .endnote em { font-style: italic; color: var(--muted); }
+
+    /* Reading-position progress (subtle, top-of-viewport) */
+    .progress-shell {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 120ms linear;
+    }
+
+    /* Footer */
+    footer {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 32px 32px 64px;
+      border-top: 1px solid var(--rule);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      footer { padding: 28px 24px 48px; }
+    }
+
+    .footer-link {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--dur-fast) var(--ease-standard);
+    }
+
+    .footer-link:hover { color: var(--ink); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .lockup:hover .mark svg { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-shell"><div class="progress-bar" id="progress-bar"></div></div>
+
+  <header class="topbar">
+    <a href="/" class="lockup">
+      <div class="mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Obra mark">
+          <title>Obra mark</title>
+          <circle cx="60" cy="60" r="44" fill="none" stroke="currentColor" stroke-width="10"/>
+          <circle cx="60" cy="60" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="wordmark">Obra</div>
+    </a>
+    <a href="/" class="nav-link">Back to home</a>
+  </header>
+
+  <article>
+    <div class="essay-eyebrow">Essay</div>
+    <h1 class="essay-title">The trust gap</h1>
+    <p class="essay-deck">
+      How Europe's short-term rental compliance silently breaks at the channel
+      layer, and what kind of infrastructure is required to fix it.
+    </p>
+
+    <div class="essay-byline">
+      <div><span class="meta-label">By</span>the Obra team</div>
+      <div><span class="meta-label">Reading</span>~10 min</div>
+      <div><span class="meta-label">Published</span>19 May 2026</div>
+    </div>
+
+    <div class="prose">
+      <p>Somewhere on the Portuguese coast, a vacation rental host opens her email at six in the morning. A booking has come in overnight. The guest is from Lyon and arrives in three days. Before he gets here, she has six things to do. The one that will go wrong is the passport.</p>
+
+      <p>Portuguese law requires her to register the guest's identity with the authorities within twenty-four hours of arrival, verified against a passport or equivalent document. The law has been on the books for more than a decade. The penalty for missing a submission is substantial. Most hosts she knows have never been audited.</p>
+
+      <p>A few days before the guest arrives, she sends a polite message through the booking platform's chat. <em>Hello, we are excited to have you as our guest. We need to ask you for some information to provide to the authorities. We are legally required to. Could you please send a photo of your passport so I can register it.</em> Her English is uncertain. The message arrives in the guest's app translated by an algorithm, where it reads colder than she intended.</p>
+
+      <p>Eight times out of ten, the guest refuses.</p>
+
+      <p>The reasons vary. He does not want to send a passport image through a booking platform's chat. He does not know what <em>SIBA</em> is or whether it is real. He has heard stories about identity theft and is wary on principle. He offers to send the numbers instead, typed into the chat. She accepts what she can get. She types the numbers into the SIBA portal. She does not verify them against a document she has not seen. She submits.</p>
+
+      <p>She knows this is not what the law requires. She also knows that nobody she knows has ever been audited. Everyone does it this way. The compliance regime, as it actually exists in 2026, is paperwork that runs on trust she cannot independently verify.</p>
+
+      <p>This essay is about why that is the case, and what kind of infrastructure is required to make it stop being the case.</p>
+
+      <h2>What the law requires</h2>
+
+      <p>Portugal's <em>Decreto-Lei n.º 128/2014</em>, with its subsequent amendments, obliges anyone operating short-term rental accommodation to register the identity of every foreign guest with the relevant authority within a short window of their arrival. The mechanism is a web portal where the host enters the guest's name, document number, date of birth, nationality, country of issue, and the dates of the stay. The portal stores nothing about the host's verification process. It accepts whatever the host types.</p>
+
+      <p>Equivalent obligations exist across the EU. Spain has <em>Registro Único de Huéspedes</em>. France has the <em>fiche individuelle de police</em>. Italy has the <em>Alloggiati Web</em> portal. The Netherlands has the <em>nachtregister</em>. Greece has the <em>Special Register</em>. The details differ. The shape is the same: short-term rental hosts must register every guest, the registration is independently of the booking platform, and the verification step exists in the law but is not architecturally enforced.</p>
+
+      <p>The Schengen Acquis underpins this. The regime predates short-term rental at scale. It was designed for hotels, where a uniformed receptionist takes the passport, swipes it through a scanner, and hands it back. The legal framework assumed a face-to-face verification step. Short-term rental did not invent the absence of that step. Short-term rental discovered it by stretching the regime into a deployment shape it was never designed for.</p>
+
+      <p style="font-size: 16px; color: var(--muted); font-style: italic; padding: 16px 20px; border-left: 2px solid var(--rule); margin-top: 8px;">A note on rigor: the above is a non-lawyer's summary. The operative text for Portugal is <em>Decreto-Lei n.º 128/2014</em> of 29 August 2014, as amended (consolidated text available at <em>diariodarepublica.pt</em>); guest registration is filed through the SIBA <em>boletim de alojamento</em> system, which since the dissolution of SEF in 2023 has been administered by the authorities. EU equivalents are named with their common labels rather than full citations; specific instruments vary by jurisdiction and we invite correction from qualified counsel. A fuller compliance-notes document is forthcoming in the project's documentation.</p>
+
+      <h2>What the hosts actually do</h2>
+
+      <p>The 80% refusal rate is not a survey. There is no public statistic for it, and there is unlikely ever to be one. No host can publicly admit how often the verification step fails without exposing themselves to regulatory liability they have not earned and platform retaliation they cannot afford. The pattern lives in conversations hosts have with each other in private, in the shrugs at local meetups, in the messages exchanged with accountants who quietly handle their books. We know about it because the hosts who shared this with us trust that what they said would not put them at risk. The figure is an order-of-magnitude claim grounded in those private exchanges. The order of magnitude is what matters. The precise number is unknowable until either the platforms or the regulators choose to make it knowable.</p>
+
+      <p>Of the small fraction who do not refuse outright, most send the identity data as typed text in the platform's chat: a name, a document number, a birthday. Some send a photo. Hosts who insist on the photo risk the guest cancelling the reservation. Hosts who do not insist on the photo accept the text and proceed.</p>
+
+      <p>The hosts know that what they are doing is not the verification step the law assumes. They do it anyway. The platforms' complaint mechanisms create a chilling effect: a guest who feels too scrutinized can leave a bad review, file a complaint, request a refund, or all three. The host's livelihood lives at the mercy of those mechanisms. The regulator's audit power is theoretical. The platform's punishment power is immediate.</p>
+
+      <p>This is not negligence. It is a rational response to a system whose incentives are misaligned. The host has been left to navigate, alone, a contradiction that nobody set out to create but that everyone in the system has reason to maintain.</p>
+
+      <h2>How the platforms amplify the gap</h2>
+
+      <p>The booking platforms do not solve this problem. They also do not stand neutrally outside it. They actively make it harder to solve, on three fronts.</p>
+
+      <p><strong>They penalize off-platform communications.</strong> Hosts who try to move guests to WhatsApp, where guests are more likely to share an image, face downranking and listing penalties. The platforms enforce in-platform communication as a business priority. The compliance workaround that the host community knows would help is the workaround the platforms forbid.</p>
+
+      <p><strong>They penalize external links in chat.</strong> Hosts who try to share a link to a host-controlled upload page, where a guest might trust the architecture more than they trust the platform's chat, have those links classified as off-platform reservation diversion. The link gets flagged. The host gets warned. Repeat infractions risk delisting.</p>
+
+      <p><strong>Their complaint mechanism punishes hosts who try to verify in person.</strong> A host who meets a guest at the door and asks to see a passport before handing over the keys creates a moment of friction. The guest can complain to the platform, request a refund, or write a bad review. Hosts who depend on platform ranking, which is most of them, cannot afford the friction. The verification step that the law assumes happens at the door is the verification step the platform's economic incentives discourage.</p>
+
+      <p>The platforms are caught in a contradiction. Their in-platform enforcement protects their core business. Their growing EU regulatory exposure pushes them toward stronger guest-identity verification at the platform level. Their hosts' regulatory obligations sit between the two. They are aware of this contradiction. They have not yet solved it themselves, because solving it would require either weakening platform-comms lock-in or becoming a regulated data processor for special-category identity data. Both are positions they have actively avoided for years.</p>
+
+      <h2>Why no centralized player can fix this</h2>
+
+      <p>The intuitive answer is <em>the platforms should just build this</em>. The platforms cannot build this, for a reason that is more structural than political.</p>
+
+      <p>The guests' refusal to send passport images is not arbitrary. It is a response to the <em>centralization</em> of the channel they are being asked to send it through. The guest does not trust the booking platform with their special-category identity data. A hosted SaaS vendor solving the problem on the platform's behalf would inherit exactly the same trust position, because the guest would correctly perceive the SaaS vendor as another centralized party that the data has to flow through. The data has not become more private; it has just changed which company holds it.</p>
+
+      <p>The problem is not a missing feature. The problem is that the architecture of every existing party (platform, vendor, hosted-SaaS) is incompatible with the trust shape the guest is asking for. Centralization is the substrate the problem grows on. Any solution that runs on the same substrate cannot grow a different fruit.</p>
+
+      <p>The architecture that can close this gap has four properties that are not optional:</p>
+
+      <ol>
+        <li><strong>The guest's image is uploaded to a runtime the host operates</strong>, not to platform storage, not to vendor storage. No third-party data processor sits between the guest and the host's runtime. The guest can be told this and the architecture demonstrates it.</li>
+        <li><strong>Inference runs under the host's own API key</strong>, not the operator's. Each inference call sends a single image to Anthropic's commercial endpoint for a single response and nothing more; Anthropic's commercial commitments apply (no training on customer API data; Zero Data Retention available for eligible accounts). The reasoning core never sees a centralized database of identity images. The host's runtime never has more than one guest's image at a time, and discards it after the regulatory submission is acknowledged.</li>
+        <li><strong>The audit trail is hash-chained and owned by the host</strong>. Not stored on a vendor's server. Not stored on the platform. The host can produce it on demand for a regulator, a tax authority, or a curious data subject, without anyone's permission.</li>
+        <li><strong>The telemetry that flows back to whoever is operating the system is redacted by construction</strong>. The operator sees event types, counts, and hashes. They never see guest names, passport numbers, addresses, or any element of the special-category data. The architecture proves this rather than promises it.</li>
+      </ol>
+
+      <p>This is not a list of marketing claims. It is the actual minimum specification for an architecture the guest will trust enough to engage with. Anything missing one of these properties leaves the guest with the same objection that drove them to refuse the platform's chat in the first place. A longer treatment of why each property is necessary, with case-by-case analysis of why weaker alternatives (centralized SaaS with strong encryption, EU data residency, customer-managed keys) still fail the trust test, is forthcoming in the project's architecture documentation.</p>
+
+      <p>The corollary is that the architecture the gap requires is one that <strong>the parties who have the distribution to deploy at scale cannot build</strong>, and the parties who can build it (small, independent, structurally local-first) lack the distribution. This is the textbook shape of a market gap that compounds the longer it remains unaddressed.</p>
+
+      <p>The architecture also admits two strengthening paths the design already anticipates. Hybrid extraction, with on-host OCR and machine-readable-zone parsing and only the extracted text fields routed to Claude, keeps the image bytes from leaving the host's hardware at all. Inference on customer-controlled cloud compute via Amazon Bedrock or Google Vertex keeps the data inside the customer's own EU cloud tenancy. Neither is required for the first deployment; both are reachable from the v1 design without re-architecting. The architecture's privacy ceiling is higher than the v1 shape consumes.</p>
+
+      <h2>What this implies more broadly</h2>
+
+      <p>The Portuguese short-term rental case is a local instance of a continent-wide pattern. Every EU jurisdiction has analogous guest-registration laws. Every one has the same shape of trust gap at the channel between platforms, hosts, and guests. The estimated population of affected operators is not in the thousands. It is millions, across hospitality, vacation rental, B&amp;Bs, hostels, and adjacent regulated lodging categories.</p>
+
+      <p>The implications extend further. Wherever an EU regulated SMB is obligated to collect, verify, and report special-category data on behalf of a regulator, and wherever the channel that data has to travel through is mediated by a platform whose architectural assumptions are incompatible with the trust the data requires, the same gap exists. And the same two levers close it: a channel the counterparty can trust, and a request drafted with care, in their own language, that answers their actual concern. Vacation rentals is the most visible case. It is not the only case.</p>
+
+      <p>This is also a story about <em>how AI can be deployed responsibly in a regulated production environment</em>. The reasoning core that does the actual document-reading, the multilingual draft, the audit-trail generation, and the decision support is a frontier large language model. Done badly, an AI like this becomes a centralized vendor consuming special-category data at scale and creating its own version of the trust gap. Done well, it runs in a deployment shape where the operator is structurally outside the inference data path, the customer controls the AI relationship directly, and human review gates every regulator-touching action. The same model, in a different deployment shape, produces opposite outcomes for guest trust and regulatory compliance. Both halves matter: the capability the model brings, and the architectural posture that lets the capability reach the user safely. Neither alone is sufficient.</p>
+
+      <h2>What we are building</h2>
+
+      <p>We are a small group at the start of this work. The vacation rental wedge is where we are beginning, because we work directly with a Portuguese host whose business is exactly the shape this essay describes, and because the architecture we believe is required for the broader EU regulated SMB market can be proved out here at small scale first.</p>
+
+      <p>The platform is called <strong>Obra</strong>. It is built on <strong>Claude</strong>. It runs on the host's infrastructure, invoking Claude under the host's own Anthropic API key. It runs guest-identity collection through a structurally trustable channel the host controls. It produces a hash-chained audit trail the host owns. It pairs every regulator-touching action with a human verification step the host signs off on, before the action runs. It is being released as a managed service, with the vertical-specific skills released open-source under Apache 2.0.</p>
+
+      <p>There is a second lever here, beyond the architecture. The passport ask fails partly because of the channel and partly because of the ask itself. Because Obra drafts the request, it can write it the way a careful, fluent host would: in the guest's own language, in the host's voice, explaining plainly why the law requires it and what becomes of the image afterward. And because the same reasoning core reads the guest's replies, it can recognize the specific worry behind a hesitation, an unfamiliar acronym, a fear of identity theft, a distrust of the platform's chat, and draft a reply to that worry directly instead of repeating a script, for the host to send. The architecture removes the guest's structural objection. The drafting removes the human friction. A warm, clear, responsive ask through a channel the guest can trust is far more likely to be met than a cold one through a channel they do not. How much more, we intend to measure; either way the answer is useful, because whatever the ask cannot win, the architecture still has to catch.</p>
+
+      <p>We are not trying to become a booking platform. We are not trying to compete for guests. We are trying to make the compliance step that the law already requires actually work, inside the channel reality hosts already live in.</p>
+
+      <p>The open-source vertical reference pack is at <a href="https://github.com/get-obra/claude-for-portuguese-al-hosts">github.com/get-obra/claude-for-portuguese-al-hosts</a>. The architecture is documented; two of the skill files are in. The rest land over the coming weeks. The core loop already runs in our own testing: a guest-registration form filled automatically, field by field, and a host-approved message sent under the host's own account, with each step recorded in the audit chain and the final regulator submission left for the host. The first deployment runs with the Portuguese host who is the subject of much of this essay, this summer.</p>
+
+      <p>The work is also a hypothesis about what responsible AI deployment in regulated EU sectors looks like at all. We believe the architectural properties that close the trust gap for short-term rental are the same properties that close the analogous trust gaps for the EU regulated SMB universe more broadly: accountants under data-minimization obligations, property managers under tenant privacy law, small healthcare providers under HIPAA-equivalent regimes, legal practices under privilege constraints. The wedge is one vertical. The bet is the architecture.</p>
+
+      <h2>A note on what this essay is not</h2>
+
+      <p>This is not a product pitch. This essay exists because the problem it describes is real and load-bearing for the deployment of AI in regulated European sectors, and because we believe the analysis is more useful as public reading than as a slide deck for ten meetings.</p>
+
+      <p>It is also not a complaint about the booking platforms. The platforms are large companies operating in a complex regulatory environment with constraints we do not face. We believe a partnership-shaped path exists where their compliance posture improves and their hosts' lives get easier, with us providing the infrastructure layer they have correctly chosen not to build internally. We expect that conversation to happen on a future date that depends on work we have not yet done.</p>
+
+      <p>It is, mainly, the kind of essay we would have wanted to read six months ago when we started building. If it is useful to you, or if you see something we have got wrong, an email to <a href="mailto:team@get-obra.com">team@get-obra.com</a> finds us.</p>
+
+      <div class="endnote">
+        <p><em>Obra is built on Claude. The vacation rental host whose work appears throughout this essay is real, has reviewed this account, and consents to her workflow being described in anonymized form. The 80% figure is an order-of-magnitude estimate grounded in her direct experience and the broader network of Portuguese AL operators we have spoken with. No real host name, real guest name, real passport number, real booking platforms' internal data, real property location, or any other identifying detail appears in this essay or in our public repositories. Every scenario described is illustrative.</em></p>
+        <p><em>Maintained by the Obra team. Released under CC BY 4.0. Last updated 19 May 2026.</em></p>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <div>&copy; 2026 Obra</div>
+    <div><a href="/" class="footer-link">Back to home</a></div>
+    <div><a href="https://x.com/getobra" class="footer-link" target="_blank" rel="noopener">Follow on X</a></div>
+  </footer>
+
+  <script>
+    // Reading-position progress bar.
+    (function() {
+      var bar = document.getElementById('progress-bar');
+      if (!bar) return;
+      var ticking = false;
+      function update() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+        bar.style.width = pct + '%';
+        ticking = false;
+      }
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      }, { passive: true });
+      update();
+    })();
+  </script>
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d5b534fcfdc24e97afe3103783b3869c"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Obra
+
+> Obra is a managed AI workforce for regulated businesses. We place accountable, role-specialized AI employees on the customer's own machine, build and operate their workflows for them, and stop at the decisions a human must own. Local-first, two-read verification, typed actions, a host-owned audit trail. Built on Claude. First vertical live: Portugal's short-term-rental (SIBA) compliance.
+
+## What Obra is
+Obra runs on the customer's own machine, not in the cloud. A role-specialized AI employee acts only through approved actions, stops at the decisions a human must own, and writes a signed, tamper-evident audit trail. We build the workflows, deploy them remotely, and operate the whole fleet on health and status signals only. The customer's data, credentials, memory, and audit stay local; only the model reasoning calls out, and that is controllable and swappable. You employ the role. We operate the worker.
+
+## Core pages
+- [Home](https://get-obra.com/): what Obra is and how it works.
+- [CV](https://get-obra.com/cv/): what Obra can do, in the language of what you care about.
+- [The trust gap](https://get-obra.com/the-trust-gap/): why a frontier model alone is not enough for regulated work.
+- [The unenforced law](https://get-obra.com/the-unenforced-law/): the compliance gap Obra was built for.
+
+## Portuguese (pt-PT)
+- [Início](https://get-obra.com/pt/)
+- [The trust gap](https://get-obra.com/pt/the-trust-gap/)
+- [The unenforced law](https://get-obra.com/pt/the-unenforced-law/)
+
+## Contact
+- Email: team@get-obra.com
+- X: https://x.com/getobra
